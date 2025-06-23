@@ -5,13 +5,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 User = get_user_model()
 
 def login_view(request, role):
-    if request.user.is_authenticated:
-        return redirect('dashboard_redirect')
 
+    logout(request)
     template_map = {
         'admin': 'login-admin.html',
         'coordinator': 'login-coordinator.html',
@@ -45,3 +45,27 @@ def dashboard_redirect(request):
 def logout_view(request):
     logout(request)
     return redirect('login', role='student')
+
+def is_admin(user):
+    return user.is_authenticated and user.role == 'admin'
+
+def is_coordinator(user):
+    return user.is_authenticated and user.role == 'coordinator'
+
+def is_student(user):
+    return user.is_authenticated and user.role == 'student'
+
+@login_required
+@user_passes_test(is_admin)
+def admin_dashboard(request):
+    return render(request, 'login/admin-dashboard.html')
+
+@login_required
+@user_passes_test(is_coordinator)
+def coordinator_dashboard(request):
+    return render(request, 'login/coordinator-dashboard.html')
+
+@login_required
+@user_passes_test(is_student)
+def student_dashboard(request):
+    return render(request, 'login/student-dashboard.html')

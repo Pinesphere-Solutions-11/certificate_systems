@@ -109,17 +109,21 @@
         <div class="login-box">
             <i class="fas fa-user-tie"></i>
             <h2>Coordinator Login</h2>
-            <form>
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                <button type="submit" class="login-btn">Login</button>
-            </form>
+            <form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="{{ form.username.id_for_label }}">Username</label>
+        {{ form.username }}
+    </div>
+    <div class="form-group">
+        <label for="{{ form.password.id_for_label }}">Password</label>
+        {{ form.password }}
+    </div>
+    <button type="submit" class="login-btn">Login</button>
+</form>
+{% if form.non_field_errors %}
+  <div style="color: red;">{{ form.non_field_errors }}</div>
+{% endif %}
             <div class="login-footer">
                 <p>For student coordinators only. Contact admin if you need access.</p>
             </div>

@@ -220,6 +220,7 @@
         <header class="admin-header">
             <h1>Welcome back, System Administrator</h1>
             <p>Here's what's happening with your institution today</p>
+           <p style="text-align: right;" class="active"><a href="{% url 'index' %}" onclick="logout()">Logout</a></p>
         </header>
 
         <div class="action-buttons">
@@ -385,6 +386,9 @@
     </div>
 
     <script>
+        function logout() {
+             window.location.href = "/logout"; // Replace with your actual logout endpoint
+             }
         document.addEventListener('DOMContentLoaded', function() {
             // Form toggle functionality
             const showCoordinatorForm = document.getElementById('showCoordinatorForm');
