@@ -11,7 +11,7 @@ def create_admin_user(apps, schema_editor):
             password='admin123',
             role='admin'
         )
-    if not User.objects.filter(username='saran').exissts():
+    if not User.objects.filter(username='saran').exists():
         User.objects.create_user(
             username='saran',
             email='coordinator@example.com',
