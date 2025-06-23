@@ -3,136 +3,337 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduConnect | Home</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-   <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EduConnect | Home</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Styles -->
+  <style>
+    :root {
+      --primary: #2563eb;
+      --secondary: #f1f5f9;
+      --text: #1e293b;
+      --gray: #64748b;
+      --white: #fff;
+      --radius: 1rem;
+      --shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+      --transition: 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: var(--secondary);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+      transition: var(--transition);
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 1rem;
+    }
+
+    header {
+      background: var(--white);
+      box-shadow: var(--shadow);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo h1 {
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+
+    .logo span {
+      color: #1e293b;
+    }
+
+    nav ul {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    nav li a {
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    nav li a:hover,
+    nav .active a {
+      color: var(--primary);
+    }
+
+    .login-dropdown {
+      position: relative;
+    }
+
+    .login-dropdown .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 0.5rem;
+      min-width: 200px;
+    }
+
+    .login-dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .dropdown-content a {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      color: var(--gray);
+      border-radius: 0.5rem;
+    }
+
+    .dropdown-content a:hover {
+      background: var(--secondary);
+    }
+
+    .hero {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4rem 0;
+      background: var(--white);
+    }
+
+    .hero-content {
+      flex: 1 1 50%;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero h1 span {
+      color: var(--primary);
+    }
+
+    .hero p {
+      color: var(--gray);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-image {
+      flex: 1 1 40%;
+      text-align: center;
+    }
+
+    .hero-image img {
+      width: 100%;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .btn {
+      background: var(--primary);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius);
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .btn:hover {
+      background: #1d4ed8;
+    }
+
+    .features {
+      padding: 4rem 0;
+      text-align: center;
+    }
+
+    .features h2 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      background: var(--white);
+      padding: 2rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .feature-card i {
+      font-size: 2rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    footer {
+      background: #0f172a;
+      color: white;
+      padding: 2rem 0;
+      text-align: center;
+    }
+
+    .social-links a {
+      color: white;
+      margin: 0 0.5rem;
+      font-size: 1.2rem;
+      transition: var(--transition);
+    }
+
+    .social-links a:hover {
+      color: var(--primary);
+    }
+
+    @media (max-width: 768px) {
+      nav ul {
+        flex-direction: column;
+        display: none;
+      }
+
+      nav ul.active {
+        display: flex;
+        background: white;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        box-shadow: var(--shadow);
+        padding: 1rem;
+      }
+
+      #mobile-menu {
+        display: block;
+        cursor: pointer;
+        font-size: 1.5rem;
+      }
+    }
+
+    #mobile-menu {
+      display: none;
+    }
+
+  </style>
 </head>
 <body>
-    <header>
-    <div class="container">
-        <div class="logo">
-            <h1><span>Edu</span>Connect</h1>
-        </div>
-        
-        <!-- Hamburger menu (hidden on desktop) -->
-       
-        
-        <!-- Regular navigation -->
-        <nav class="nav-links">
-            <ul>
-                <li class="active"><a href="{% url 'index' %}">Home</a></li>
-                <li><a href="{% url 'about' %}">About</a></li>
-                <li><a href="{% url 'contact' %}">Contact</a></li>
-                <li class="login-dropdown">
-                    <a href="#"><i class="fas fa-user-circle"></i></a>
-                    <div class="dropdown-content">
-                        <a href="{% url 'login' role='admin' %}"><i class="fas fa-user-shield"></i> Admin Login</a>
-                        <a href="{% url 'login' role='coordinator' %}"><i class="fas fa-user-tie"></i> Coordinator Login</a>
-                        <a href="{% url 'login' role='student' %}"><i class="fas fa-user-graduate"></i> Student Login</a>
-                    </div>
-                </li>
-            </ul>
-        </nav>
-    </div>
-</header>
 
-<!-- Update the hero section in index.html -->
-<section class="hero">
-    <div class="container">
-        <div class="hero-content">
-            <h1>Welcome to <span>EduConnect</span></h1>
-            <p>Empowering education through innovative technology and dedicated support</p>
-            <a href="#features" class="btn">Explore More</a>
-        </div>
-        <div class="hero-image">
-            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80" alt="Students learning">
-        </div>
-    </div>
-</section>
-
-    <section id="features" class="features">
-        <div class="container">
-            <h2>Our Services</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <i class="fas fa-chalkboard-teacher"></i>
-                    <h3>Expert Faculty</h3>
-                    <p>Learn from industry professionals and academic experts.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-laptop-code"></i>
-                    <h3>Modern Facilities</h3>
-                    <p>State-of-the-art labs and learning environments.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-handshake"></i>
-                    <h3>Industry Connections</h3>
-                    <p>Strong ties with leading companies for placements.</p>
-                </div>
+  <header>
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+      <div class="logo"><h1><span>Edu</span>Connect</h1></div>
+      <div id="mobile-menu"><i class="fas fa-bars"></i></div>
+      <nav>
+        <ul class="nav-links">
+          <li class="active"><a href="{% url 'index' %}">Home</a></li>
+          <li><a href="{% url 'about' %}">About</a></li>
+          <li><a href="{% url 'contact' %}">Contact</a></li>
+          <li class="login-dropdown">
+            <a href="#"><i class="fas fa-user-circle"></i></a>
+            <div class="dropdown-content">
+              <a href="{% url 'login' role='admin' %}"><i class="fas fa-user-shield"></i> Admin</a>
+              <a href="{% url 'login' role='coordinator' %}"><i class="fas fa-user-tie"></i> Coordinator</a>
+              <a href="{% url 'login' role='student' %}"><i class="fas fa-user-graduate"></i> Student</a>
             </div>
-        </div>
-    </section>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2023 EduConnect. All rights reserved.</p>
-            <div class="social-links">
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-            </div>
-        </div>
-    </footer>
+  <section class="hero">
+    <div class="container hero-container" style="display: flex; flex-wrap: wrap; gap: 2rem;">
+      <div class="hero-content">
+        <h1>Welcome to <span>EduConnect</span></h1>
+        <p>Empowering education through innovative technology and dedicated support.</p>
+        <a href="#features" class="btn">Explore More</a>
+      </div>
+      <div class="hero-image">
+        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1471&q=80" alt="Students learning">
+      </div>
+    </div>
+  </section>
 
- <script>
-   // Mobile menu functionality
-document.addEventListener('DOMContentLoaded', function() {
+  <section id="features" class="features">
+    <div class="container">
+      <h2>Our Services</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <h3>Expert Faculty</h3>
+          <p>Learn from industry professionals and academic experts.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-laptop-code"></i>
+          <h3>Modern Facilities</h3>
+          <p>State-of-the-art labs and collaborative learning environments.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-handshake"></i>
+          <h3>Industry Connections</h3>
+          <p>Partnerships with top companies to drive student success.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2023 EduConnect. All rights reserved.</p>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
     const mobileMenu = document.getElementById('mobile-menu');
     const navLinks = document.querySelector('.nav-links');
-    const loginDropdown = document.querySelector('.login-dropdown');
-    
-    // Toggle main menu
-    mobileMenu.addEventListener('click', function() {
-        navLinks.classList.toggle('active');
-        this.classList.toggle('active');
-    });
-    
-    // Toggle login dropdown on mobile
-    if (loginDropdown) {
-        const dropdownToggle = loginDropdown.querySelector('a');
-        
-        dropdownToggle.addEventListener('click', function(e) {
-            if (window.innerWidth <= 768) {
-                e.preventDefault();
-                loginDropdown.classList.toggle('active');
-            }
-        });
-    }
-    
-    // Close menu when clicking on a link
-    document.querySelectorAll('.nav-links a:not(.login-dropdown a)').forEach(link => {
-        link.addEventListener('click', () => {
-            navLinks.classList.remove('active');
-            mobileMenu.classList.remove('active');
-        });
-    });
-});
-// Mobile menu toggle
-const mobileMenu = document.getElementById('mobile-menu');
-const navLinks = document.querySelector('.nav-links');
 
-mobileMenu.addEventListener('click', () => {
-    navLinks.classList.toggle('active');
-    
-    // Toggle between hamburger and close icon
-    const icon = mobileMenu.querySelector('i');
-    icon.classList.toggle('fa-bars');
-    icon.classList.toggle('fa-times');
-});
- </script>
+    mobileMenu.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      mobileMenu.querySelector('i').classList.toggle('fa-bars');
+      mobileMenu.querySelector('i').classList.toggle('fa-times');
+    });
+  </script>
 </body>
 </html>
