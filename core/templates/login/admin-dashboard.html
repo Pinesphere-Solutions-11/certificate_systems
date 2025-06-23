@@ -247,6 +247,13 @@ body {
     </style>
 </head>
 <body>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li style="color: green;">{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
     <div class="admin-container">
         <header class="admin-header">
             <h1>Welcome back, System Administrator</h1>
@@ -275,15 +282,15 @@ body {
         <div class="stats-grid">
             <div class="stat-card">
                 <h3>Total Certificates</h3>
-                <div class="number">0</div>
+                <div class="number">{{ total_certificates }}</div>
             </div>
             <div class="stat-card">
                 <h3>Coordinators</h3>
-                <div class="number">0</div>
+                <div class="number">{{ coordinator_count }}</div> 
             </div>
             <div class="stat-card">
                 <h3>Active Students</h3>
-                <div class="number">0</div>
+                <div class="number">{{ student_count }}</div>
             </div>
         </div>
 
