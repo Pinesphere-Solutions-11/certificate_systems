@@ -4,13 +4,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>EduConnect | About</title>
+  <title>PineSphere | About</title>
+  <link rel="icon" type="image/png" href="https://i.ibb.co/PZqtNG29/logo.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="{% static 'css/style.css' %}" />
   <style>
      :root {
-      --primary-color: #2563eb;
+      --primary-color: #3794D0;
       --primary-dark: #1d4ed8;
       --secondary-color: #f8fafc;
       --text-color: #1e293b;
@@ -231,7 +232,10 @@
   <header>
     <div class="container">
       <div class="logo">
-        <h1><span>Edu</span>Connect</h1>
+        <a href="{% url 'index' %}" style="display: flex; align-items: center; gap: 0.5rem;">
+          <img src="https://i.ibb.co/PZqtNG29/logo.png" alt="Logo" style="height: 40px;">
+          <img src="{% static 'images/company name.png' %}" alt="PineSphere" style="height: 50px;">
+        </a>
       </div>
 
       <div id="mobile-menu">
@@ -258,7 +262,7 @@
 
   <section class="about-hero">
     <div class="container">
-      <h1>About <span>EduConnect</span></h1>
+      <h1>About <span style="color: #3B82F6;">Pinesphere</span></h1>
     </div>
   </section>
 

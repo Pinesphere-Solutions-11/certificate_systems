@@ -10,8 +10,8 @@
     <style>
         /* === include your existing CSS here === */
         :root {
-    --primary-color: #2563eb;
-    --primary-dark: #2563eb;
+    --primary-color: #0099ff;
+    --primary-dark: #1d4ed8;
     --accent-color: #10b981;
     --background: #f1f5f9;
     --card-bg: rgba(255, 255, 255, 0.8);
@@ -193,7 +193,7 @@ body {
     display: block;
 }
 .logout-btn {
-    background-color:rgb(22, 73, 243); /* Red tone */
+    background-color:#0099ff; /* Red tone */
     
 }
 .logout-btn:hover {
@@ -257,7 +257,7 @@ body {
         {% endif %}
 
         <header class="admin-header">
-            <h1>Welcome back, System Administrator</h1>
+            <h1 style="color: #0099ff;">Welcome back, System Administrator</h1>
             <p>Here's what's happening with your institution today</p>
             <div style="display: flex; justify-content: flex-end;">
                 <a href="{% url 'index' %}" class="action-btn logout-btn">

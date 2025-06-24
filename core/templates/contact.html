@@ -4,13 +4,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EduConnect | Contact</title>
+  <title>PineSphere | Contact</title>
+  <link rel="icon" type="image/png" href="https://i.ibb.co/PZqtNG29/logo.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="{% static 'css/style.css' %}" />
   <style>
     :root { 
-      --primary-color: #2563eb;
+      --primary-color: #3794D0;
       --primary-dark: #1d4ed8;
       --secondary-color: #f8fafc;
       --text-color: #1e293b;
@@ -129,7 +130,7 @@
     }
 
     .page-banner {
-      background: linear-gradient(90deg, #2563eb, #1d4ed8);
+      background: linear-gradient(90deg, #2563eb, #3794D0);
       color: white;
       text-align: center;
       padding: 2rem 1rem 1rem;
@@ -295,7 +296,10 @@
   <header>
     <div class="container">
       <div class="logo">
-        <h1><span>Edu</span>Connect</h1>
+        <a href="{% url 'index' %}" style="display: flex; align-items: center; gap: 0.5rem;">
+          <img src="https://i.ibb.co/PZqtNG29/logo.png" alt="Logo" style="height: 40px;">
+          <img src="{% static 'images/company name.png' %}" alt="PineSphere" style="height: 50px;">
+        </a>
       </div>
 
       <div id="mobile-menu">
