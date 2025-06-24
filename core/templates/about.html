@@ -64,6 +64,7 @@
     }
 
      nav > ul > li > a:hover,
+     nav > ul > li > a:active
          {
         color: #2563eb;
         }
@@ -103,6 +104,13 @@
     .login-dropdown .dropdown-content a:hover {
       background-color: #f0f4f8;
       color: #2563eb;
+    }
+     .login-dropdown:hover .dropdown-content {
+      /* remove hover behavior */
+      display: none;
+    }
+    .login-dropdown.active .dropdown-content {
+      display: block;
     }
     #mobile-menu {
       display: none;

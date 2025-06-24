@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
     <title>Coordinator Dashboard | EduConnect</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --primary-color: #2563eb;
@@ -255,57 +257,115 @@
         </header>
 
         <div class="action-buttons">
-            <button class="action-btn" id="showCertificateForm">
-                <i class="fas fa-certificate"></i> Create Certificate
+            <button class="action-btn" id="showOfferForm">
+                <i class="fas fa-file-signature"></i> Generate Offer Letter
+            </button>
+            <button class="action-btn" id="showCompletionForm">
+                <i class="fas fa-award"></i> Generate Completion Certificate
             </button>
             <button class="action-btn" id="showStudentForm">
                 <i class="fas fa-user-plus"></i> Add Student
             </button>
         </div>
 
-        <!-- Certificate Form (Initially hidden) -->
-        <div class="certificate-form" id="certificateForm">
-            <div class="data-section">
-                <h3>Create New Certificate</h3>
-                <form id="createCertificateForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="studentName">Student Name</label>
-                            <input type="text" id="studentName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="department">Department</label>
-                            <input type="text" id="department" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="college">College</label>
-                            <input type="text" id="college" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="courseName">Course Name</label>
-                            <input type="text" id="courseName" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="duration">Duration</label>
-                            <input type="text" id="duration" placeholder="e.g., 6 months" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="completionDate">Completion Date</label>
-                            <input type="date" id="completionDate" required>
-                        </div>
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="action-btn">
-                            <i class="fas fa-save"></i> Generate Certificate
-                        </button>
-                    </div>
-                </form>
+       <!-- Corrected Completion Certificate Form -->
+<div class="certificate-form" id="certificateForm">
+    <div class="data-section">
+        <h3>Create New Certificate</h3>
+        <form id="createCertificateForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <select id="title" required>
+                        <option value="">Select Title</option>
+                        <option value="Mr">Mr</option>
+                        <option value="Ms">Ms</option>
+                        <option value="Mrs">Mrs</option>
+                        <option value="Dr">Dr</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="studentName">Student Name</label>
+                    <input type="text" id="studentName" required>
+                </div>
             </div>
-        </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="studentID">Student ID</label>
+                    <input type="text" id="studentID" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerNumber">Register Number</label>
+                    <input type="text" id="registerNumber" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="department">Department</label>
+                    <select id="department" required>
+                        <option value="">Select Department</option>
+                        <option value="Bachelor's of Engineering">Bachelor's of Engineering</option>
+                        <option value="B.Tech">B.Tech</option>
+                        <option value="Arts and Science">Arts and Science</option>
+                        <option value="MBA">MBA</option>
+                        <option value="Diploma">Diploma</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="college">College</label>
+                    <input type="text" id="college" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" required>
+                </div>
+                <div class="form-group">
+                    <label for="courseName">Course Name</label>
+                    <select id="courseName" required>
+                        <option value="">Select Course</option>
+                        <option value="Full Stack Java Development">Full Stack Java Development</option>
+                        <option value="Full Stack Python Development">Full Stack Python Development</option>
+                        <option value="UI/UX">UI/UX</option>
+                        <option value="Backend Development">Backend Development</option>
+                        <option value="DevOps">DevOps</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="duration">Duration</label>
+                    <input type="text" id="duration" placeholder="e.g., 6 months" required>
+                </div>
+                <div class="form-group">
+                    <label for="completionDate">Completion Date</label>
+                    <input type="date" id="completionDate" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="director">Director Name</label>
+                    <select id="director" required>
+                        <option value="">Select Director</option>
+                        <option value="Surendar S">Surendar S</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="action-btn">
+                    <i class="fas fa-save"></i> Generate Certificate
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
         <!-- Student Form (Initially hidden) -->
         <div class="certificate-form" id="studentForm">
@@ -346,7 +406,104 @@
                 </form>
             </div>
         </div>
+               <!-- Corrected Offer Letter Form -->
+<div class="certificate-form" id="offerForm">
+    <div class="data-section">
+        <h3>Generate Offer Letter</h3>
+        <form id="createOfferForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <select id="title" required>
+                        <option value="">Select Title</option>
+                        <option value="Mr">Mr</option>
+                        <option value="Ms">Ms</option>
+                        <option value="Mrs">Mrs</option>
+                        <option value="Dr">Dr</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="studentName">Student Name</label>
+                    <input type="text" id="studentName" required>
+                </div>
+            </div>
 
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="studentID">Student ID</label>
+                    <input type="text" id="studentID" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerNumber">Register Number</label>
+                    <input type="text" id="registerNumber" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="department">Department</label>
+                    <select id="department" required>
+                        <option value="">Select Department</option>
+                        <option value="Bachelor's of Engineering">Bachelor's of Engineering</option>
+                        <option value="B.Tech">B.Tech</option>
+                        <option value="Arts and Science">Arts and Science</option>
+                        <option value="MBA">MBA</option>
+                        <option value="Diploma">Diploma</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="college">College</label>
+                    <input type="text" id="college" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" required>
+                </div>
+                <div class="form-group">
+                    <label for="courseName">Course Name</label>
+                    <select id="courseName" required>
+                        <option value="">Select Course</option>
+                        <option value="Full Stack Java Development">Full Stack Java Development</option>
+                        <option value="Full Stack Python Development">Full Stack Python Development</option>
+                        <option value="UI/UX">UI/UX</option>
+                        <option value="Backend Development">Backend Development</option>
+                        <option value="DevOps">DevOps</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="duration">Duration</label>
+                    <input type="text" id="duration" placeholder="e.g., 6 months" required>
+                </div>
+                <div class="form-group">
+                    <label for="completionDate">Completion Date</label>
+                    <input type="date" id="completionDate" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="director">Director Name</label>
+                    <select id="director" required>
+                        <option value="">Select Director</option>
+                        <option value="Surendar S">Surendar S</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="action-btn">
+                    <i class="fas fa-save"></i> Generate Certificate
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
         <!-- Certificates Section -->
         <div class="data-section">
             <h2 class="section-title">
@@ -403,61 +560,105 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Toggle forms
-            const showCertificateForm = document.getElementById('showCertificateForm');
-            const showStudentForm = document.getElementById('showStudentForm');
-            
-            const certificateForm = document.getElementById('certificateForm');
-            const studentForm = document.getElementById('studentForm');
-            
-            // Initially hide both forms
-            certificateForm.style.display = 'none';
-            studentForm.style.display = 'none';
-            
-            function hideAllForms() {
-                certificateForm.style.display = 'none';
-                studentForm.style.display = 'none';
-            }
-            
-            showCertificateForm.addEventListener('click', function(e) {
-                e.preventDefault();
-                if (certificateForm.style.display === 'block') {
-                    certificateForm.style.display = 'none';
-                } else {
+  <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const showOfferForm = document.getElementById('showOfferForm');
+    const showCompletionForm = document.getElementById('showCompletionForm');
+    const showStudentForm = document.getElementById('showStudentForm');
+
+    const offerForm = document.getElementById('offerForm');
+    const certificateForm = document.getElementById('certificateForm');
+    const studentForm = document.getElementById('studentForm');
+
+    const tableBody = document.querySelector('.data-table tbody');
+
+    function hideAllForms() {
+        offerForm.style.display = 'none';
+        certificateForm.style.display = 'none';
+        studentForm.style.display = 'none';
+    }
+
+    hideAllForms();
+
+    showOfferForm.addEventListener('click', () => {
+        hideAllForms();
+        offerForm.style.display = 'block';
+    });
+
+    showCompletionForm.addEventListener('click', () => {
+        hideAllForms();
+        certificateForm.style.display = 'block';
+    });
+
+    showStudentForm.addEventListener('click', () => {
+        hideAllForms();
+        studentForm.style.display = 'block';
+    });
+
+    // Helper: Collect form data
+    function getFormData(form) {
+        const data = new FormData(form);
+        return Object.fromEntries(data.entries());
+    }
+
+    // Add row to certificate table
+    function addCertificateToTable(student, course, date, certId) {
+        const emptyRow = document.querySelector('.empty-state');
+        if (emptyRow) emptyRow.remove();
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${student}</td>
+            <td>${course}</td>
+            <td>${date}</td>
+            <td>${certId}</td>
+            <td><button class="action-btn">Download</button></td>
+        `;
+        tableBody.appendChild(row);
+    }
+
+    // AJAX submit handler
+    function handleCertificateSubmit(formId, url) {
+        const form = document.getElementById(formId);
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    addCertificateToTable(data.student, data.course, data.date, data.certificate_number);
+                    alert(data.message);
+                    form.reset();
                     hideAllForms();
-                    certificateForm.style.display = 'block';
-                    certificateForm.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-            
-            showStudentForm.addEventListener('click', function(e) {
-                e.preventDefault();
-                if (studentForm.style.display === 'block') {
-                    studentForm.style.display = 'none';
                 } else {
-                    hideAllForms();
-                    studentForm.style.display = 'block';
-                    studentForm.scrollIntoView({ behavior: 'smooth' });
+                    alert(data.message || 'Something went wrong.');
                 }
-            });
-            
-            // Form submissions
-            document.getElementById('createCertificateForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                alert('Certificate created successfully!');
-                this.reset();
-                hideAllForms();
-            });
-            
-            document.getElementById('addStudentForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                alert('Student added successfully!');
-                this.reset();
-                hideAllForms();
+            })
+            .catch(err => {
+                alert('Request failed. Check console for details.');
+                console.error(err);
             });
         });
-    </script>
+    }
+
+    // CSRF Token helper
+    function getCSRFToken() {
+    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    }
+
+
+    handleCertificateSubmit('createOfferForm', '/certificate/offer/create/');
+    handleCertificateSubmit('createCertificateForm', '/certificate/completion/create/');
+});
+</script>
 </body>
 </html>

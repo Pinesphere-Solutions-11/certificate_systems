@@ -7,6 +7,9 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .forms import CoordinatorForm, StudentForm, AdminUserForm
+from django.http import JsonResponse
+from .models import Certificate
+import datetime
 
 User = get_user_model()
 
@@ -114,3 +117,67 @@ def coordinator_dashboard(request):
 @user_passes_test(is_student)
 def student_dashboard(request):
     return render(request, 'login/student-dashboard.html')
+
+
+@login_required
+@user_passes_test(is_coordinator)
+def create_offer_letter(request):
+    if request.method == 'POST':
+        data = request.POST
+
+        cert = Certificate.objects.create(
+            certificate_type='offer',
+            title=data.get('title'),
+            student_name=data.get('student_name'),
+            student_id=data.get('student_id'),
+            department=data.get('department'),
+            college=data.get('college'),
+            location=data.get('location'),
+            course_name=data.get('course_name'),
+            duration=data.get('duration'),
+            completion_date=data.get('completion_date'),
+            director_name=data.get('director')
+        )
+
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Offer Letter created successfully!',
+            'certificate_number': cert.certificate_number,
+            'student': cert.student_name,
+            'course': cert.course_name,
+            'date': cert.completion_date.strftime('%Y-%m-%d')
+        })
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+
+@login_required
+@user_passes_test(is_coordinator)
+def create_completion_certificate(request):
+    if request.method == 'POST':
+        data = request.POST
+
+        cert = Certificate.objects.create(
+            certificate_type='completion',
+            title=data.get('title'),
+            student_name=data.get('student_name'),
+            student_id=data.get('student_id'),
+            department=data.get('department'),
+            college=data.get('college'),
+            location=data.get('location'),
+            course_name=data.get('course_name'),
+            duration=data.get('duration'),
+            completion_date=data.get('completion_date'),
+            director_name=data.get('director')
+        )
+
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Internship Certificate created successfully!',
+            'certificate_number': cert.certificate_number,
+            'student': cert.student_name,
+            'course': cert.course_name,
+            'date': cert.completion_date.strftime('%Y-%m-%d')
+        })
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
