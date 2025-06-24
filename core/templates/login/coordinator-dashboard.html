@@ -37,7 +37,14 @@
             margin: 0 auto;
             padding: 2rem;
         }
-        
+        .logout-btn {
+        background-color:rgb(22, 73, 243); /* Red tone */
+    
+        }
+        .logout-btn:hover {
+        background-color:rgb(12, 95, 250);
+
+        }
         .dashboard-header {
             display: flex;
             justify-content: space-between;
@@ -228,6 +235,7 @@
                 width: 100%;
                 justify-content: center;
             }
+        
         }
     </style>
 </head>
@@ -238,6 +246,11 @@
             <div class="welcome-message">
                 <h1>Welcome back, Coordinator</h1>
                 <p>Here's your certificate management dashboard</p>
+            </div>
+            <div style="display: flex; justify-content: flex-end;">
+                <a href="{% url 'index' %}" class="action-btn logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
             </div>
         </header>
 

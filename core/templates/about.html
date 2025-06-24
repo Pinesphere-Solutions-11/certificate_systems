@@ -1,94 +1,333 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduConnect | About</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EduConnect | About</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  <style>
+     :root {
+      --primary-color: #2563eb;
+      --primary-dark: #1d4ed8;
+      --secondary-color: #f8fafc;
+      --text-color: #1e293b;
+      --light-gray: #e2e8f0;
+      --white: #ffffff;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+    /* Core nav styles reused from home page */
+    header {
+      background-color: #ffffff;
+      padding: 1rem 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #2563eb;
+    }
+
+    .logo span {
+      color: #1e293b;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: #1e293b;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+     nav > ul > li > a:hover,
+         {
+        color: #2563eb;
+        }
+     .login-dropdown {
+      position: relative;
+    }
+
+    .login-dropdown > a > i {
+      font-size: 1.8rem;
+      cursor: pointer;
+    }
+
+    .login-dropdown .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 2.5rem;
+      right: 0;
+      background: white;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 0.5rem 0;
+      z-index: 99;
+      border-radius: 5px;
+      min-width: 200px;
+    }
+
+    .login-dropdown.active .dropdown-content {
+      display: block;
+    }
+
+    .login-dropdown .dropdown-content a {
+      display: block;
+      padding: 0.5rem 1rem;
+      white-space: nowrap;
+      color: #1e293b;
+    }
+
+    .login-dropdown .dropdown-content a:hover {
+      background-color: #f0f4f8;
+      color: #2563eb;
+    }
+    #mobile-menu {
+      display: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #2563eb;
+    }
+
+    @media (max-width: 768px) {
+      nav ul {
+        flex-direction: column;
+        background: #ffffff;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 100%;
+        display: none;
+        padding: 1rem;
+      }
+
+      nav.active ul {
+        display: flex;
+      }
+
+      #mobile-menu {
+        display: block;
+      }
+    }
+
+    .about-hero {
+      background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+        url('https://images.unsplash.com/photo-1571260898933-d1a1ff2b4a4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80') 
+        no-repeat center center/cover;
+      height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      text-align: center;
+    }
+
+    .about-hero h1 {
+      font-size: 3rem;
+    }
+
+    .about-hero h1 span {
+      color: #2563eb;
+    }
+
+    .about-content,
+    .mission {
+      padding: 80px 0;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 50px;
+      align-items: center;
+    }
+
+    .about-image img {
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+    }
+
+    .mission-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    .mission-card {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .mission-card i {
+      font-size: 2.5rem;
+      color: #2563eb;
+      margin-bottom: 20px;
+    }
+
+    footer {
+      background-color: #1e293b;
+      color: #ffffff;
+      padding: 30px 0;
+      text-align: center;
+    }
+
+    .social-links a {
+      color: #ffffff;
+      margin: 0 10px;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+
+    .social-links a:hover {
+      color: #60a5fa;
+    }
+
+    @media (max-width: 768px) {
+      .about-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .about-hero h1 {
+        font-size: 2.2rem;
+      }
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="logo">
-                <h1><span>Edu</span>Connect</h1>
+  <header>
+    <div class="container">
+      <div class="logo">
+        <h1><span>Edu</span>Connect</h1>
+      </div>
+
+      <div id="mobile-menu">
+        <i class="fas fa-bars"></i>
+      </div>
+
+      <nav>
+        <ul>
+          <li><a href="{% url 'index' %}">Home</a></li>
+          <li class="active"><a href="{% url 'about' %}">About</a></li>
+          <li><a href="{% url 'contact' %}">Contact</a></li>
+          <li class="login-dropdown">
+            <a href="#"><i class="fas fa-user-circle"></i></a>
+            <div class="dropdown-content">
+              <a href="{% url 'login' role='admin' %}"><i class="fas fa-user-shield"></i> Admin Login</a>
+              <a href="{% url 'login' role='coordinator' %}"><i class="fas fa-user-tie"></i> Coordinator Login</a>
+              <a href="{% url 'login' role='student' %}"><i class="fas fa-user-graduate"></i> Student Login</a>
             </div>
-            <nav>
-                <ul>
-                    <li><a href="{% url 'index' %}">Home</a></li>
-                    <li class="active"><a href="{% url 'about' %}">About</a></li>
-                    <li><a href="{% url 'contact' %}">Contact</a></li>
-                    <li class="login-dropdown">
-                        <a href="#"><i class="fas fa-user-circle"></i></a>
-                        <div class="dropdown-content">
-                            <a href="{% url 'login' role='admin' %}"><i class="fas fa-user-shield"></i> Admin Login</a>
-                            <a href="{% url 'login' role='coordinator' %}"><i class="fas fa-user-tie"></i> Coordinator Login</a>
-                            <a href="{% url 'login' role='student' %}"><i class="fas fa-user-graduate"></i> Student Login</a>
-                        </div>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
-    <section class="about-hero">
-        <div class="container">
-            <h1>About <span>EduConnect</span></h1>
-        </div>
-    </section>
+  <section class="about-hero">
+    <div class="container">
+      <h1>About <span>EduConnect</span></h1>
+    </div>
+  </section>
 
-    <section class="about-content">
-        <div class="container">
-            <div class="about-grid">
-                <div class="about-text">
-                    <h2>Our Institution</h2>
-                    <p>Founded in 2005, EduConnect has been at the forefront of educational excellence, providing students with the tools and knowledge they need to succeed in an ever-changing world.</p>
-                    <p>Our institution boasts a 98% satisfaction rate among students and maintains strong industry connections that lead to excellent placement opportunities.</p>
-                    <p>With state-of-the-art facilities and a faculty comprising industry experts and academic leaders, we're committed to delivering an education that goes beyond textbooks.</p>
-                </div>
-                <div class="about-image">
-                    <img src="https://images.unsplash.com/photo-1571260898933-d1a1ff2b4a4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Our Campus">
-                </div>
-            </div>
+  <section class="about-content">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-text">
+          <h2>Our Institution</h2>
+          <p>Founded in 2005, EduConnect has been at the forefront of educational excellence, providing students with the tools and knowledge they need to succeed in an ever-changing world.</p>
+          <p>Our institution boasts a 98% satisfaction rate among students and maintains strong industry connections that lead to excellent placement opportunities.</p>
+          <p>With state-of-the-art facilities and a faculty comprising industry experts and academic leaders, we're committed to delivering an education that goes beyond textbooks.</p>
         </div>
-    </section>
-
-    <section class="mission">
-        <div class="container">
-            <div class="mission-grid">
-                <div class="mission-card">
-                    <i class="fas fa-eye"></i>
-                    <h3>Vision</h3>
-                    <p>To be a globally recognized center of excellence in education that transforms lives through innovative learning.</p>
-                </div>
-                <div class="mission-card">
-                    <i class="fas fa-bullseye"></i>
-                    <h3>Mission</h3>
-                    <p>To provide accessible, high-quality education that empowers students to achieve their full potential and make meaningful contributions to society.</p>
-                </div>
-                <div class="mission-card">
-                    <i class="fas fa-chart-line"></i>
-                    <h3>Values</h3>
-                    <p>Integrity, Excellence, Innovation, Diversity, and Community are the core values that guide our institution.</p>
-                </div>
-            </div>
+        <div class="about-image">
+          <img src="https://images.unsplash.com/photo-1571260898933-d1a1ff2b4a4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Our Campus">
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2023 EduConnect. All rights reserved.</p>
-            <div class="social-links">
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-            </div>
+  <section class="mission">
+    <div class="container">
+      <div class="mission-grid">
+        <div class="mission-card">
+          <i class="fas fa-eye"></i>
+          <h3>Vision</h3>
+          <p>To be a globally recognized center of excellence in education that transforms lives through innovative learning.</p>
         </div>
-    </footer>
+        <div class="mission-card">
+          <i class="fas fa-bullseye"></i>
+          <h3>Mission</h3>
+          <p>To provide accessible, high-quality education that empowers students to achieve their full potential and make meaningful contributions to society.</p>
+        </div>
+        <div class="mission-card">
+          <i class="fas fa-chart-line"></i>
+          <h3>Values</h3>
+          <p>Integrity, Excellence, Innovation, Diversity, and Community are the core values that guide our institution.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <footer>
+    <div class="container">
+      <p>&copy; 2023 EduConnect. All rights reserved.</p>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const mobileMenu = document.getElementById('mobile-menu');
+      const nav = document.querySelector('nav');
+      const loginDropdown = document.querySelector('.login-dropdown');
+      const dropdownToggle = loginDropdown.querySelector('a');
+
+      mobileMenu.addEventListener('click', function () {
+        nav.classList.toggle('active');
+        this.querySelector('i').classList.toggle('fa-bars');
+        this.querySelector('i').classList.toggle('fa-times');
+      });
+
+      dropdownToggle.addEventListener('click', function (e) {
+        e.preventDefault();
+        loginDropdown.classList.toggle('active');
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!loginDropdown.contains(e.target)) {
+          loginDropdown.classList.remove('active');
+        }
+      });
+    });
+  </script>
 </body>
 </html>

@@ -1,136 +1,417 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduConnect | Contact</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduConnect | Contact</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  <style>
+    :root { 
+      --primary-color: #2563eb;
+      --primary-dark: #1d4ed8;
+      --secondary-color: #f8fafc;
+      --text-color: #1e293b;
+      --light-gray: #e2e8f0;
+      --white: #ffffff;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      background-color: #ffffff;
+      padding: 1rem 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .logo h1 {
+      color: #2563eb;
+      font-weight: 700;
+    }
+
+    .logo span {
+      color: #1d4ed8;
+    }
+
+    .nav-links ul {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #1e293b;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links .active a {
+      color: #2563eb;
+    }
+
+    .login-dropdown {
+      position: relative;
+    }
+
+    .login-dropdown > a > i {
+      font-size: 1.8rem;
+      cursor: pointer;
+    }
+
+    .login-dropdown .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 2.5rem;
+      right: 0;
+      background: white;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 0.5rem 0;
+      z-index: 99;
+      border-radius: 5px;
+      min-width: 200px;
+    }
+
+    .login-dropdown.active .dropdown-content {
+      display: block;
+    }
+
+    .login-dropdown .dropdown-content a {
+      display: block;
+      padding: 0.5rem 1rem;
+      white-space: nowrap;
+      color: #1e293b;
+    }
+
+    .login-dropdown .dropdown-content a:hover {
+      background-color: #f0f4f8;
+      color: #2563eb;
+    }
+
+    #mobile-menu {
+      display: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #2563eb;
+    }
+
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+    }
+
+    .page-banner {
+      background: linear-gradient(90deg, #2563eb, #1d4ed8);
+      color: white;
+      text-align: center;
+      padding: 4rem 1rem 3rem;
+    }
+
+    .page-banner h1 {
+      font-size: 2.8rem;
+      font-weight: 600;
+    }
+
+    .contact-section {
+      padding: 3rem 0;
+      background: #f9fafb;
+    }
+
+    .contact-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: space-between;
+    }
+
+    .contact-info,
+    .contact-form {
+      flex: 1 1 48%;
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .contact-info h2,
+    .contact-form h2 {
+      color: #1e293b;
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .info-item i {
+      font-size: 1.3rem;
+      color: #2563eb;
+      margin-top: 4px;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.375rem;
+      font-size: 1rem;
+      background: #ffffff;
+    }
+
+    .btn {
+      background-color: #2563eb;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      font-size: 1rem;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #1d4ed8;
+    }
+
+    .map-container {
+      width: 100%;
+      margin-top: 2rem;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .map-container iframe {
+      width: 100%;
+      height: 350px;
+      border: none;
+    }
+
+    footer {
+      background-color: #1e293b;
+      color: white;
+      padding: 2rem 0;
+      text-align: center;
+    }
+
+    footer .social-links a {
+      color: white;
+      margin: 0 0.5rem;
+      font-size: 1.2rem;
+      transition: color 0.3s ease;
+    }
+
+    footer .social-links a:hover {
+      color: #60a5fa;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links ul {
+        flex-direction: column;
+        background: white;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 100%;
+        display: none;
+        padding: 1rem;
+      }
+
+      .nav-links.active ul {
+        display: flex;
+      }
+
+      #mobile-menu {
+        display: block;
+      }
+
+      .contact-grid {
+        flex-direction: column;
+      }
+
+      .contact-info,
+      .contact-form {
+        flex: 1 1 100%;
+      }
+
+      .page-banner h1 {
+        font-size: 2rem;
+      }
+    }
+     .login-dropdown:hover .dropdown-content {
+      /* remove hover behavior */
+      display: none;
+    }
+    .login-dropdown.active .dropdown-content {
+      display: block;
+    }
+
+  </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="logo">
-                <h1><span>Edu</span>Connect</h1>
+  <header>
+    <div class="container">
+      <div class="logo">
+        <h1><span>Edu</span>Connect</h1>
+      </div>
+
+      <div id="mobile-menu">
+        <i class="fas fa-bars"></i>
+      </div>
+
+      <nav class="nav-links">
+        <ul>
+          <li><a href="{% url 'index' %}">Home</a></li>
+          <li><a href="{% url 'about' %}">About</a></li>
+          <li class="active"><a href="{% url 'contact' %}">Contact</a></li>
+          <li class="login-dropdown" id="user-icon">
+            <a href="javascript:void(0)"><i class="fas fa-user-circle"></i></a>
+            <div class="dropdown-content">
+              <a href="{% url 'login' role='admin' %}"><i class="fas fa-user-shield"></i> Admin Login</a>
+              <a href="{% url 'login' role='coordinator' %}"><i class="fas fa-user-tie"></i> Coordinator Login</a>
+              <a href="{% url 'login' role='student' %}"><i class="fas fa-user-graduate"></i> Student Login</a>
             </div>
-            <nav>
-                <ul>
-                    <li><a href="{% url 'index' %}">Home</a></li>
-                    <li><a href="{% url 'about' %}">About</a></li>
-                    <li class="active"><a href="{% url 'contact' %}">Contact</a></li>
-                    <li class="login-dropdown">
-                        <a href="#"><i class="fas fa-user-circle"></i></a>
-                        <div class="dropdown-content">
-                            <a href="{% url 'login' role='admin' %}"><i class="fas fa-user-shield"></i> Admin Login</a>
-                            <a href="{% url 'login' role='coordinator' %}"><i class="fas fa-user-tie"></i> Coordinator Login</a>
-                            <a href="{% url 'login' role='student' %}"><i class="fas fa-user-graduate"></i> Student Login</a>
-                        </div>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
-    <section class="contact-hero">
-        <div class="container">
-            <h1>Contact <span>Us</span></h1>
-        </div>
-    </section>
+  <section class="page-banner">
+    <div class="container">
+      <h1>Contact <span style="color:#c3dafe;">Us</span></h1>
+    </div>
+  </section>
 
-    <section class="contact-content">
-        <div class="container">
-            <div class="contact-grid">
-                <div class="contact-info">
-                    <h2>Get in Touch</h2>
-                    <p>Have questions or need assistance? Our team is here to help you.</p>
-                    
-                    <div class="info-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <div>
-                            <h3>Address</h3>
-                            <p>123 Education Avenue, Knowledge City, 101010</p>
-                        </div>
-                    </div>
-                    
-                    <div class="info-item">
-                        <i class="fas fa-phone-alt"></i>
-                        <div>
-                            <h3>Phone</h3>
-                            <p>+1 (555) 123-4567</p>
-                        </div>
-                    </div>
-                    
-                    <div class="info-item">
-                        <i class="fas fa-envelope"></i>
-                        <div>
-                            <h3>Email</h3>
-                            <p>info@educonnect.edu</p>
-                        </div>
-                    </div>
-                    
-                    <div class="info-item">
-                        <i class="fas fa-clock"></i>
-                        <div>
-                            <h3>Hours</h3>
-                            <p>Monday - Friday: 8:00 AM - 6:00 PM</p>
-                            <p>Saturday: 9:00 AM - 3:00 PM</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="contact-form">
-                    <h2>Send Us a Message</h2>
-                    <form>
-                        <div class="form-group">
-                            <label for="name">Name</label>
-                            <input type="text" id="name" name="name" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="subject">Subject</label>
-                            <input type="text" id="subject" name="subject" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="message">Message</label>
-                            <textarea id="message" name="message" rows="5" required></textarea>
-                        </div>
-                        
-                        <button type="submit" class="btn">Send Message</button>
-                    </form>
-                </div>
+  <section class="contact-section">
+    <div class="container">
+      <div class="contact-grid">
+        <div class="contact-info">
+          <h2>Get in Touch</h2>
+          <p style="margin-bottom: 1.5rem;">Have questions or need assistance? Our team is here to help you.</p>
+          <div class="info-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <p><strong>Address:</strong><br>123 Education Avenue, Knowledge City, 101010</p>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-phone-alt"></i>
+            <p><strong>Phone:</strong><br>+1 (555) 123-4567</p>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-envelope"></i>
+            <p><strong>Email:</strong><br>info@educonnect.edu</p>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-clock"></i>
+            <p><strong>Hours:</strong><br>Mon - Fri: 8:00 AM – 6:00 PM<br>Sat: 9:00 AM – 3:00 PM</p>
+          </div>
+        </div>
+
+        <div class="contact-form">
+          <h2>Send Us a Message</h2>
+          <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" required />
             </div>
-        </div>
-    </section>
-
-    <section class="map">
-        <div class="container">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d31325.602115152287!2d77.01399113476562!3d11.061084200000007!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sin!4v1750655974035!5m2!1sen!2sin" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-        
-        </div>
-    </section>
-
-    <footer>
-        <div class="container">
-            <p>&copy; 2023 EduConnect. All rights reserved.</p>
-            <div class="social-links">
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" required />
             </div>
+            <div class="form-group">
+              <label for="subject">Subject</label>
+              <input type="text" id="subject" name="subject" required />
+            </div>
+            <div class="form-group">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn">Send Message</button>
+          </form>
         </div>
-    </footer>
 
- 
+        <!-- Map directly under both contact sections -->
+        <div class="map-container">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1957.8496930651959!2d77.03370168458316!3d11.061149938391209!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba8f786a0a49db7%3A0xf5b61d1204a86138!2sPinesphere%20Solutions!5e0!3m2!1sen!2sin!4v1750745894708!5m2!1sen!2sin"
+            allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <footer>
+    <div class="container">
+      <p>&copy; 2023 EduConnect. All rights reserved.</p>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const mobileMenu = document.getElementById('mobile-menu');
+      const navLinks = document.querySelector('.nav-links');
+      const loginDropdown = document.querySelector('#user-icon');
+
+      mobileMenu.addEventListener('click', function () {
+        navLinks.classList.toggle('active');
+        this.querySelector('i').classList.toggle('fa-bars');
+        this.querySelector('i').classList.toggle('fa-times');
+      });
+
+      loginDropdown.querySelector('a').addEventListener('click', function (e) {
+        e.preventDefault();
+        loginDropdown.classList.toggle('active');
+      });
+    });
+  </script>
 </body>
 </html>

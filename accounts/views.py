@@ -63,66 +63,46 @@ def is_student(user):
     return user.is_authenticated and user.role == 'student'
 
 
+from django.shortcuts import render, redirect
+from .forms import CoordinatorForm, StudentForm, AdminUserForm
+from .models import Coordinator, Student, AdminUser
+from django.contrib import messages
 
 @login_required
 @user_passes_test(is_admin)
-def admin_dashboard(request):
-    from .models import Coordinator, Student, AdminUser  # your profile models
-    
-    coordinator_form = CoordinatorForm()
-    student_form = StudentForm()
-    admin_form = AdminUserForm()
 
+def admin_dashboard(request):
     if request.method == 'POST':
         form_type = request.POST.get('form_type')
-
         if form_type == 'coordinator':
-            coordinator_form = CoordinatorForm(request.POST)
-            if coordinator_form.is_valid():
-                user = coordinator_form.save()
-                Coordinator.objects.create(
-                    full_name=user.full_name,
-                    email=user.email,
-                    department=request.POST.get('department'),
-                    phone=request.POST.get('phone')
-                )
-                messages.success(request, "Coordinator added successfully.")
-        
+            form = CoordinatorForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Coordinator added successfully!')
+                return redirect('admin_dashboard')
+
         elif form_type == 'student':
-            student_form = StudentForm(request.POST)
-            if student_form.is_valid():
-                user = student_form.save()
-                Student.objects.create(
-                    full_name=user.full_name,
-                    email=user.email,
-                    student_id=request.POST.get('student_id'),
-                    program=request.POST.get('program')
-                )
-                messages.success(request, "Student added successfully.")
+            form = StudentForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Student added successfully!')
+                return redirect('admin_dashboard')
 
         elif form_type == 'admin':
-            admin_form = AdminUserForm(request.POST)
-            if admin_form.is_valid():
-                user = admin_form.save()
-                AdminUser.objects.create(
-                    full_name=user.full_name,
-                    email=user.email,
-                    username=user.username,
-                    password='***'  # Masked password; actual hashed version is in `User`
-                )
-                messages.success(request, "Admin added successfully.")
-            else:
-                print(admin_form.errors)
+            form = AdminUserForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Admin added successfully!')
+                return redirect('admin_dashboard')
 
+    # Count values
     context = {
-        'coordinator_form': coordinator_form,
-        'student_form': student_form,
-        'admin_form': admin_form,
         'coordinator_count': Coordinator.objects.count(),
         'student_count': Student.objects.count(),
-        'total_certificates': 0,  # Placeholder until your Certificate model is connected
+        'total_certificates': 0  # Replace with actual count if applicable
     }
     return render(request, 'login/admin-dashboard.html', context)
+
 
 
 @login_required

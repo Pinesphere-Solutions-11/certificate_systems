@@ -1,17 +1,17 @@
+
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EduConnect | Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <style>
-:root {
+        /* === include your existing CSS here === */
+        :root {
     --primary-color: #2563eb;
-    --primary-dark: #1d4ed8;
+    --primary-dark: #2563eb;
     --accent-color: #10b981;
     --background: #f1f5f9;
     --card-bg: rgba(255, 255, 255, 0.8);
@@ -193,11 +193,11 @@ body {
     display: block;
 }
 .logout-btn {
-    background-color: #dc2626; /* Red tone */
+    background-color:rgb(22, 73, 243); /* Red tone */
     
 }
 .logout-btn:hover {
-    background-color: #b91c1c;
+    background-color:rgb(12, 95, 250);
 
 }
 
@@ -243,39 +243,33 @@ body {
         width: 100%;
     }
 }
-
     </style>
 </head>
 <body>
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-            <li style="color: green;">{{ message }}</li>
-        {% endfor %}
-    </ul>
-{% endif %}
     <div class="admin-container">
+        <!-- Flash Messages -->
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li style="color: green;">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
         <header class="admin-header">
             <h1>Welcome back, System Administrator</h1>
             <p>Here's what's happening with your institution today</p>
-            <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
-            <a href="{% url 'index' %}" onclick="logout()" class="action-btn logout-btn">
-            <i class="fas fa-sign-out-alt"></i> Logout
-            </a>
+            <div style="display: flex; justify-content: flex-end;">
+                <a href="{% url 'index' %}" class="action-btn logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
             </div>
-
         </header>
 
         <div class="action-buttons">
-            <button class="action-btn" id="showCoordinatorForm">
-                <i  class="fas fa-user-tie"></i> Add Coordinator
-            </button>
-            <button class="action-btn" id="showStudentForm">
-                <i class="fas fa-user-graduate"></i> Add Student
-            </button>
-            <button class="action-btn" id="showAdminForm">
-                <i class="fas fa-user-shield"></i> New Admin
-            </button>
+            <button class="action-btn" id="showCoordinatorForm"><i class="fas fa-user-tie"></i> Add Coordinator</button>
+            <button class="action-btn" id="showStudentForm"><i class="fas fa-user-graduate"></i> Add Student</button>
+            <button class="action-btn" id="showAdminForm"><i class="fas fa-user-shield"></i> New Admin</button>
         </div>
 
         <!-- Stats Section -->
@@ -286,7 +280,7 @@ body {
             </div>
             <div class="stat-card">
                 <h3>Coordinators</h3>
-                <div class="number">{{ coordinator_count }}</div> 
+                <div class="number">{{ coordinator_count }}</div>
             </div>
             <div class="stat-card">
                 <h3>Active Students</h3>
@@ -296,10 +290,7 @@ body {
 
         <!-- Certificates Section -->
         <div class="data-section">
-            <h2 class="section-title">
-                <i class="fas fa-certificate"></i>
-                All Certificates
-            </h2>
+            <h2 class="section-title"><i class="fas fa-certificate"></i> All Certificates</h2>
             <table class="data-table">
                 <thead>
                     <tr>
@@ -310,140 +301,130 @@ body {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td colspan="4" class="empty-state">No certificates found</td>
-                    </tr>
+                    <tr><td colspan="4" class="empty-state">No certificates found</td></tr>
                 </tbody>
             </table>
         </div>
 
-       <!-- Coordinator Form -->
-<div class="management-form" id="coordinatorForm">
-    <h3>Add New Coordinator</h3>
-    <form id="addCoordinatorForm" method="post" action="{% url 'admin_dashboard' %}">
-        {% csrf_token %}
-        <input type="hidden" name="form_type" value="coordinator">
-        <div class="form-row">
-            <div class="form-group">
-                <label for="coordinatorName">Full Name</label>
-                <input type="text" name="full_name" id="coordinatorName" required>
-            </div>
-            <div class="form-group">
-                <label for="coordinatorEmail">Email</label>
-                <input type="email" name="email" id="coordinatorEmail" required>
-            </div>
+        <!-- Coordinator Form -->
+        <div class="management-form" id="coordinatorForm">
+            <h3>Add New Coordinator</h3>
+            <form method="post" action="{% url 'admin_dashboard' %}">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="coordinator">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="coordinatorName">Full Name</label>
+                        <input type="text" name="full_name" id="coordinatorName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="coordinatorEmail">Email</label>
+                        <input type="email" name="email" id="coordinatorEmail" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="coordinatorDepartment">Department</label>
+                        <select name="department" id="coordinatorDepartment" required>
+                            <option value="">Select Department</option>
+                            <option value="computer_science">Computer Science</option>
+                            <option value="business">Business</option>
+                            <option value="engineering">Engineering</option>
+                            <option value="arts">Arts</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="coordinatorPhone">Phone</label>
+                        <input type="tel" name="phone" id="coordinatorPhone">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="action-btn"><i class="fas fa-save"></i> Save Coordinator</button>
+                </div>
+            </form>
         </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label for="coordinatorDepartment">Department</label>
-                <select name="department" id="coordinatorDepartment" required>
-                    <option value="">Select Department</option>
-                    <option value="computer_science">Computer Science</option>
-                    <option value="business">Business</option>
-                    <option value="engineering">Engineering</option>
-                    <option value="arts">Arts</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="coordinatorPhone">Phone</label>
-                <input type="tel" name="phone" id="coordinatorPhone">
-            </div>
-        </div>
-        <div class="form-actions">
-            <button type="submit" class="action-btn">
-                <i class="fas fa-save"></i> Save Coordinator
-            </button>
-        </div>
-    </form>
-</div>
 
-<!-- Student Form -->
-<div class="management-form" id="studentForm">
-    <h3>Add New Student</h3>
-    <form id="addStudentForm" method="post" action="{% url 'admin_dashboard' %}">
-        {% csrf_token %}
-        <input type="hidden" name="form_type" value="student">
-        <div class="form-row">
-            <div class="form-group">
-                <label for="studentName">Full Name</label>
-                <input type="text" name="full_name" id="studentName" required>
-            </div>
-            <div class="form-group">
-                <label for="studentEmail">Email</label>
-                <input type="email" name="email" id="studentEmail" required>
-            </div>
+        <!-- Student Form -->
+        <div class="management-form" id="studentForm">
+            <h3>Add New Student</h3>
+            <form method="post" action="{% url 'admin_dashboard' %}">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="student">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="studentName">Full Name</label>
+                        <input type="text" name="full_name" id="studentName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentEmail">Email</label>
+                        <input type="email" name="email" id="studentEmail" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="studentID">Student ID</label>
+                        <input type="text" name="student_id" id="studentID" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentProgram">Program</label>
+                        <select name="program" id="studentProgram" required>
+                            <option value="">Select Program</option>
+                            <option value="bsc">Bachelor of Science</option>
+                            <option value="ba">Bachelor of Arts</option>
+                            <option value="msc">Master of Science</option>
+                            <option value="mba">Master of Business</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="action-btn"><i class="fas fa-save"></i> Save Student</button>
+                </div>
+            </form>
         </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label for="studentID">Student ID</label>
-                <input type="text" name="student_id" id="studentID" required>
-            </div>
-            <div class="form-group">
-                <label for="studentProgram">Program</label>
-                <select name="program" id="studentProgram" required>
-                    <option value="">Select Program</option>
-                    <option value="bsc">Bachelor of Science</option>
-                    <option value="ba">Bachelor of Arts</option>
-                    <option value="msc">Master of Science</option>
-                    <option value="mba">Master of Business</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-actions">
-            <button type="submit" class="action-btn">
-                <i class="fas fa-save"></i> Save Student
-            </button>
-        </div>
-    </form>
-</div>
 
-<!-- Admin Form -->
-<div class="management-form" id="adminForm">
-    <h3>Add New Admin</h3>
-    <form id="addAdminForm" method="post" action="{% url 'admin_dashboard' %}">
-        {% csrf_token %}
-        <input type="hidden" name="form_type" value="admin">
-        <div class="form-row">
-            <div class="form-group">
-                <label for="adminName">Full Name</label>
-                <input type="text" name="full_name" id="adminName" required>
-            </div>
-            <div class="form-group">
-                <label for="adminEmail">Email</label>
-                <input type="email" name="email" id="adminEmail" required>
-            </div>
+        <!-- Admin Form -->
+        <div class="management-form" id="adminForm">
+            <h3>Add New Admin</h3>
+            <form method="post" action="{% url 'admin_dashboard' %}">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="admin">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="adminName">Full Name</label>
+                        <input type="text" name="full_name" id="adminName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminEmail">Email</label>
+                        <input type="email" name="email" id="adminEmail" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="adminUsername">Username</label>
+                        <input type="text" name="username" id="adminUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminPassword">Password</label>
+                        <input type="password" name="password" id="adminPassword" required>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="action-btn"><i class="fas fa-save"></i> Save Admin</button>
+                </div>
+            </form>
         </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label for="adminUsername">Username</label>
-                <input type="text" name="username" id="adminUsername" required>
-            </div>
-            <div class="form-group">
-                <label for="adminPassword">Password</label>
-                <input type="password" name="password" id="adminPassword" required>
-            </div>
-        </div>
-        <div class="form-actions">
-            <button type="submit" class="action-btn">
-                <i class="fas fa-save"></i> Save Admin
-            </button>
-        </div>
-    </form>
-</div>
 
         <footer class="admin-footer">
             <p>&copy; 2023 EduConnect. All rights reserved.</p>
         </footer>
     </div>
 
+    <!-- JS for toggling forms -->
     <script>
-
         document.addEventListener('DOMContentLoaded', function() {
-            // Form toggle functionality
             const showCoordinatorForm = document.getElementById('showCoordinatorForm');
             const showStudentForm = document.getElementById('showStudentForm');
             const showAdminForm = document.getElementById('showAdminForm');
-            
             const coordinatorForm = document.getElementById('coordinatorForm');
             const studentForm = document.getElementById('studentForm');
             const adminForm = document.getElementById('adminForm');
@@ -453,51 +434,28 @@ body {
                 studentForm.style.display = 'none';
                 adminForm.style.display = 'none';
             }
-            
+
             showCoordinatorForm.addEventListener('click', function(e) {
                 e.preventDefault();
                 hideAllForms();
                 coordinatorForm.style.display = 'block';
                 coordinatorForm.scrollIntoView({ behavior: 'smooth' });
             });
-            
+
             showStudentForm.addEventListener('click', function(e) {
                 e.preventDefault();
                 hideAllForms();
                 studentForm.style.display = 'block';
                 studentForm.scrollIntoView({ behavior: 'smooth' });
             });
-            
+
             showAdminForm.addEventListener('click', function(e) {
                 e.preventDefault();
                 hideAllForms();
                 adminForm.style.display = 'block';
                 adminForm.scrollIntoView({ behavior: 'smooth' });
             });
-        
-            // Form submissions
-            document.getElementById('addCoordinatorForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                alert('Coordinator added successfully!');
-                this.reset();
-                hideAllForms();
-            });
-            
-            document.getElementById('addStudentForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                alert('Student added successfully!');
-                this.reset();
-                hideAllForms();
-            });
-            
-            document.getElementById('addAdminForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                alert('Admin added successfully!');
-                this.reset();
-                hideAllForms();
-            });
         });
-
     </script>
 </body>
 </html>

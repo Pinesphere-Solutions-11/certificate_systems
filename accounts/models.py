@@ -19,6 +19,7 @@ class User(AbstractUser):
 
 
 
+
 class Coordinator(models.Model):
     full_name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
@@ -35,4 +36,4 @@ class AdminUser(models.Model):
     full_name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=100, unique=True)
-    password = models.CharField(max_length=100)  # use hashed password ideally
+    password = models.CharField(max_length=128)
