@@ -100,11 +100,12 @@
 <body>
     <header>
         <div class="container">
-            <div class="logo">
-                 <h1 style="font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 1.8rem; letter-spacing: 0.15rem; margin: 0;">
-                    <span style="color: #3B82F6;">PINE</span><span style="color: #000000;">SPHERE</span>
-                </h1>
-            </div>
+           <div class="logo">
+        <a href="{% url 'index' %}" style="display: flex; align-items: center; gap: 0.5rem;">
+          <img src="https://i.ibb.co/PZqtNG29/logo.png" alt="Logo" style="height: 40px;">
+          <img src="{% static 'images/company name.png' %}" alt="PineSphere" style="height: 50px;">
+        </a>
+      </div>
             <nav>
                 <ul>
                    <li><a href="{% url 'index' %}">Home</a></li>

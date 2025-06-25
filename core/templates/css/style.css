@@ -1,6 +1,6 @@
 :root {
-    --primary-color: #3B82F6;
-    --primary-dark: #3B82F6;
+    --primary-color: #3794D0;
+    --primary-dark: #026aaf;
     --secondary-color: #f8fafc;
     --text-color: #1e293b;
     --light-gray: #e2e8f0;
@@ -127,7 +127,7 @@ nav ul li a:hover {
 
 .dropdown-content a:hover {
     background-color: var(--light-gray);
-    color: var(--primary-color);
+    color: #026aaf;
 }
 
 /* Replace the existing hero styles with these: */

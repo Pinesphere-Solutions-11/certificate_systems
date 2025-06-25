@@ -31,12 +31,12 @@
         
         .login-box h2 {
             margin-bottom: 30px;
-            color: var(--primary-color);
+            color: #3794D0;
         }
         
         .login-box i {
             font-size: 3rem;
-            color: var(--primary-color);
+            color: #3794D0;
             margin-bottom: 20px;
         }
         
@@ -62,7 +62,7 @@
         .login-btn {
             width: 100%;
             padding: 12px;
-            background-color: var(--primary-color);
+            background-color: #3794D0;
             color: var(--white);
             border: none;
             border-radius: 5px;
@@ -73,7 +73,7 @@
         }
         
         .login-btn:hover {
-            background-color: var(--primary-dark);
+            background-color: #026aaf;
         }
         
         .login-footer {
@@ -85,11 +85,12 @@
 <body>
     <header>
         <div class="container">
-            <div class="logo">
-               <h1 style="font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 1.8rem; letter-spacing: 0.15rem; margin: 0;">
-                    <span style="color: #3B82F6;">PINE</span><span style="color: #000000;">SPHERE</span>
-                </h1>
-            </div>
+           <div class="logo">
+        <a href="{% url 'index' %}" style="display: flex; align-items: center; gap: 0.5rem;">
+          <img src="https://i.ibb.co/PZqtNG29/logo.png" alt="Logo" style="height: 40px;">
+          <img src="{% static 'images/company name.png' %}" alt="PineSphere" style="height: 50px;">
+        </a>
+      </div>
             <nav>
                 <ul>
                     <li><a href="{% url 'index' %}">Home</a></li>
