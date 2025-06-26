@@ -8,6 +8,7 @@ from django.template.loader import render_to_string
 from weasyprint import HTML
 from django.core.files.base import File
 import tempfile
+from django.conf import settings
 from datetime import datetime
 from .forms import LoginForm, CoordinatorForm, StudentForm, AdminUserForm
 from .models import Certificate, Coordinator, Student, AdminUser, User
@@ -152,25 +153,33 @@ import tempfile
 from weasyprint import HTML
 from django.core.files.base import File
 
-def generate_certificate_pdf(certificate, template_name):
-    html_string = render_to_string(template_name, {'certificate': certificate})
 
-    # Create a named temp file and close it immediately (for Windows compatibility)
+def generate_certificate_pdf(certificate, template_name):
+    import os
+    from weasyprint import HTML
+    from django.template.loader import render_to_string
+    import tempfile
+
+    static_path = os.path.join(settings.BASE_DIR, 'static').replace('\\', '/')
+    base_url = f'file:///{static_path}'
+
+    html_string = render_to_string(template_name, {
+        'certificate': certificate,
+        'base_url': base_url
+    })
+
     tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
     tmp_file.close()
 
-    # WeasyPrint writes to it
-    HTML(string=html_string).write_pdf(tmp_file.name)
+    HTML(string=html_string, base_url=base_url).write_pdf(tmp_file.name)
 
-    # Save to Django FileField
     with open(tmp_file.name, 'rb') as pdf_file:
         certificate.generated_pdf.save(
             f"{certificate.student_id}_{certificate.certificate_type}.pdf",
             File(pdf_file)
         )
 
-    # Clean up temp file
-    os.unlink(tmp_file.name)
+    os.remove(tmp_file.name)
 
 
 from datetime import datetime

@@ -1,87 +1,70 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <style>
-<<<<<<< HEAD
-        @page {
-            size: A4;
-            margin: 0;
-        }
-        body {
-            background: url('/static/images/completion_bg.png') no-repeat center center;
-            background-size: cover;
-            font-family: 'Times New Roman', serif;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-        .content {
-            position: absolute;
-            top: 270px;
-            left: 90px;
-            right: 90px;
-            font-size: 16px;
-            color: #000;
-            line-height: 1.8;
-=======
-        body {
-            background: url("/static/images/completion_bg.png") no-repeat center center;
-            background-size: cover;
-            height: 100vh;
-            font-family: 'Times New Roman', serif;
-            padding: 80px;
-        }
+  <meta charset="UTF-8">
+  <title>Internship Completion certificateificate</title>
+  <style>
+    @page { size: A4; margin: 0; }
 
-        .content {
-            margin-top: 300px;
-            color: #000;
-            font-size: 16px;
-        }
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Times New Roman', serif;
+      background: url("file:///C:/Users/admin/certificate_systems/static/images/completion_letter.png") no-repeat center center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      color: #000;
+    }
 
-        .highlight {
-            font-weight: bold;
->>>>>>> 580b33e (offer and completion field storing successfully)
-        }
-    </style>
+    .wrapper {
+      padding: 260px 70px 100px 70px; /* top, right, bottom, left */
+      box-sizing: border-box;
+    }
+
+    .content {
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+    .signature {
+      margin-top: 80px;
+      font-size: 14px;
+    }
+
+    .date {
+      margin-top: 40px;
+      font-size: 14px;
+      text-align: right;
+    }
+
+    .signature img {
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
+  <div class="wrapper">
     <div class="content">
-<<<<<<< HEAD
-        <p>This is to certify that <strong>{{ certificate.title }} {{ certificate.student_name }}</strong>
-        (Reg no: <strong>{{ certificate.student_id }}</strong>) student of
-        <strong>{{ certificate.department }}</strong> from <strong>{{ certificate.college }}</strong>,
-        {{ certificate.location }} has successfully completed his internship on
-        <strong>{{ certificate.course_name }}</strong> in our concern from
-        <strong>{{ certificate.start_date|date:"F Y" }}</strong> to
-        <strong>{{ certificate.end_date|date:"F Y" }}</strong>.</p>
-
-        <p>During this period, we found his work to be sincere and 100% regular in attendance.
-        We certify that his conduct and character have been good.</p>
-
-        <p style="margin-top: 50px;">Yours Sincerely,<br>
-        For Pinesphere Solutions<br><br><br>
-        {{ certificate.director_name }}<br>
-        Director</p>
-
-        <p style="position: absolute; bottom: 80px; right: 90px;">
-            Date of issue: {{ certificate.completion_date|date:"d-M-Y" }}
-        </p>
-=======
-        <p>This is to certify that <span class="highlight">{{ certificate.title }} {{ certificate.student_name }}</span>
-        (Reg no: {{ certificate.student_id }}) student of {{ certificate.department }},
-        from {{ certificate.college }} has successfully completed their project
-        <span class="highlight">“{{ certificate.course_name }}”</span> from
-        <span class="highlight">{{ certificate.duration }}</span> in our organization.</p>
-
-        <p>Yours sincerely,<br>
-        For Pinesphere Solutions<br><br>
-        <img src="/static/images/signature.png" height="50"><br>
-        {{ certificate.director_name }}<br>
-        Director</p>
-
-        <p>Date of issue: {{ certificate.completion_date|date:"d-M-Y" }}</p>
->>>>>>> 580b33e (offer and completion field storing successfully)
+      <p>
+        This is to certificateify that <strong>{{ certificate.title }} {{ certificate.student_name }}</strong>
+        (Reg no: {{ certificate.student_id }}) student of {{ certificate.department }}, from {{ certificate.college }} has
+        completed his project “<strong>{{ certificate.course_name }}</strong>” from
+        {{ certificate.duration }} in our organization.
+      </p>
     </div>
+
+    <div class="signature">
+      Yours Sincerely,<br><br>
+      For Pinesphere Solutions<br><br>
+      <img src="file:///C:/Users/admin/certificate_systems/static/images/signature.png" width="120"><br>
+      {{ certificate.director_name }}<br>
+      Director
+    </div>
+
+    <div class="date">
+      Date of issue: {{ certificate.completion_date|date:"d-M-Y" }}
+    </div>
+  </div>
 </body>
 </html>

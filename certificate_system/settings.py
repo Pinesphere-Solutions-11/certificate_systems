@@ -83,7 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'certificate_system',
         'USER' : 'postgres',
-        'PASSWORD' : 'postgres',
+        'PASSWORD' : '123',
         'HOST' : 'localhost',
         'PORT' : '5432',
     }
@@ -128,6 +128,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / 'staticfiles' 
 TEMPLATES[0]['DIRS'] = [BASE_DIR / 'templates']
 
 MEDIA_URL = '/media/'

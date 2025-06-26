@@ -3,90 +3,95 @@
 <head>
     <meta charset="utf-8">
     <style>
-<<<<<<< HEAD
         @page {
             size: A4;
             margin: 0;
         }
         body {
-            background: url('/static/images/offer_letter_bg.png') no-repeat center center;
+            background: url("file:///C:/Users/admin/certificate_systems/static/images/offer_letter_bg.png") no-repeat center center;
             background-size: cover;
             font-family: 'Times New Roman', serif;
-            height: 100%;
             margin: 0;
             padding: 0;
-        }
-        .content {
-            position: absolute;
-            top: 230px;
-            left: 100px;
-            right: 100px;
-            font-size: 16px;
+            height: 100%;
             color: #000;
+        }
+        .wrapper {
+            padding: 220px 100px 60px 100px; /* top, right, bottom, left */
+            box-sizing: border-box;
+        }
+
+        .section {
+            font-size: 16px;
             line-height: 1.8;
-=======
-        body {
-            background: url("/static/images/offer_letter_bg.png") no-repeat center center;
-            background-size: cover;
-            height: 100vh;
-            font-family: 'Times New Roman', serif;
-            padding: 80px;
         }
 
-        .content {
-            margin-top: 300px;
-            color: #000;
-            font-size: 16px;
+        .ack {
+            margin-top: 50px;
+            font-size: 15px;
+            line-height: 1.6;
         }
 
-        .highlight {
-            font-weight: bold;
->>>>>>> 580b33e (offer and completion field storing successfully)
+        .sign {
+            margin-top: 40px;
+            font-size: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .sign div {
+            width: 45%;
+        }
+
+        .stamp {
+            width: 100px;
+            float: right;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="content">
-        <p><strong>To,</strong><br>
-        {{ certificate.student_name }}<br>
-        {{ certificate.department }}<br>
-        {{ certificate.college }}</p>
+    <div class="wrapper">
+        <div class="section">
+            <p>
+                To,<br>
+                <strong>{{ certificate.student_name }}</strong><br>
+                {{ certificate.department }}<br>
+                {{ certificate.college }}<br><br>
 
-        <p><strong>Subject:</strong> Internship Offer Letter</p>
+                <strong>Subject:</strong> Internship Offer Letter<br><br>
 
-        <p>Dear {{ certificate.student_name }},</p>
+                Dear {{ certificate.student_name }},<br><br>
 
-<<<<<<< HEAD
-        <p>We are pleased to offer you an <strong>internship</strong> opportunity at
-        <strong>Pinesphere Solutions Pvt Ltd</strong>.<br>
-        Starting from <strong>{{ certificate.completion_date|date:"d M Y" }}</strong> for a duration of
-        <strong>{{ certificate.duration }}</strong>.</p>
+                We are pleased to offer you an <strong>internship</strong> opportunity at
+                <strong>Pinesphere Solutions Pvt Ltd</strong> starting from
+                <strong>{{ certificate.duration }}</strong>. During this period, you will gain valuable
+                hands-on experience by working on live projects under the guidance of our experienced team.<br><br>
 
-        <p><strong>Position:</strong> {{ certificate.course_name }} Intern<br>
-        <strong>Office Timings:</strong> 09:00 AM to 06:30 PM</p>
+                <strong>Internship Details:</strong><br>
+                Position: {{ certificate.course_name }} Intern<br>
+                Duration: {{ certificate.duration }}<br>
+                Office Timings: 09:00 AM to 06:30 PM<br><br>
 
-        <p>We look forward to having you with us!<br>
-        Warm regards,<br>
-=======
-        <p>We are pleased to offer you an <span class="highlight">internship</span> opportunity at
-        <span class="highlight">Pinesphere Solutions Pvt Ltd</span> starting from
-        <span class="highlight">{{ certificate.duration }}</span>. During this period, you will gain hands-on experience
-        working on live projects under the guidance of our experienced team.</p>
+                We look forward to having you with us!<br>
+                Warm regards,<br>
+                HR Team<br>
+                Pinesphere Solutions Pvt Ltd
+            </p>
+        </div>
 
-        <p><strong>Position:</strong> {{ certificate.course_name }} Intern<br>
-        <strong>Duration:</strong> {{ certificate.duration }}<br>
-        <strong>Office Timings:</strong> 09:00 AM to 06:30 PM</p>
+        <div class="ack">
+            <strong>Acknowledgment and Acceptance</strong><br>
+            I, {{ certificate.student_name }}, accept the internship offer as outlined.
+        </div>
 
-        <p>Warm regards,<br>
->>>>>>> 580b33e (offer and completion field storing successfully)
-        HR Team<br>
-        Pinesphere Solutions Pvt Ltd</p>
+        <div class="sign">
+            <div>Signature: ____________________</div>
+            <div>Date: ____________________</div>
+        </div>
 
-        <p style="margin-top: 50px;">Acknowledgment and Acceptance<br>
-        I, {{ certificate.student_name }}, accept the internship offer as outlined.</p>
-
-        <p>Signature: _____________________<br>
-        Date: _____________________</p>
+        <!-- Optional: stamp -->
+        <!-- <img class="stamp" src="file:///C:/Users/admin/certificateificate_systems/static/images/stamp.png" alt="Stamp"> -->
     </div>
 </body>
 </html>
