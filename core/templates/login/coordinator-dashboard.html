@@ -584,11 +584,34 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% if certificates %}
+        {% for cert in certificates %}
+        <tr>
+            <td>{{ cert.student_name }}</td>
+            <td>{{ cert.course_name }}</td>
+            <td>{{ cert.completion_date|date:"Y-m-d" }}</td>
+            <td>{{ cert.certificate_number }}</td>
+            <td>{{ cert.get_certificate_type_display }}</td>
+            <td>
+                {% if cert.generated_pdf %}
+                    <a href="{{ cert.generated_pdf.url }}" class="action-btn" download>Download</a>
+                {% else %}
+
+                    <span class="action-btn disabled">N/A</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    {% else %}
+
                     <tr>
                         <td colspan="6" class="empty-state">No certificates created yet</td>
                     </tr>
+               {% endif %}
                 </tbody>
+
             </table>
+
         </div>
 
         <!-- Footer -->

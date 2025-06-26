@@ -3,40 +3,50 @@
 <head>
     <meta charset="utf-8">
     <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
         body {
-            background: url("/static/images/completion_bg.png") no-repeat center center;
+            background: url('/static/images/completion_bg.png') no-repeat center center;
             background-size: cover;
-            height: 100vh;
             font-family: 'Times New Roman', serif;
-            padding: 80px;
+            height: 100%;
+            margin: 0;
+            padding: 0;
         }
-
         .content {
-            margin-top: 300px;
-            color: #000;
+            position: absolute;
+            top: 270px;
+            left: 90px;
+            right: 90px;
             font-size: 16px;
-        }
-
-        .highlight {
-            font-weight: bold;
+            color: #000;
+            line-height: 1.8;
         }
     </style>
 </head>
 <body>
     <div class="content">
-        <p>This is to certify that <span class="highlight">{{ certificate.title }} {{ certificate.student_name }}</span>
-        (Reg no: {{ certificate.student_id }}) student of {{ certificate.department }},
-        from {{ certificate.college }} has successfully completed their project
-        <span class="highlight">“{{ certificate.course_name }}”</span> from
-        <span class="highlight">{{ certificate.duration }}</span> in our organization.</p>
+        <p>This is to certify that <strong>{{ certificate.title }} {{ certificate.student_name }}</strong>
+        (Reg no: <strong>{{ certificate.student_id }}</strong>) student of
+        <strong>{{ certificate.department }}</strong> from <strong>{{ certificate.college }}</strong>,
+        {{ certificate.location }} has successfully completed his internship on
+        <strong>{{ certificate.course_name }}</strong> in our concern from
+        <strong>{{ certificate.start_date|date:"F Y" }}</strong> to
+        <strong>{{ certificate.end_date|date:"F Y" }}</strong>.</p>
 
-        <p>Yours sincerely,<br>
-        For Pinesphere Solutions<br><br>
-        <img src="/static/images/signature.png" height="50"><br>
+        <p>During this period, we found his work to be sincere and 100% regular in attendance.
+        We certify that his conduct and character have been good.</p>
+
+        <p style="margin-top: 50px;">Yours Sincerely,<br>
+        For Pinesphere Solutions<br><br><br>
         {{ certificate.director_name }}<br>
         Director</p>
 
-        <p>Date of issue: {{ certificate.completion_date|date:"d-M-Y" }}</p>
+        <p style="position: absolute; bottom: 80px; right: 90px;">
+            Date of issue: {{ certificate.completion_date|date:"d-M-Y" }}
+        </p>
     </div>
 </body>
 </html>

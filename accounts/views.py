@@ -115,7 +115,10 @@ def admin_dashboard(request):
 @login_required
 @user_passes_test(is_coordinator)
 def coordinator_dashboard(request):
-    return render(request, 'login/coordinator-dashboard.html')
+    certificates = Certificate.objects.filter(created_by=request.user).order_by('-created_at')
+    return render(request, 'login/coordinator-dashboard.html', {
+        'certificates' : certificates
+    })
 
 
 # =========================
