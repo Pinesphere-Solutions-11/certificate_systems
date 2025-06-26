@@ -39,6 +39,10 @@ class AdminUser(models.Model):
     password = models.CharField(max_length=128)
     
 
+from django.core.files.storage import FileSystemStorage
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class Certificate(models.Model):
     CERTIFICATE_TYPES = [
@@ -60,6 +64,10 @@ class Certificate(models.Model):
     completion_date = models.DateField()
     director_name = models.CharField(max_length=100, default='Surendar S')
 
+    # ✅ Add these two:
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    generated_pdf = models.FileField(upload_to='certificates/', blank=True, null=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
@@ -67,7 +75,10 @@ class Certificate(models.Model):
         if not self.certificate_number:
             last = Certificate.objects.order_by('-id').first()
             if last and last.certificate_number:
-                num = int(last.certificate_number.replace('PS', '')) + 1
+                try:
+                    num = int(last.certificate_number.replace('PS', '')) + 1
+                except ValueError:
+                    num = 1
             else:
                 num = 1
             self.certificate_number = f"PS{num:03d}"

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            background: url("/static/images/completion_bg.png") no-repeat center center;
+            background-size: cover;
+            height: 100vh;
+            font-family: 'Times New Roman', serif;
+            padding: 80px;
+        }
+
+        .content {
+            margin-top: 300px;
+            color: #000;
+            font-size: 16px;
+        }
+
+        .highlight {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <p>This is to certify that <span class="highlight">{{ certificate.title }} {{ certificate.student_name }}</span>
+        (Reg no: {{ certificate.student_id }}) student of {{ certificate.department }},
+        from {{ certificate.college }} has successfully completed their project
+        <span class="highlight">“{{ certificate.course_name }}”</span> from
+        <span class="highlight">{{ certificate.duration }}</span> in our organization.</p>
+
+        <p>Yours sincerely,<br>
+        For Pinesphere Solutions<br><br>
+        <img src="/static/images/signature.png" height="50"><br>
+        {{ certificate.director_name }}<br>
+        Director</p>
+
+        <p>Date of issue: {{ certificate.completion_date|date:"d-M-Y" }}</p>
+    </div>
+</body>
+</html>

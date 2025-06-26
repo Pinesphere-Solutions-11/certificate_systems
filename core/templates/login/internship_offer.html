@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            background: url("/static/images/offer_letter_bg.png") no-repeat center center;
+            background-size: cover;
+            height: 100vh;
+            font-family: 'Times New Roman', serif;
+            padding: 80px;
+        }
+
+        .content {
+            margin-top: 300px;
+            color: #000;
+            font-size: 16px;
+        }
+
+        .highlight {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <p><strong>To,</strong><br>
+        {{ certificate.student_name }}<br>
+        {{ certificate.department }}<br>
+        {{ certificate.college }}</p>
+
+        <p><strong>Subject:</strong> Internship Offer Letter</p>
+
+        <p>Dear {{ certificate.student_name }},</p>
+
+        <p>We are pleased to offer you an <span class="highlight">internship</span> opportunity at
+        <span class="highlight">Pinesphere Solutions Pvt Ltd</span> starting from
+        <span class="highlight">{{ certificate.duration }}</span>. During this period, you will gain hands-on experience
+        working on live projects under the guidance of our experienced team.</p>
+
+        <p><strong>Position:</strong> {{ certificate.course_name }} Intern<br>
+        <strong>Duration:</strong> {{ certificate.duration }}<br>
+        <strong>Office Timings:</strong> 09:00 AM to 06:30 PM</p>
+
+        <p>Warm regards,<br>
+        HR Team<br>
+        Pinesphere Solutions Pvt Ltd</p>
+
+        <p style="margin-top: 50px;">Acknowledgment and Acceptance<br>
+        I, {{ certificate.student_name }}, accept the internship offer as outlined.</p>
+
+        <p>Signature: _____________________<br>
+        Date: _____________________</p>
+    </div>
+</body>
+</html>

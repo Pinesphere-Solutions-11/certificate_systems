@@ -623,192 +623,201 @@
         </div>
     </div>
 
-    <script>
-        // Department data
-        const departmentData = {
-            "BE": [
-                "Computer Science Engineering",
-                "Mechanical Engineering",
-                "Electrical Engineering",
-                "Civil Engineering",
-                "Electronics and Communication"
-            ],
-            "BTech": [
-                "Information Technology",
-                "Biotechnology",
-                "Chemical Engineering"
-            ],
-            "Arts": [
-                "Computer Science",
-                "Mathematics",
-                "English Literature",
-                "Physics",
-                "Commerce"
-            ]
-        };
+  <script>
+    const departmentData = {
+        "BE": ["Computer Science Engineering", "Mechanical Engineering", "Electrical Engineering", "Civil Engineering", "Electronics and Communication"],
+        "BTech": ["Information Technology", "Biotechnology", "Chemical Engineering"],
+        "Arts": ["Computer Science", "Mathematics", "English Literature", "Physics", "Commerce"]
+    };
 
-        // Populate departments based on selected degree
-        function populateDepartments(degreeId, departmentId) {
-            const degree = document.getElementById(degreeId).value;
-            const department = document.getElementById(departmentId);
-            const departmentGroup = document.getElementById(departmentId + 'Group');
+    function populateDepartments(degreeId, departmentId) {
+        const degree = document.getElementById(degreeId).value;
+        const department = document.getElementById(departmentId);
+        const departmentGroup = document.getElementById(departmentId + 'Group');
+        department.innerHTML = '<option value="">Select Department</option>';
 
-            // Clear previous options
-            department.innerHTML = '<option value="">Select Department</option>';
+        if (departmentData[degree]) {
+            departmentData[degree].forEach(opt => {
+                const option = document.createElement("option");
+                option.value = opt;
+                option.textContent = opt;
+                department.appendChild(option);
+            });
+            departmentGroup.style.display = "block";
+        } else {
+            departmentGroup.style.display = "none";
+        }
+    }
 
-            if (departmentData[degree]) {
-                // Add new options
-                departmentData[degree].forEach(function(opt) {
-                    const option = document.createElement("option");
-                    option.value = opt;
-                    option.textContent = opt;
-                    department.appendChild(option);
-                });
+    function checkImageSize(input) {
+        const errorElement = document.getElementById(input.id + 'Error');
+        const previewElement = document.getElementById(input.id + 'Preview');
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const img = new Image();
+            const objectURL = URL.createObjectURL(file);
+            img.onload = function () {
+                const megapixels = (this.width * this.height) / 1000000;
+                if (megapixels > 2) {
+                    errorElement.textContent = 'Image exceeds 2MP limit.';
+                    input.value = '';
+                    previewElement.style.display = 'none';
+                } else {
+                    errorElement.textContent = '';
+                    previewElement.src = objectURL;
+                    previewElement.style.display = 'block';
+                }
+                URL.revokeObjectURL(objectURL);
+            };
+            img.src = objectURL;
+        }
+    }
 
-                departmentGroup.style.display = "block"; // Show department dropdown
-            } else {
-                departmentGroup.style.display = "none"; // Hide for MBA/Diploma
-            }
+    function showPopup(message, success = true) {
+        let popup = document.getElementById('popupNotification');
+        if (!popup) {
+            popup = document.createElement('div');
+            popup.id = 'popupNotification';
+            popup.style.position = 'fixed';
+            popup.style.top = '20px';
+            popup.style.right = '20px';
+            popup.style.zIndex = '9999';
+            popup.style.padding = '12px 20px';
+            popup.style.borderRadius = '6px';
+            popup.style.color = 'white';
+            popup.style.fontWeight = 'bold';
+            document.body.appendChild(popup);
+        }
+        popup.style.backgroundColor = success ? '#4BB543' : '#FF3333';
+        popup.textContent = message;
+        popup.style.display = 'block';
+        setTimeout(() => { popup.style.display = 'none'; }, 3000);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const showOfferForm = document.getElementById('showOfferForm');
+        const showCompletionForm = document.getElementById('showCompletionForm');
+        const showStudentForm = document.getElementById('showStudentForm');
+        const offerForm = document.getElementById('offerForm');
+        const completionForm = document.getElementById('completionForm');
+        const studentForm = document.getElementById('studentForm');
+        const tableBody = document.querySelector('.data-table tbody');
+
+        function hideAllForms() {
+            offerForm.style.display = 'none';
+            completionForm.style.display = 'none';
+            studentForm.style.display = 'none';
         }
 
-        // Check image size (max 2MP)
-        function checkImageSize(input) {
-            const errorElementId = input.id + 'Error';
-            const previewElementId = input.id + 'Preview';
-            const errorElement = document.getElementById(errorElementId);
-            const previewElement = document.getElementById(previewElementId);
-            
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-                const img = new Image();
-                const objectURL = URL.createObjectURL(file);
-                
-                img.onload = function() {
-                    const width = this.width;
-                    const height = this.height;
-                    const megapixels = (width * height) / 1000000;
-                    
-                    if (megapixels > 2) {
-                        errorElement.textContent = 'Image exceeds 2MP limit. Please choose a smaller image.';
-                        input.value = '';
-                        previewElement.style.display = 'none';
-                    } else {
-                        errorElement.textContent = '';
-                        // Show preview
-                        previewElement.src = objectURL;
-                        previewElement.style.display = 'block';
-                    }
-                    URL.revokeObjectURL(objectURL);
-                };
-                
-                img.src = objectURL;
-            }
-        }
+        hideAllForms();
 
-        document.addEventListener('DOMContentLoaded', function () {
-            const showOfferForm = document.getElementById('showOfferForm');
-            const showCompletionForm = document.getElementById('showCompletionForm');
-            const showStudentForm = document.getElementById('showStudentForm');
-
-            const offerForm = document.getElementById('offerForm');
-            const completionForm = document.getElementById('completionForm');
-            const studentForm = document.getElementById('studentForm');
-
-            const tableBody = document.querySelector('.data-table tbody');
-
-            function hideAllForms() {
-                offerForm.style.display = 'none';
-                completionForm.style.display = 'none';
-                studentForm.style.display = 'none';
-            }
-
+        showOfferForm?.addEventListener('click', () => {
             hideAllForms();
+            offerForm.style.display = 'block';
+        });
 
-            showOfferForm.addEventListener('click', () => {
-                hideAllForms();
-                offerForm.style.display = 'block';
-            });
+        showCompletionForm?.addEventListener('click', () => {
+            hideAllForms();
+            completionForm.style.display = 'block';
+        });
 
-            showCompletionForm.addEventListener('click', () => {
-                hideAllForms();
-                completionForm.style.display = 'block';
-            });
+        showStudentForm?.addEventListener('click', () => {
+            hideAllForms();
+            studentForm.style.display = 'block';
+        });
 
-            showStudentForm.addEventListener('click', () => {
-                hideAllForms();
-                studentForm.style.display = 'block';
-            });
+        function addCertificateToTable(student, course, date, certId, type) {
+            const emptyRow = document.querySelector('.empty-state');
+            if (emptyRow) emptyRow.remove();
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${student}</td>
+                <td>${course}</td>
+                <td>${date}</td>
+                <td>${certId}</td>
+                <td>${type}</td>
+                <td><button class="action-btn">Download</button></td>`;
+            tableBody.appendChild(row);
+        }
 
-            // Helper: Collect form data
-            function getFormData(form) {
-                const data = new FormData(form);
-                return Object.fromEntries(data.entries());
-            }
+        function handleCertificateSubmit(formId, url, type) {
+            const form = document.getElementById(formId);
+            form?.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const formData = new FormData(form);
 
-            // Add row to certificate table
-            function addCertificateToTable(student, course, date, certId, type) {
-                const emptyRow = document.querySelector('.empty-state');
-                if (emptyRow) emptyRow.remove();
-
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${student}</td>
-                    <td>${course}</td>
-                    <td>${date}</td>
-                    <td>${certId}</td>
-                    <td>${type}</td>
-                    <td><button class="action-btn">Download</button></td>
-                `;
-                tableBody.appendChild(row);
-            }
-
-            // AJAX submit handler
-            function handleCertificateSubmit(formId, url, type) {
-                const form = document.getElementById(formId);
-                form.addEventListener('submit', function (e) {
-                    e.preventDefault();
-
-                    const formData = new FormData(form);
-
-                    // Simulate AJAX request (replace with actual fetch)
-                    setTimeout(() => {
-                        // Generate a random certificate number for demo
-                        const certNumber = 'CERT-' + Math.floor(100000 + Math.random() * 900000);
-                        
-                        // Get form values
-                        const studentName = formData.get(formId.includes('Offer') ? 'offerStudentName' : 'completionStudentName');
-                        const courseName = formData.get(formId.includes('Offer') ? 'offerCourseName' : 'completionCourseName');
-                        const date = formData.get(formId.includes('Offer') ? 'offerStartDate' : 'completionDate');
-                        
-                        // Add to table
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Server error. Please check the form.');
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success') {
                         addCertificateToTable(
-                            studentName,
-                            courseName,
-                            new Date(date).toLocaleDateString(),
-                            certNumber,
+                            data.student,
+                            data.course,
+                            data.date,
+                            data.certificate_number || 'CERT-' + Math.floor(100000 + Math.random() * 900000),
                             type
                         );
-                        
-                        // Show success message
-                        alert(`${type} certificate generated successfully! Certificate ID: ${certNumber}`);
-                        
-                        // Reset form and hide
+                        showPopup(data.message, true);
                         form.reset();
                         hideAllForms();
-                        
-                        // Hide signature previews
                         document.querySelectorAll('.signature-preview').forEach(el => {
                             el.style.display = 'none';
                         });
-                    }, 1000);
+                    } else {
+                        showPopup(data.message || 'Failed to generate certificate.', false);
+                    }
+                })
+                .catch(err => {
+                    showPopup(err.message, false);
                 });
-            }
+            });
+        }
 
-            // Initialize form handlers
-            handleCertificateSubmit('createOfferForm', '/certificate/offer/create/', 'Offer Letter');
-            handleCertificateSubmit('createCompletionForm', '/certificate/completion/create/', 'Completion Certificate');
-            handleCertificateSubmit('addStudentForm', '/student/add/', 'Student');
-        });
-    </script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        handleCertificateSubmit('createOfferForm', '/accounts/certificate/offer/create/', 'Offer Letter');
+        handleCertificateSubmit('createCompletionForm', '/accounts/certificate/completion/create/', 'Completion Certificate');
+        handleCertificateSubmit('addStudentForm', '/accounts/student/add/', 'Student');
+    });
+</script>
+
+<!-- Success/Error Popup -->
+<div id="popupNotification" style="
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #4BB543;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-weight: bold;
+    z-index: 9999;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+"></div>
+
 </body>
 </html>
