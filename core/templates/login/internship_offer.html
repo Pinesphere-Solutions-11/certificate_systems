@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <style>
+<<<<<<< HEAD
         @page {
             size: A4;
             margin: 0;
@@ -23,6 +24,24 @@
             font-size: 16px;
             color: #000;
             line-height: 1.8;
+=======
+        body {
+            background: url("/static/images/offer_letter_bg.png") no-repeat center center;
+            background-size: cover;
+            height: 100vh;
+            font-family: 'Times New Roman', serif;
+            padding: 80px;
+        }
+
+        .content {
+            margin-top: 300px;
+            color: #000;
+            font-size: 16px;
+        }
+
+        .highlight {
+            font-weight: bold;
+>>>>>>> 580b33e (offer and completion field storing successfully)
         }
     </style>
 </head>
@@ -37,6 +56,7 @@
 
         <p>Dear {{ certificate.student_name }},</p>
 
+<<<<<<< HEAD
         <p>We are pleased to offer you an <strong>internship</strong> opportunity at
         <strong>Pinesphere Solutions Pvt Ltd</strong>.<br>
         Starting from <strong>{{ certificate.completion_date|date:"d M Y" }}</strong> for a duration of
@@ -47,6 +67,18 @@
 
         <p>We look forward to having you with us!<br>
         Warm regards,<br>
+=======
+        <p>We are pleased to offer you an <span class="highlight">internship</span> opportunity at
+        <span class="highlight">Pinesphere Solutions Pvt Ltd</span> starting from
+        <span class="highlight">{{ certificate.duration }}</span>. During this period, you will gain hands-on experience
+        working on live projects under the guidance of our experienced team.</p>
+
+        <p><strong>Position:</strong> {{ certificate.course_name }} Intern<br>
+        <strong>Duration:</strong> {{ certificate.duration }}<br>
+        <strong>Office Timings:</strong> 09:00 AM to 06:30 PM</p>
+
+        <p>Warm regards,<br>
+>>>>>>> 580b33e (offer and completion field storing successfully)
         HR Team<br>
         Pinesphere Solutions Pvt Ltd</p>
 

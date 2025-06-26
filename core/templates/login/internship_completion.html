@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <style>
+<<<<<<< HEAD
         @page {
             size: A4;
             margin: 0;
@@ -23,11 +24,30 @@
             font-size: 16px;
             color: #000;
             line-height: 1.8;
+=======
+        body {
+            background: url("/static/images/completion_bg.png") no-repeat center center;
+            background-size: cover;
+            height: 100vh;
+            font-family: 'Times New Roman', serif;
+            padding: 80px;
+        }
+
+        .content {
+            margin-top: 300px;
+            color: #000;
+            font-size: 16px;
+        }
+
+        .highlight {
+            font-weight: bold;
+>>>>>>> 580b33e (offer and completion field storing successfully)
         }
     </style>
 </head>
 <body>
     <div class="content">
+<<<<<<< HEAD
         <p>This is to certify that <strong>{{ certificate.title }} {{ certificate.student_name }}</strong>
         (Reg no: <strong>{{ certificate.student_id }}</strong>) student of
         <strong>{{ certificate.department }}</strong> from <strong>{{ certificate.college }}</strong>,
@@ -47,6 +67,21 @@
         <p style="position: absolute; bottom: 80px; right: 90px;">
             Date of issue: {{ certificate.completion_date|date:"d-M-Y" }}
         </p>
+=======
+        <p>This is to certify that <span class="highlight">{{ certificate.title }} {{ certificate.student_name }}</span>
+        (Reg no: {{ certificate.student_id }}) student of {{ certificate.department }},
+        from {{ certificate.college }} has successfully completed their project
+        <span class="highlight">“{{ certificate.course_name }}”</span> from
+        <span class="highlight">{{ certificate.duration }}</span> in our organization.</p>
+
+        <p>Yours sincerely,<br>
+        For Pinesphere Solutions<br><br>
+        <img src="/static/images/signature.png" height="50"><br>
+        {{ certificate.director_name }}<br>
+        Director</p>
+
+        <p>Date of issue: {{ certificate.completion_date|date:"d-M-Y" }}</p>
+>>>>>>> 580b33e (offer and completion field storing successfully)
     </div>
 </body>
 </html>

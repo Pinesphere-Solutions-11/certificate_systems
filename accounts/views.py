@@ -125,6 +125,11 @@ def coordinator_dashboard(request):
 # 👨‍🎓 STUDENT DASHBOARD
 # =========================
 
+
+# =========================
+# 👨‍🎓 STUDENT DASHBOARD
+# =========================
+
 @login_required
 @user_passes_test(is_student)
 def student_dashboard(request):
