@@ -190,6 +190,8 @@ def create_offer_letter(request):
     if request.method == 'POST':
         data = request.POST
         signature_file = request.FILES.get('offerSignature')
+        start_date = datetime.strptime(data.get('offerStartDate'), '%Y-%m-%d').date()
+        end_date = datetime.strptime(data.get('offerEndDate'), '%Y-%m-%d').date()
         cert = Certificate(
             certificate_type='offer',
             title=data.get('offerTitle'),
@@ -203,8 +205,8 @@ def create_offer_letter(request):
             completion_date=datetime.strptime(data.get('offerEndDate'), '%Y-%m-%d').date(),
             director_name=data.get('offerDirector'),
             signature=signature_file,
-            start_date = request.POST.get('offerStartDate'),
-            end_date = request.POST.get('offerEndDate'),
+            start_date = start_date,
+            end_date = end_date,
             created_by=request.user,
         )
 

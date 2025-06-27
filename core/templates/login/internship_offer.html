@@ -24,17 +24,6 @@
             line-height: 1.7;
         }
 
-        
-
-        .footer {
-            position: absolute;
-            bottom: 85px;
-            left: 90px;
-            text-align: left;
-            
-            font-size: 14px;
-            line-height: 1.6;
-        }
 
         .date {
             position: absolute;
@@ -58,7 +47,7 @@
         <p>Dear {{ certificate.title }}. {{ certificate.student_name }},</p>
 
         <p style="text-align: justify;">
-          We are pleased to offer you an internship opportunity at Pinesphere Solutions Pvt Ltd Starting from {{ certificate.start_date }} to {{ certificate.end_date }}. During this period, you will gain valuable hands-on experience by working on live projects under the guidance of our experienced team.
+          We are pleased to offer you an internship opportunity at Pinesphere Solutions Pvt Ltd Starting from {{ certificate.start_date|date:"d M Y" }} to {{ certificate.end_date|date:"d M Y" }}. During this period, you will gain valuable hands-on experience by working on live projects under the guidance of our experienced team.
         </p>
         <p>Internship Details:</p>
         <p>
@@ -78,17 +67,18 @@
             Acknowledgment and Acceptance<br>
             I, {{ certificate.student_name }}, accept the internship offer as outlined.
         </p>
-    </div>
+    <br>
+    <br>
 
     <!-- Signature Image -->
     
 
     <!-- Director Info -->
-    <div class="footer">
-       <br>
+    
+      
         Signature<br>
        
-        Date of issue: {{ certificate.issue_date|date:"d.m.Y" }}
+        Date of issue: {{ certificate.issue_date|date:"d M Y" }}
     
     </div>
 
