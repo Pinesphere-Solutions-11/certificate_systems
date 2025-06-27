@@ -395,8 +395,8 @@
                             <label for="completionDirector">Director Name</label>
                             <select id="completionDirector" name="completionDirector" required>
                                 <option value="">Select Director</option>
-                                <option value="Surendar S">Mr. Surendiran S</option>
-                                <option value="Mr. Vasanth Nagarajan">Mr. Vasanth Nagarajan CTO & Co-Founder</option>
+                                <option value="Mr. Surendiran S">Mr. Surendiran S</option>
+                                <option value="Mr. Vasanth Nagarajan CTO & Co-Founder">Mr. Vasanth Nagarajan CTO & Co-Founder</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -536,17 +536,15 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="offerDirector">Director Name</label>
-                            <select id="offerDirector" name="offerDirector" required>
+                            <select id="offerDirector" name="offerDirector" required onchange="updateSignaturePreview()">
                                 <option value="">Select Director</option>
-                                <option value="Surendar S">Mr. Surendiran S</option>
-                                <option value="Mr. Vasanth Nagarajan">Mr. Vasanth Nagarajan CTO & Co-Founder</option>
+                                <option value="Mr. Surendiran S">Mr. Surendiran S</option>
+                                <option value="Mr. Vasanth Nagarajan CTO & Co-Founder">Mr. Vasanth Nagarajan CTO & Co-Founder</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label for="offerSignature">Upload E-sign (Max 2MP)</label>
-                            <input type="file" id="offerSignature" name="offerSignature" accept="image/*" required onchange="checkImageSize(this)">
-                            <div id="offerSignatureError" class="error-message"></div>
-                            <img id="offerSignaturePreview" class="signature-preview" src="#" alt="Signature Preview">
+                       <div class="form-group">
+                            <label>Signature Preview</label><br>
+                            <img id="autoSignaturePreview" src="" alt="Signature" style="height: 100px; display: none;">
                         </div>
                     </div>
 
@@ -641,9 +639,25 @@
     </div>
 
   <script>
-    
+        function updateSignaturePreview() {
+    const director = document.getElementById('offerDirector').value;
+    const img = document.getElementById('autoSignaturePreview');
+
+    // Map director to image path
+    const signatureMap = {
+        "Mr. Surendiran S": "/static/images/signatures/surendar_s.png",
+        "Mr. Vasanth Nagarajan CTO & Co-Founder": "/static/images/signatures/vasanth_nagarajan.png"
+    };
+
+    if (signatureMap[director]) {
+        img.src = signatureMap[director];
+        img.style.display = 'block';
+    } else {
+        img.style.display = 'none';
+    }
+}
     const departmentData = {
-        "BE": ["Computer Science Engineering", "Mechanical Engineering", "Electrical Engineering", "Civil Engineering", "Electronics and Communication"],
+        "BE": ["Computer Science and Engineering", "Mechanical Engineering", "Electrical Engineering", "Civil Engineering", "Electronics and Communication"],
         "BTech": ["Information Technology", "Biotechnology", "Chemical Engineering"],
         "Arts": ["Computer Science", "Mathematics", "English Literature", "Physics", "Commerce"]
     };

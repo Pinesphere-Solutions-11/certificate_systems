@@ -15,74 +15,63 @@
             padding: 0;
             color: #000;
         }
+
         .content {
             position: absolute;
-            top: 280px;
-            left: 90px;
-            right: 90px;
-            font-size: 14px;
+            top: 330px;
+            left: 80px;
+            right: 80px;
+            font-size: 18px;
             line-height: 1.7;
         }
 
-
-        .date {
+        .footer {
             position: absolute;
-            bottom: 90px;
-            left: 90px;
-            font-size: 14px;
+            bottom: 120px;
+            left: 80px;
+            right: 80px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .signature-img {
+            height: 60px;
+            margin-bottom: 5px;
+        }
+
+        .issue-date {
+            text-align: right;
         }
     </style>
 </head>
 <body>
     <div class="content">
-        <p>To,</p>
-
-        <p>
-            {{ certificate.title }}. {{ certificate.student_name }}<br>
-            {{ certificate.department }}<br>
-            {{ certificate.college }} {{ certificate.location }}
-        </p>
-        <p>Subject: Internship Offer Letter</p>
-
-        <p>Dear {{ certificate.title }}. {{ certificate.student_name }},</p>
-
         <p style="text-align: justify;">
-          We are pleased to offer you an internship opportunity at Pinesphere Solutions Pvt Ltd Starting from {{ certificate.start_date|date:"d M Y" }} to {{ certificate.end_date|date:"d M Y" }}. During this period, you will gain valuable hands-on experience by working on live projects under the guidance of our experienced team.
+            This is to certify that <strong>{{ certificate.title }}. {{ certificate.student_name }}</strong>, 
+            a {{ certificate.department }} student from {{ certificate.college }}, has shortlist for their internship in 
+            <strong>{{ certificate.course_name }}</strong> at <strong>Pinesphere</strong> under our supervision and guidance. The internship duration 
+            is from <strong>{{ certificate.start_date|date:"d M Y" }}</strong> to <strong>{{ certificate.end_date|date:"d M Y" }}</strong>.
         </p>
-        <p>Internship Details:</p>
-        <p>
-            Position: {{certificate.course_name}} Intern<br>
-            Duration: {{ certificate.duration }} <br>
-            Office Timings: 09:00 AM to 06:30 PM
-        </p>
-
-        <p>
-            We look forward to having you with us!<br>
-            Warm regards,<br>
-            HR Team<br>
-            Pinesphere Solutions Pvt Ltd
-        </p>
-
-        <p>
-            Acknowledgment and Acceptance<br>
-            I, {{ certificate.student_name }}, accept the internship offer as outlined.
-        </p>
-    <br>
-    <br>
-
-    <!-- Signature Image -->
-    
-
-    <!-- Director Info -->
-    
-      
-        Signature<br>
-       
-        Date of issue: {{ certificate.issue_date|date:"d M Y" }}
-    
     </div>
 
-    <!-- Issue Date -->
-    
+    <div class="footer">
+       
+
+        Yours sincerely,<br><br>
+        For Pinesphere Solutions<br><br>
+        {% if certificate.director_name == "Mr. Surendiran S" %}
+            <img src="{{ base_url }}/images/signatures/surendar_s.png" class="signature-img">
+        {% elif certificate.director_name == "Mr. Vasanth Nagarajan CTO & Co-Founder" %}
+            <img src="{{ base_url }}/images/signatures/vasanth_nagarajan.png" class="signature-img">
+        {% else %}
+            <img src="{{ base_url }}/images/signatures/default_signature.png" class="signature-img">
+        {% endif %}<br><br>
+        {{ certificate.director_name }}<br>
+        <strong>Director/CTO</strong>
+
+        <div class="issue-date">
+            Date of issue: {{ certificate.issue_date|date:"d M Y" }}
+        </div>
+    </div>
 </body>
 </html>
