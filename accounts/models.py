@@ -3,6 +3,8 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils import timezone
+import datetime
 
 class User(AbstractUser):
     ROLE_CHOICES = [
@@ -60,9 +62,14 @@ class Certificate(models.Model):
     college = models.CharField(max_length=200)
     location = models.CharField(max_length=200)
     course_name = models.CharField(max_length=100)
+    start_date = models.DateField()
+    end_date = models.DateField()
     duration = models.CharField(max_length=50)
     completion_date = models.DateField()
-    director_name = models.CharField(max_length=100, default='Surendar S')
+    
+    director_name = models.CharField(max_length=100)
+    issue_date = models.DateField(default=timezone.now)
+    signature = models.ImageField(upload_to='signatures/', null=True, blank=True)
 
     # ✅ Add these two:
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)

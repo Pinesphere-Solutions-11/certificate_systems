@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token }}">
-    <title>Coordinator Dashboard | EduConnect</title>
+    <title>Pinesphere | Coordinator Dashboard</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/r2xvtYsR/logo-removebg-preview.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
@@ -40,21 +41,24 @@
             padding: 2rem;
         }
         .logout-btn {
-            background-color:#026aaf; 
+            background-color:#3794D0; 
             text-decoration: none !important; 
-            font-size: 14px;                 
-            padding: 6px 14px;                 
-            color: white;    
-            border-radius: 10px;                 
+            font-size: 14px;  
+            font-weight: 500;               
+            padding: 0.60rem 1.5rem;                 
+            color: white;                   
             display: inline-flex;             
             align-items: center;             
             gap: 6px;                        
             border: none;
             cursor: pointer;
-            
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
         }
         .logout-btn:hover {
             background-color:#b61a1a;
+            transform: translateY(-3px);
         }
         .dashboard-header {
             display: flex;
@@ -365,15 +369,10 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="completionCourseName">Domain</label>
-                            <select id="completionCourseName" name="completionCourseName" required>
-                                <option value="">Select Course</option>
-                                <option value="Full Stack Java Development">Full Stack Java Development</option>
-                                <option value="Full Stack Python Development">Full Stack Python Development</option>
-                                <option value="UI/UX">UI/UX</option>
-                                <option value="Backend Development">Backend Development</option>
-                                <option value="DevOps">DevOps</option>
-                            </select>
+                            <input type="text" id="completionCourseName" name="completionCourseName" required>
                         </div>
+
+                                            
                         <div class="form-group">
                             <label for="completionProjectName">Project Name</label>
                             <input type="text" id="completionProjectName" name="completionProjectName" required>
@@ -396,7 +395,8 @@
                             <label for="completionDirector">Director Name</label>
                             <select id="completionDirector" name="completionDirector" required>
                                 <option value="">Select Director</option>
-                                <option value="Surendar S">Surendar S</option>
+                                <option value="Surendar S">Mr. Surendiran S</option>
+                                <option value="Mr. Vasanth Nagarajan">Mr. Vasanth Nagarajan CTO & Co-Founder</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -433,7 +433,7 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="newStudentID">Student ID</label>
+                            <label for="newStudentID">Register Number</label>
                             <input type="text" id="newStudentID" required>
                         </div>
                          
@@ -512,14 +512,7 @@
                         </div>
                         <div class="form-group">
                             <label for="offerCourseName">Domain</label>
-                            <select id="offerCourseName" name="offerCourseName" required>
-                                <option value="">Select Course</option>
-                                <option value="Full Stack Java Development">Full Stack Java Development</option>
-                                <option value="Full Stack Python Development">Full Stack Python Development</option>
-                                <option value="UI/UX">UI/UX</option>
-                                <option value="Backend Development">Backend Development</option>
-                                <option value="DevOps">DevOps</option>
-                            </select>
+                            <input type="text" id="offerCourseName" name="offerCourseName" required>                          
                         </div>
                     </div>
 
@@ -545,7 +538,8 @@
                             <label for="offerDirector">Director Name</label>
                             <select id="offerDirector" name="offerDirector" required>
                                 <option value="">Select Director</option>
-                                <option value="Surendar S">Surendar S</option>
+                                <option value="Surendar S">Mr. Surendiran S</option>
+                                <option value="Mr. Vasanth Nagarajan">Mr. Vasanth Nagarajan CTO & Co-Founder</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -647,6 +641,7 @@
     </div>
 
   <script>
+    
     const departmentData = {
         "BE": ["Computer Science Engineering", "Mechanical Engineering", "Electrical Engineering", "Civil Engineering", "Electronics and Communication"],
         "BTech": ["Information Technology", "Biotechnology", "Chemical Engineering"],

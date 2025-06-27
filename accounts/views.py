@@ -189,7 +189,7 @@ from datetime import datetime
 def create_offer_letter(request):
     if request.method == 'POST':
         data = request.POST
-
+        signature_file = request.FILES.get('offerSignature')
         cert = Certificate(
             certificate_type='offer',
             title=data.get('offerTitle'),
@@ -202,6 +202,9 @@ def create_offer_letter(request):
             duration=data.get('offerDuration'),
             completion_date=datetime.strptime(data.get('offerEndDate'), '%Y-%m-%d').date(),
             director_name=data.get('offerDirector'),
+            signature=signature_file,
+            start_date = request.POST.get('offerStartDate'),
+            end_date = request.POST.get('offerEndDate'),
             created_by=request.user,
         )
 

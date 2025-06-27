@@ -338,6 +338,8 @@ footer p {
     border-radius: 10px;
     box-shadow: var(--shadow);
     text-align: center;
+    transform: translateY(-3px);
+        transition: transform 0.3s ease;
 }
 
 .mission-card i {

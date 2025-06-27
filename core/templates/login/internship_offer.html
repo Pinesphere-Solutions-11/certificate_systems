@@ -8,90 +8,91 @@
             margin: 0;
         }
         body {
-            background: url("file:///C:/Users/admin/certificate_systems/static/images/offer_letter_bg.png") no-repeat center center;
+            background: url("file:///C:/Users/admin/certificate_systems/static/images/offer_letter_template.png") no-repeat center center;
             background-size: cover;
             font-family: 'Times New Roman', serif;
             margin: 0;
             padding: 0;
-            height: 100%;
             color: #000;
         }
-        .wrapper {
-            padding: 220px 100px 60px 100px; /* top, right, bottom, left */
-            box-sizing: border-box;
+        .content {
+            position: absolute;
+            top: 280px;
+            left: 90px;
+            right: 90px;
+            font-size: 14px;
+            line-height: 1.7;
         }
 
-        .section {
-            font-size: 16px;
-            line-height: 1.8;
-        }
+        
 
-        .ack {
-            margin-top: 50px;
-            font-size: 15px;
+        .footer {
+            position: absolute;
+            bottom: 85px;
+            left: 90px;
+            text-align: left;
+            
+            font-size: 14px;
             line-height: 1.6;
         }
 
-        .sign {
-            margin-top: 40px;
-            font-size: 15px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .sign div {
-            width: 45%;
-        }
-
-        .stamp {
-            width: 100px;
-            float: right;
-            margin-top: 20px;
+        .date {
+            position: absolute;
+            bottom: 90px;
+            left: 90px;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
-    <div class="wrapper">
-        <div class="section">
-            <p>
-                To,<br>
-                <strong>{{ certificate.student_name }}</strong><br>
-                {{ certificate.department }}<br>
-                {{ certificate.college }}<br><br>
+    <div class="content">
+        <p>To,</p>
 
-                <strong>Subject:</strong> Internship Offer Letter<br><br>
+        <p>
+            {{ certificate.title }}. {{ certificate.student_name }}<br>
+            {{ certificate.department }}<br>
+            {{ certificate.college }} {{ certificate.location }}
+        </p>
+        <p>Subject: Internship Offer Letter</p>
 
-                Dear {{ certificate.student_name }},<br><br>
+        <p>Dear {{ certificate.title }}. {{ certificate.student_name }},</p>
 
-                We are pleased to offer you an <strong>internship</strong> opportunity at
-                <strong>Pinesphere Solutions Pvt Ltd</strong> starting from
-                <strong>{{ certificate.duration }}</strong>. During this period, you will gain valuable
-                hands-on experience by working on live projects under the guidance of our experienced team.<br><br>
+        <p style="text-align: justify;">
+          We are pleased to offer you an internship opportunity at Pinesphere Solutions Pvt Ltd Starting from {{ certificate.start_date }} to {{ certificate.end_date }}. During this period, you will gain valuable hands-on experience by working on live projects under the guidance of our experienced team.
+        </p>
+        <p>Internship Details:</p>
+        <p>
+            Position: {{certificate.course_name}} Intern<br>
+            Duration: {{ certificate.duration }} <br>
+            Office Timings: 09:00 AM to 06:30 PM
+        </p>
 
-                <strong>Internship Details:</strong><br>
-                Position: {{ certificate.course_name }} Intern<br>
-                Duration: {{ certificate.duration }}<br>
-                Office Timings: 09:00 AM to 06:30 PM<br><br>
+        <p>
+            We look forward to having you with us!<br>
+            Warm regards,<br>
+            HR Team<br>
+            Pinesphere Solutions Pvt Ltd
+        </p>
 
-                We look forward to having you with us!<br>
-                Warm regards,<br>
-                HR Team<br>
-                Pinesphere Solutions Pvt Ltd
-            </p>
-        </div>
-
-        <div class="ack">
-            <strong>Acknowledgment and Acceptance</strong><br>
+        <p>
+            Acknowledgment and Acceptance<br>
             I, {{ certificate.student_name }}, accept the internship offer as outlined.
-        </div>
-
-        <div class="sign">
-            <div>Signature: ____________________</div>
-            <div>Date: ____________________</div>
-        </div>
-
-        <!-- Optional: stamp -->
-        <!-- <img class="stamp" src="file:///C:/Users/admin/certificateificate_systems/static/images/stamp.png" alt="Stamp"> -->
+        </p>
     </div>
+
+    <!-- Signature Image -->
+    
+
+    <!-- Director Info -->
+    <div class="footer">
+       <br>
+        Signature<br>
+       
+        Date of issue: {{ certificate.issue_date|date:"d.m.Y" }}
+    
+    </div>
+
+    <!-- Issue Date -->
+    
 </body>
 </html>
