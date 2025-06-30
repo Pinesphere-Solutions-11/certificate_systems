@@ -12,6 +12,11 @@ from django.conf import settings
 from datetime import datetime
 from .forms import LoginForm, CoordinatorForm, StudentForm, AdminUserForm
 from .models import Certificate, Coordinator, Student, AdminUser, User
+from datetime import datetime
+from django.http import JsonResponse
+from .models import Certificate
+from django.core.paginator import Paginator
+from django.db.models import Q
 
 # =========================
 # 🔐 AUTH SYSTEM
@@ -77,7 +82,32 @@ def is_student(user):
 
 @login_required
 @user_passes_test(is_admin)
+
+
 def admin_dashboard(request):
+    certificates = Certificate.objects.all().order_by('-created_at')
+
+    # === Filter Parameters from GET ===
+    query = request.GET.get('query', '')
+    cert_type = request.GET.get('type', '')
+    student_id = request.GET.get('student_id', '')
+    domain = request.GET.get('course_name', '')
+
+    # === Filtering Certificates Based on Query Params ===
+    if query or cert_type or student_id or domain:
+        certificates = certificates.filter(
+            Q(student_name__icontains=query) &
+            Q(certificate_type__icontains=cert_type) &
+            Q(student_id__icontains=student_id) &
+            Q(course_name__icontains=domain)
+        )
+
+    # === Pagination ===
+    paginator = Paginator(certificates, 10)  # Show 10 certificates per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # === Form Submission Handling (POST) ===
     if request.method == 'POST':
         form_type = request.POST.get('form_type')
 
@@ -87,6 +117,8 @@ def admin_dashboard(request):
                 form.save()
                 messages.success(request, 'Coordinator added successfully!')
                 return redirect('admin_dashboard')
+            else:
+                print("CoordinatorForm errors:", form.errors)
 
         elif form_type == 'student':
             form = StudentForm(request.POST)
@@ -94,32 +126,76 @@ def admin_dashboard(request):
                 form.save()
                 messages.success(request, 'Student added successfully!')
                 return redirect('admin_dashboard')
+            else:
+                print("StudentForm errors:", form.errors)
 
         elif form_type == 'admin':
-            form = AdminUserForm(request.POST)
-            if form.is_valid():
-                form.save()
+            admin_form = AdminUserForm(request.POST)
+            if admin_form.is_valid():
+                admin = admin_form.save(commit=False)
+                admin.set_password(admin_form.cleaned_data['password'])  # Hash the password
+                admin.save()
                 messages.success(request, 'Admin added successfully!')
                 return redirect('admin_dashboard')
+            else:
+                print("AdminUserForm errors:", admin_form.errors)
 
+    # === Context for Template ===
     context = {
         'coordinator_count': Coordinator.objects.count(),
         'student_count': Student.objects.count(),
         'total_certificates': Certificate.objects.count(),
+        'certificates': page_obj,
+        'page_obj': page_obj,
+        'query': query,
+        'cert_type': cert_type,
+        'student_id_filter': student_id,
+        'domain_filter': domain,
     }
+
     return render(request, 'login/admin-dashboard.html', context)
+
 
 # =========================
 # 🧑‍🏫 COORDINATOR DASHBOARD
 # =========================
-
+from django.core.paginator import Paginator
+from django.db.models import Q
 @login_required
 @user_passes_test(is_coordinator)
+
+
 def coordinator_dashboard(request):
     certificates = Certificate.objects.filter(created_by=request.user).order_by('-created_at')
-    return render(request, 'login/coordinator-dashboard.html', {
-        'certificates' : certificates
-    })
+
+    # --- Filtering ---
+    cert_type = request.GET.get('type')
+    student_id = request.GET.get('student_id')
+    domain = request.GET.get('domain')
+
+    if cert_type:
+        certificates = certificates.filter(certificate_type=cert_type)
+
+    if student_id:
+        certificates = certificates.filter(student_id__icontains=student_id)
+
+    if domain:
+        certificates = certificates.filter(course_name__icontains=domain)
+
+    # --- Pagination ---
+    paginator = Paginator(certificates, 10)  # Show 10 per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'certificates': page_obj,
+        'page_obj': page_obj,
+        'cert_type': cert_type or '',
+        'student_id': student_id or '',
+        'domain': domain or '',
+    }
+    return render(request, 'login/coordinator-dashboard.html', context)
+
 
 
 # =========================
@@ -181,8 +257,31 @@ def generate_certificate_pdf(certificate, template_name):
 
     os.remove(tmp_file.name)
 
+# COORDINATOR ADD STUDENT FORM #
+def add_student(request):
+    if request.method == 'POST':
+        name = request.POST.get('student_name')
+        email = request.POST.get('student_email')
+        student_id = request.POST.get('student_id')
+        department = request.POST.get('student_department')  # ← use department now
 
-from datetime import datetime
+        if not all([name, email, student_id, department]):
+            return JsonResponse({'status': 'error', 'message': 'All fields are required'}, status=400)
+
+        if Student.objects.filter(student_id=student_id).exists():
+            return JsonResponse({'status': 'error', 'message': 'Student already exists'}, status=400)
+
+        Student.objects.create(
+            full_name=name,
+            email=email,
+            student_id=student_id,
+            department=department  # ← updated here too
+        )
+
+        return JsonResponse({'status': 'success', 'message': 'Student added successfully!'})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
 
 @login_required
 @user_passes_test(is_coordinator)
@@ -231,6 +330,22 @@ def create_completion_certificate(request):
     if request.method == 'POST':
         data = request.POST
 
+        # Get and validate dates
+        start_date_str = data.get('completionStartDate')
+        end_date_str = data.get('completionEndDate')
+        completion_date_str = data.get('completionDate')
+
+        if not start_date_str or not end_date_str or not completion_date_str:
+            return JsonResponse({'status': 'error', 'message': 'All dates are required'}, status=400)
+
+        try:
+            start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+            end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+            completion_date = datetime.strptime(completion_date_str, '%Y-%m-%d').date()
+        except ValueError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid date format (must be YYYY-MM-DD)'}, status=400)
+
+        # Create certificate
         cert = Certificate(
             certificate_type='completion',
             title=data.get('completionTitle'),
@@ -241,8 +356,10 @@ def create_completion_certificate(request):
             location=data.get('completionLocation'),
             course_name=data.get('completionCourseName'),
             duration=data.get('completionDuration'),
-            completion_date=datetime.strptime(data.get('completionDate'), '%Y-%m-%d').date(),
+            completion_date=completion_date,
             director_name=data.get('completionDirector'),
+            start_date=start_date,
+            end_date=end_date,
             created_by=request.user,
         )
 
@@ -259,3 +376,4 @@ def create_completion_certificate(request):
         })
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+

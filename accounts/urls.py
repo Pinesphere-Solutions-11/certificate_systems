@@ -1,10 +1,11 @@
 from django.conf import settings
 from django.urls import path
+from .views import add_student
 
 from .views import (
     login_view, logout_view, dashboard_redirect,
     admin_dashboard, coordinator_dashboard, student_dashboard,
-    create_offer_letter, create_completion_certificate
+    create_offer_letter, create_completion_certificate,
 )
 
 urlpatterns = [
@@ -14,7 +15,7 @@ urlpatterns = [
     path('dashboard/admin/', admin_dashboard, name='admin_dashboard'),
     path('dashboard/coordinator/', coordinator_dashboard, name='coordinator_dashboard'),
     path('dashboard/student/', student_dashboard, name='student_dashboard'),
-    
+    path('student/add/', add_student, name='add_student'),
     # ✅ Certificate creation endpoints
     path('certificate/offer/create/', create_offer_letter, name='create_offer_letter'),
     path('certificate/completion/create/', create_completion_certificate, name='create_completion_certificate'),

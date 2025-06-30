@@ -253,6 +253,38 @@ body {
         width: 100%;
     }
 }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.pagination a,
+.pagination span {
+    padding: 0.5rem 0.9rem;
+    border-radius: 0.5rem;
+    background-color: #e2e8f0;
+    color: #1e293b;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.3s ease;
+}
+
+.pagination a:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.pagination .current {
+    background-color: var(--primary-dark);
+    color: white;
+    font-weight: bold;
+}
+
     </style>
 </head>
 <body>
@@ -297,24 +329,83 @@ body {
                 <div class="number">{{ student_count }}</div>
             </div>
         </div>
+<form method="get" style="margin-bottom: 1.5rem;">
+    <div class="form-row">
+        <div class="form-group">
+            <label>Filter by Type</label>
+            <select name="type">
+                <option value="">All Types</option>
+                <option value="offer" {% if cert_type == 'offer' %}selected{% endif %}>Offer Letter</option>
+                <option value="completion" {% if cert_type == 'completion' %}selected{% endif %}>Completion Certificate</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Student ID</label>
+            <input type="text" name="student_id" value="{{ student_id }}">
+        </div>
+        <div class="form-group">
+            <label>Domain</label>
+            <input type="text" name="domain" value="{{ domain }}">
+        </div>
+        <div class="form-group" style="display: flex; align-items: flex-end;">
+            <button type="submit" class="action-btn"><i class="fas fa-search"></i> Search</button>
+        </div>
+    </div>
+</form>
 
         <!-- Certificates Section -->
         <div class="data-section">
             <h2 class="section-title"><i class="fas fa-certificate"></i> All Certificates</h2>
             <table class="data-table">
                 <thead>
-                    <tr>
-                        <th>STUDENT</th>
-                        <th>COURSE</th>
-                        <th>EDUCATOR</th>
-                        <th>DATE</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td colspan="4" class="empty-state">No certificates found</td></tr>
+                <tr>
+                <th>Student Name</th>
+                <th>Register No.</th>
+                <th>Course</th>
+                <th>Type</th>
+                <th>Date</th>
+                <th>Certificate ID</th>
+                <th>Preview</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cert in certificates %}
+                <tr>
+                <td>{{ cert.student_name }}</td>
+                <td>{{ cert.student_id }}</td>
+                <td>{{ cert.course_name }}</td>
+                <td>{{ cert.get_certificate_type_display }}</td>
+                <td>{{ cert.completion_date|date:"d M Y" }}</td>
+                <td>{{ cert.certificate_number }}</td>
+                <td>
+                    {% if cert.generated_pdf %}
+                    <a href="{{ cert.generated_pdf.url }}" target="_blank" class="action-btn">Preview</a>
+                    {% else %}
+                    <span style="color:gray;">Not generated</span>
+                    {% endif %}
+                </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7" style="text-align:center;">No certificates issued yet.</td></tr>
+                {% endfor %}
                 </tbody>
-            </table>
-        </div>
+                </table>
+            </div>
+<div style="text-align:center; margin-top: 1rem;">
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page=1&type={{ cert_type }}&student_id={{ student_id }}&domain={{ domain }}">« First</a>
+            <a href="?page={{ page_obj.previous_page_number }}&type={{ cert_type }}&student_id={{ student_id }}&domain={{ domain }}">‹ Prev</a>
+        {% endif %}
+
+        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}&type={{ cert_type }}&student_id={{ student_id }}&domain={{ domain }}">Next ›</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}&type={{ cert_type }}&student_id={{ student_id }}&domain={{ domain }}">Last »</a>
+        {% endif %}
+    </div>
+</div>
 
         <!-- Coordinator Form -->
         <div class="management-form" id="coordinatorForm">
@@ -439,6 +530,7 @@ body {
             const coordinatorForm = document.getElementById('coordinatorForm');
             const studentForm = document.getElementById('studentForm');
             const adminForm = document.getElementById('adminForm');
+            
 
             function hideAllForms() {
                 coordinatorForm.style.display = 'none';
@@ -467,6 +559,9 @@ body {
                 adminForm.scrollIntoView({ behavior: 'smooth' });
             });
         });
+        const form = document.getElementById('studentForm');
+const formData = new FormData(form);  // ✅ form must be a <form>
+
     </script>
 </body>
 </html>

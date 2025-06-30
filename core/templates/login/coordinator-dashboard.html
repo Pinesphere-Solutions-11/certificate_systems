@@ -278,6 +278,41 @@
             flex: 1;
             min-width: 200px;
         }
+        .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+.pagination a,
+.pagination span {
+    padding: 0.4rem 0.9rem;
+    border-radius: 0.6rem;
+    background-color: var(--background);
+    color: var(--text-dark);
+    text-decoration: none;
+    font-weight: 500;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+    box-shadow: var(--shadow);
+}
+
+.pagination a:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-dark);
+}
+
+.pagination .current {
+    background-color: var(--primary-dark);
+    color: white;
+    font-weight: 600;
+    pointer-events: none;
+}
+
     </style>
 </head>
 <body>
@@ -309,148 +344,159 @@
 
         <!-- Completion Certificate Form -->
         <div class="certificate-form" id="completionForm">
-            <div class="data-section">
-                <h3>Create Completion Certificate</h3>
-                <form id="createCompletionForm" enctype="multipart/form-data">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="completionTitle">Title</label>
-                            <select id="completionTitle" name="completionTitle" required>
-                                <option value="">Select Title</option>
-                                <option value="Mr">Mr</option>
-                                <option value="Ms">Ms</option>
-                                <option value="Mrs">Mrs</option>
-                                <option value="Dr">Dr</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="completionStudentName">Student Name</label>
-                            <input type="text" id="completionStudentName" name="completionStudentName" required>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="completionRegisterNumber">Register Number</label>
-                            <input type="text" id="completionRegisterNumber" name="completionRegisterNumber" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="completionDegree">Degree</label>
-                            <select id="completionDegree" name="completionDegree" required onchange="populateDepartments('completionDegree', 'completionDepartment')">
-                                <option value="">Select Degree</option>
-                                <option value="BE">Bachelor's of Engineering</option>
-                                <option value="BTech">B.Tech</option>
-                                <option value="Arts">Arts and Science</option>
-                                <option value="MBA">MBA</option>
-                                <option value="Diploma">Diploma</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group" id="completionDepartmentGroup" style="display:none;">
-                            <label for="completionDepartment">Department</label>
-                            <select id="completionDepartment" name="completionDepartment" required>
-                                <option value="">Select Department</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="completionCollege">College</label>
-                            <input type="text" id="completionCollege" name="completionCollege" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="completionLocation">Location</label>
-                            <input type="text" id="completionLocation" name="completionLocation" required>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="completionCourseName">Domain</label>
-                            <input type="text" id="completionCourseName" name="completionCourseName" required>
-                        </div>
-
-                                            
-                        <div class="form-group">
-                            <label for="completionProjectName">Project Name</label>
-                            <input type="text" id="completionProjectName" name="completionProjectName" required>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="completionDuration">Duration</label>
-                            <input type="text" id="completionDuration" name="completionDuration" placeholder="e.g., 6 months" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="completionDate">Completion Date</label>
-                            <input type="date" id="completionDate" name="completionDate" required>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="completionDirector">Director Name</label>
-                            <select id="completionDirector" name="completionDirector" required>
-                                <option value="">Select Director</option>
-                                <option value="Mr. Surendiran S">Mr. Surendiran S</option>
-                                <option value="Mr. Vasanth Nagarajan CTO & Co-Founder">Mr. Vasanth Nagarajan CTO & Co-Founder</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="completionSignature">Upload E-sign (Max 2MP)</label>
-                            <input type="file" id="completionSignature" name="completionSignature" accept="image/*" required onchange="checkImageSize(this)">
-                            <div id="completionSignatureError" class="error-message"></div>
-                            <img id="completionSignaturePreview" class="signature-preview" src="#" alt="Signature Preview">
-                        </div>
-                    </div>
-
-                    <div class="form-actions">
-                        <button type="submit" class="action-btn">
-                            <i class="fas fa-save"></i> Generate Certificate
-                        </button>
-                    </div>
-                </form>
+    <div class="data-section">
+        <h3>Generate Completion Certificate</h3>
+        <form id="createCompletionForm">
+            <!-- Title, Name and Register Number -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="completionTitle">Title</label>
+                    <select id="completionTitle" name="completionTitle" required>
+                        <option value="">Select Title</option>
+                        <option value="Mr">Mr</option>
+                        <option value="Ms">Ms</option>
+                        <option value="Mrs">Mrs</option>
+                        <option value="Dr">Dr</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="completionStudentName">Student Name</label>
+                    <input type="text" id="completionStudentName" name="completionStudentName" required>
+                </div>
+                <div class="form-group">
+                    <label for="completionRegisterNumber">Register Number</label>
+                    <input type="text" id="completionRegisterNumber" name="completionRegisterNumber" required>
+                </div>
             </div>
-        </div>
+
+            <!-- Degree and College -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="completionDegree">Degree</label>
+                    <select id="completionDegree" name="completionDegree" required onchange="populateDepartments('completionDegree', 'completionDepartment')">
+                        <option value="">Select Degree</option>
+                        <option value="BE">Bachelor's of Engineering</option>
+                        <option value="BTech">B.Tech</option>
+                        <option value="Arts">Arts and Science</option>
+                        <option value="MBA">MBA</option>
+                        <option value="Diploma">Diploma</option>
+                    </select>
+                </div>
+                <div class="form-group" id="completionDepartmentGroup" style="display:none;">
+                    <label for="completionDepartment">Department</label>
+                    <select id="completionDepartment" name="completionDepartment" required>
+                        <option value="">Select Department</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="completionCollege">College</label>
+                    <input type="text" id="completionCollege" name="completionCollege" required>
+                </div>
+            </div>
+
+            <!-- Location and Course -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="completionLocation">Location</label>
+                    <input type="text" id="completionLocation" name="completionLocation" required>
+                </div>
+                <div class="form-group">
+                    <label for="completionCourseName">Course/Domain</label>
+                    <input type="text" id="completionCourseName" name="completionCourseName" required>
+                </div>
+            </div>
+
+            <!-- Project Field  -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="completionProject">Project Name</label>
+                    <input type="text" id="completionProject" name="completionProject" placeholder="e.g., Online Portfolio System" required>
+                </div>
+            </div>
+
+            <!-- Start Date, End Date, Duration -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="completionStartDate">Start Date</label>
+                    <input type="date" id="completionStartDate" name="completionStartDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="completionEndDate">End Date</label>
+                    <input type="date" id="completionEndDate" name="completionEndDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="completionDuration">Duration</label>
+                    <input type="text" id="completionDuration" name="completionDuration" placeholder="e.g., 2 weeks" required>
+                </div>
+            </div>
+
+            <!-- Director -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="completionDirector">Director Name</label>
+                    <select id="completionDirector" name="completionDirector" required onchange="updateSignaturePreviewCompletion()">
+                        <option value="">Select Director</option>
+                        <option value="Mr. Surendiran S">Mr. Surendiran S</option>
+                        <option value="Mr. Vasanth Nagarajan CTO & Co-Founder">Mr. Vasanth Nagarajan</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Signature Preview</label><br>
+                    <img id="completionSignaturePreview" src="" alt="Signature" style="height: 100px; display: none;">
+                </div>
+            </div>
+
+            <!-- Completion Date -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="completionDate">Date of Issue</label>
+                    <input type="date" id="completionDate" name="completionDate" required>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="form-actions">
+                <button type="submit" class="action-btn">
+                    <i class="fas fa-save"></i> Generate Certificate
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
         <!-- Student Form -->
-        <div class="certificate-form" id="studentForm">
-            <div class="data-section">
-                <h3>Add New Student</h3>
-                <form id="addStudentForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="newStudentName">Full Name</label>
-                            <input type="text" id="newStudentName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="newStudentEmail">Email</label>
-                            <input type="email" id="newStudentEmail" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="newStudentID">Register Number</label>
-                            <input type="text" id="newStudentID" required>
-                        </div>
-                         
-                        <div class="form-group">
-                            <label for="department">Department</label>
-                            <input type="text" id="newDepartment" required>
-                        </div>
-                        </div>
-                   
-                    <div class="form-actions">
-                        <button type="submit" class="action-btn">
-                            <i class="fas fa-save"></i> Add Student
-                        </button>
-                    </div>
-                </form>
-            </div>
+      <div class="certificate-form" id="addstudentForm">
+  <div class="data-section">
+    <h3>Add New Student</h3>
+    <form id="addStudentForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="newStudentName">Full Name</label>
+          <input type="text" id="newStudentName" name="student_name" required>
         </div>
+        <div class="form-group">
+          <label for="newStudentEmail">Email</label>
+          <input type="email" id="newStudentEmail" name="student_email" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="newStudentID">Register Number</label>
+          <input type="text" id="newStudentID" name="student_id" required>
+        </div>
+        <div class="form-group">
+          <label for="newDepartment">Department</label>
+          <input type="text" id="newDepartment" name="student_department" required>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="action-btn">
+          <i class="fas fa-save"></i> Add Student
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
 
         <!-- Offer Letter Form -->
         <div class="certificate-form" id="offerForm">
@@ -539,7 +585,7 @@
                             <select id="offerDirector" name="offerDirector" required onchange="updateSignaturePreview()">
                                 <option value="">Select Director</option>
                                 <option value="Mr. Surendiran S">Mr. Surendiran S</option>
-                                <option value="Mr. Vasanth Nagarajan CTO & Co-Founder">Mr. Vasanth Nagarajan CTO & Co-Founder</option>
+                                <option value="Mr. Vasanth Nagarajan CTO & Co-Founder">Mr. Vasanth Nagarajan </option>
                             </select>
                         </div>
                        <div class="form-group">
@@ -557,7 +603,29 @@
                 </form>
             </div>
         </div>
-
+<form method="get" style="margin-bottom: 1.5rem;">
+    <div class="form-row">
+        <div class="form-group">
+            <label>Filter by Type</label>
+            <select name="type">
+                <option value="">All Types</option>
+                <option value="offer" {% if cert_type == 'offer' %}selected{% endif %}>Offer Letter</option>
+                <option value="completion" {% if cert_type == 'completion' %}selected{% endif %}>Completion Certificate</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Student ID</label>
+            <input type="text" name="student_id" value="{{ student_id }}">
+        </div>
+        <div class="form-group">
+            <label>Domain</label>
+            <input type="text" name="domain" value="{{ domain }}">
+        </div>
+        <div class="form-group" style="display: flex; align-items: flex-end;">
+            <button type="submit" class="action-btn"><i class="fas fa-search"></i> Search</button>
+        </div>
+    </div>
+</form>
         <!-- Certificates Section -->
         <div class="data-section">
             <h2 class="section-title">
@@ -605,6 +673,21 @@
             </table>
 
         </div>
+ <div style="text-align:center; margin-top: 1rem;">
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page=1&type={{ cert_type }}&student_id={{ student_id }}&domain={{ domain }}">« First</a>
+            <a href="?page={{ page_obj.previous_page_number }}&type={{ cert_type }}&student_id={{ student_id }}&domain={{ domain }}">‹ Prev</a>
+        {% endif %}
+
+        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}&type={{ cert_type }}&student_id={{ student_id }}&domain={{ domain }}">Next ›</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}&type={{ cert_type }}&student_id={{ student_id }}&domain={{ domain }}">Last »</a>
+        {% endif %}
+    </div>
+</div>   
 
         <!-- Footer -->
         <footer class="dashboard-footer">
@@ -639,11 +722,11 @@
     </div>
 
   <script>
-        function updateSignaturePreview() {
-    const director = document.getElementById('offerDirector').value;
-    const img = document.getElementById('autoSignaturePreview');
+       
+    function updateSignaturePreviewCompletion() {
+    const director = document.getElementById('completionDirector').value;
+    const img = document.getElementById('completionSignaturePreview');
 
-    // Map director to image path
     const signatureMap = {
         "Mr. Surendiran S": "/static/images/signatures/surendar_s.png",
         "Mr. Vasanth Nagarajan CTO & Co-Founder": "/static/images/signatures/vasanth_nagarajan.png"
@@ -656,6 +739,8 @@
         img.style.display = 'none';
     }
 }
+
+
     const departmentData = {
         "BE": ["Computer Science and Engineering", "Mechanical Engineering", "Electrical Engineering", "Civil Engineering", "Electronics and Communication"],
         "BTech": ["Information Technology", "Biotechnology", "Chemical Engineering"],
@@ -732,7 +817,7 @@
         const showStudentForm = document.getElementById('showStudentForm');
         const offerForm = document.getElementById('offerForm');
         const completionForm = document.getElementById('completionForm');
-        const studentForm = document.getElementById('studentForm');
+        const studentForm = document.getElementById('addstudentForm');
         const tableBody = document.querySelector('.data-table tbody');
 
         function hideAllForms() {

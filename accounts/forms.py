@@ -21,12 +21,13 @@ from .models import Coordinator, Student, AdminUser
 class CoordinatorForm(forms.ModelForm):
     class Meta:
         model = Coordinator
-        fields = '__all__'
+        fields = ['full_name','email', 'department', 'phone']
 
 class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
-        fields = '__all__'
+        fields = ['full_name', 'email', 'student_id', 'department']
+
 
 class AdminUserForm(forms.ModelForm):
     class Meta:
@@ -35,3 +36,4 @@ class AdminUserForm(forms.ModelForm):
         widgets = {
             'password': forms.PasswordInput(),
         }
+

@@ -32,14 +32,14 @@ class Student(models.Model):
     full_name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     student_id = models.CharField(max_length=20, unique=True)
-    program = models.CharField(max_length=100)
+    department = models.CharField(max_length=100)
 
 class AdminUser(models.Model):
     full_name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=100, unique=True)
     password = models.CharField(max_length=128)
-    
+
 
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth import get_user_model

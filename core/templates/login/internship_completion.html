@@ -1,70 +1,97 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Internship Completion certificateificate</title>
-  <style>
-    @page { size: A4; margin: 0; }
+    <meta charset="utf-8">
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
 
-    body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: 'Times New Roman', serif;
-      background: url("file:///C:/Users/admin/certificate_systems/static/images/completion_letter.png") no-repeat center center;
-      background-size: cover;
-      background-repeat: no-repeat;
-      color: #000;
-    }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Times New Roman', serif;
+            background: url("{{ base_url }}/images/completion_letter_template.png") no-repeat center center;
+            background-size: cover;
+            color: #000;
+        }
 
-    .wrapper {
-      padding: 260px 70px 100px 70px; /* top, right, bottom, left */
-      box-sizing: border-box;
-    }
+        .content {
+            position: absolute;
+            top: 340px;
+            left: 80px;
+            right: 80px;
+            font-size: 16px;
+            line-height: 1.7;
+        }
 
-    .content {
-      font-size: 17px;
-      line-height: 1.7;
-    }
+        .footer {
+            position: absolute;
+            bottom: 120px;
+            left: 80px;
+            right: 80px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
 
-    .signature {
-      margin-top: 80px;
-      font-size: 14px;
-    }
+        .signature-block {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-top: 10px;
+        }
 
-    .date {
-      margin-top: 40px;
-      font-size: 14px;
-      text-align: right;
-    }
+        .signature-img {
+            height: 60px;
+            margin-bottom: 5px;
+        }
 
-    .signature img {
-      margin-top: 10px;
-    }
-  </style>
+        .issue-date {
+            text-align: right;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-  <div class="wrapper">
     <div class="content">
-      <p>
-        This is to certificateify that <strong>{{ certificate.title }} {{ certificate.student_name }}</strong>
-        (Reg no: {{ certificate.student_id }}) student of {{ certificate.department }}, from {{ certificate.college }} has
-        completed his project “<strong>{{ certificate.course_name }}</strong>” from
-        {{ certificate.duration }} in our organization.
-      </p>
+        <p style="text-align: justify;">
+            This is to certify that <strong>{{ certificate.title }} {{ certificate.student_name }}</strong> 
+            (Reg no: <strong>{{ certificate.student_id }}</strong>), student of 
+            <strong>{{ certificate.department }}</strong> from 
+            <strong>{{ certificate.college }}</strong> has successfully completed her internship on 
+            <strong>{{ certificate.course_name }}</strong> in our concern from <strong>{{ certificate.start_date|date:"d M Y" }}</strong> to <strong>{{ certificate.end_date|date:"d M Y" }}</strong>.
+        </p>
+
+        <p style="text-align: justify;">
+            During this period, we found her to be sincere in her work and 100% regular in attendance. 
+            We certify that her conduct and character have been good.
+        </p>
     </div>
 
-    <div class="signature">
-      Yours Sincerely,<br><br>
-      For Pinesphere Solutions<br><br>
-      <img src="file:///C:/Users/admin/certificate_systems/static/images/signature.png" width="120"><br>
-      {{ certificate.director_name }}<br>
-      Director
+    <div class="footer">
+    Yours sincerely,<br><br>
+    For Pinesphere Solutions
+
+    <div class="signature-block">
+        {% if certificate.director_name == "Mr. Surendiran S" %}
+            <img src="{{ base_url }}/images/signatures/surendar_s.png" class="signature-img">
+            {{ certificate.director_name }}<br>
+            <strong>Director</strong>
+        {% elif certificate.director_name == "Mr. Vasanth Nagarajan" %}
+            <img src="{{ base_url }}/images/signatures/vasanth_nagarajan.png" class="signature-img">
+            {{ certificate.director_name }}<br>
+            <Strong>CTO & Co-Founder</Strong>
+        {% else %}
+            <img src="{{ base_url }}/images/signatures/default_signature.png" class="signature-img">
+            {{ certificate.director_name }}<br>
+            <strong>Designation</strong>
+        {% endif %}
     </div>
 
-    <div class="date">
-      Date of issue: {{ certificate.completion_date|date:"d-M-Y" }}
+    <div class="issue-date">
+        Date of issue: {{ certificate.issue_date|date:"d M Y" }}
     </div>
-  </div>
+</div>
 </body>
 </html>
