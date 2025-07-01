@@ -30,9 +30,12 @@ class Coordinator(models.Model):
 
 class Student(models.Model):
     full_name = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
+    email = models.EmailField()
     student_id = models.CharField(max_length=20, unique=True)
     department = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.full_name
 
 class AdminUser(models.Model):
     full_name = models.CharField(max_length=100)

@@ -603,91 +603,114 @@
                 </form>
             </div>
         </div>
+<!-- Filter & Search -->
 <form method="get" style="margin-bottom: 1.5rem;">
     <div class="form-row">
+        <!-- Filter by Type -->
         <div class="form-group">
             <label>Filter by Type</label>
-            <select name="type">
+            <select name="type" style="padding: 0.5rem; border-radius: 8px; border: 1px solid #ccc;">
                 <option value="">All Types</option>
-                <option value="offer" {% if cert_type == 'offer' %}selected{% endif %}>Offer Letter</option>
-                <option value="completion" {% if cert_type == 'completion' %}selected{% endif %}>Completion Certificate</option>
+                <option value="offer" {% if request.GET.type == 'offer' %}selected{% endif %}>Offer Letter</option>
+                <option value="completion" {% if request.GET.type == 'completion' %}selected{% endif %}>Completion Certificate</option>
             </select>
         </div>
+
+        <!-- Student Name -->
         <div class="form-group">
-            <label>Student ID</label>
-            <input type="text" name="student_id" value="{{ student_id }}">
+            <label>Student Name</label>
+            <input type="text" name="student_name" placeholder="Search by Student Name"
+                   value="{{ request.GET.student_name }}"
+                   style="padding: 0.5rem; border-radius: 8px; border: 1px solid #ccc;">
         </div>
+
+        <!-- Course / Domain -->
         <div class="form-group">
-            <label>Domain</label>
-            <input type="text" name="domain" value="{{ domain }}">
+            <label>Course / Domain</label>
+            <input type="text" name="course_name" placeholder="Search by Course/Domain"
+                   value="{{ request.GET.course_name }}"
+                   style="padding: 0.5rem; border-radius: 8px; border: 1px solid #ccc;">
         </div>
-        <div class="form-group" style="display: flex; align-items: flex-end;">
+
+        <!-- Buttons -->
+        <div class="form-group" style="display: flex; align-items: flex-end; gap: 1rem;">
             <button type="submit" class="action-btn"><i class="fas fa-search"></i> Search</button>
+            <a href="{% url 'coordinator_dashboard' %}" class="action-btn"><i class="fas fa-sync-alt"></i> Reset</a>
         </div>
     </div>
 </form>
-        <!-- Certificates Section -->
-        <div class="data-section">
-            <h2 class="section-title">
-                <i class="fas fa-certificate"></i>
-                Students Certificates
-            </h2>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>STUDENT</th>
-                        <th>COURSE</th>
-                        <th>DATE</th>
-                        <th>CERTIFICATE ID</th>
-                        <th>TYPE</th>
-                        <th>ACTIONS</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if certificates %}
-        {% for cert in certificates %}
-        <tr>
-            <td>{{ cert.student_name }}</td>
-            <td>{{ cert.course_name }}</td>
-            <td>{{ cert.completion_date|date:"Y-m-d" }}</td>
-            <td>{{ cert.certificate_number }}</td>
-            <td>{{ cert.get_certificate_type_display }}</td>
-            <td>
-                {% if cert.generated_pdf %}
-                    <a href="{{ cert.generated_pdf.url }}" class="action-btn" download>Download</a>
-                {% else %}
 
-                    <span class="action-btn disabled">N/A</span>
+
+<!-- Certificates Table -->
+<div class="data-section">
+    <h2 class="section-title">
+        <i class="fas fa-certificate"></i> Students Certificates
+    </h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>STUDENT</th>
+                <th>COURSE</th>
+                <th>DATE</th>
+                <th>CERTIFICATE ID</th>
+                <th>TYPE</th>
+                <th>ACTIONS</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if certificates %}
+                {% for cert in certificates %}
+                    <tr>
+                        <td>{{ cert.student_name }}</td>
+                        <td>{{ cert.course_name }}</td>
+                        <td>{{ cert.completion_date|date:"Y-m-d" }}</td>
+                        <td>{{ cert.certificate_number }}</td>
+                        <td>{{ cert.get_certificate_type_display }}</td>
+                        <td>
+                            {% if cert.generated_pdf %}
+                                <a href="{{ cert.generated_pdf.url }}" class="action-btn" download>Download</a>
+                            {% else %}
+                                <span class="action-btn disabled">N/A</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6" class="empty-state">No certificates created yet</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination of the form -->
+{% if page_obj.has_other_pages %}
+    {% with query_params=request.GET.urlencode %}
+        <div style="text-align:center; margin-top: 1.5rem;">
+            <div class="pagination" style="display: flex; justify-content: center; align-items: center; gap: 1rem;">
+
+                {% if page_obj.has_previous %}
+                    <a href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ page_obj.previous_page_number }}" class="action-btn">
+                        <i class="fas fa-angle-left"></i> Previous
+                    </a>
                 {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    {% else %}
 
-                    <tr>
-                        <td colspan="6" class="empty-state">No certificates created yet</td>
-                    </tr>
-               {% endif %}
-                </tbody>
+                <span class="page-info" style="font-weight: 500;">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
 
-            </table>
+                {% if page_obj.has_next %}
+                    <a href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ page_obj.next_page_number }}" class="action-btn">
+                        Next <i class="fas fa-angle-right"></i>
+                    </a>
+                {% endif %}
 
+            </div>
         </div>
- <div style="text-align:center; margin-top: 1rem;">
-    <div class="pagination">
-        {% if page_obj.has_previous %}
-            <a href="?page=1&type={{ cert_type }}&student_id={{ student_id }}&domain={{ domain }}">« First</a>
-            <a href="?page={{ page_obj.previous_page_number }}&type={{ cert_type }}&student_id={{ student_id }}&domain={{ domain }}">‹ Prev</a>
-        {% endif %}
+    {% endwith %}
+{% endif %}
 
-        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}&type={{ cert_type }}&student_id={{ student_id }}&domain={{ domain }}">Next ›</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}&type={{ cert_type }}&student_id={{ student_id }}&domain={{ domain }}">Last »</a>
-        {% endif %}
-    </div>
-</div>   
 
         <!-- Footer -->
         <footer class="dashboard-footer">

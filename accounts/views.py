@@ -79,35 +79,38 @@ def is_student(user):
 # =========================
 # 📊 ADMIN DASHBOARD
 # =========================
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from django.contrib import messages
+from django.core.paginator import Paginator
+from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
+from .models import Certificate, Coordinator, Student, AdminUser
+from .forms import CoordinatorForm, StudentForm, AdminUserForm
+from django.contrib.auth.decorators import login_required, user_passes_test
+
 
 @login_required
 @user_passes_test(is_admin)
-
-
 def admin_dashboard(request):
     certificates = Certificate.objects.all().order_by('-created_at')
 
     # === Filter Parameters from GET ===
-    query = request.GET.get('query', '')
     cert_type = request.GET.get('type', '')
-    student_id = request.GET.get('student_id', '')
-    domain = request.GET.get('course_name', '')
+    student_name = request.GET.get('student_name', '')
+    course_name = request.GET.get('course_name', '')
 
-    # === Filtering Certificates Based on Query Params ===
-    if query or cert_type or student_id or domain:
-        certificates = certificates.filter(
-            Q(student_name__icontains=query) &
-            Q(certificate_type__icontains=cert_type) &
-            Q(student_id__icontains=student_id) &
-            Q(course_name__icontains=domain)
-        )
+    if cert_type:
+        certificates = certificates.filter(certificate_type__icontains=cert_type)
+    if student_name:
+        certificates = certificates.filter(student_name__icontains=student_name)
+    if course_name:
+        certificates = certificates.filter(course_name__icontains=course_name)
 
-    # === Pagination ===
-    paginator = Paginator(certificates, 10)  # Show 10 certificates per page
+    paginator = Paginator(certificates, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    # === Form Submission Handling (POST) ===
     if request.method == 'POST':
         form_type = request.POST.get('form_type')
 
@@ -115,75 +118,79 @@ def admin_dashboard(request):
             form = CoordinatorForm(request.POST)
             if form.is_valid():
                 form.save()
+                if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                    return JsonResponse({'status': 'success', 'message': 'Coordinator added successfully!'})
                 messages.success(request, 'Coordinator added successfully!')
                 return redirect('admin_dashboard')
             else:
-                print("CoordinatorForm errors:", form.errors)
+                return JsonResponse({'status': 'error', 'message': form.errors.as_json()}, status=400)
 
         elif form_type == 'student':
             form = StudentForm(request.POST)
             if form.is_valid():
                 form.save()
+                if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                    return JsonResponse({'status': 'success', 'message': 'Student added successfully!'})
                 messages.success(request, 'Student added successfully!')
                 return redirect('admin_dashboard')
             else:
-                print("StudentForm errors:", form.errors)
+                return JsonResponse({'status': 'error', 'message': form.errors.as_json()}, status=400)
 
         elif form_type == 'admin':
-            admin_form = AdminUserForm(request.POST)
-            if admin_form.is_valid():
-                admin = admin_form.save(commit=False)
-                admin.set_password(admin_form.cleaned_data['password'])  # Hash the password
+            form = AdminUserForm(request.POST)
+            if form.is_valid():
+                from django.contrib.auth.hashers import make_password
+
+                admin = form.save(commit=False)
+                admin.password = make_password(form.cleaned_data['password'])  # ✅ Hashed
                 admin.save()
+                return JsonResponse({'status': 'success', 'message': 'Admin added successfully!'})
                 messages.success(request, 'Admin added successfully!')
                 return redirect('admin_dashboard')
             else:
-                print("AdminUserForm errors:", admin_form.errors)
+                return JsonResponse({'status': 'error', 'message': form.errors.as_json()}, status=400)
 
-    # === Context for Template ===
     context = {
+        'certificates': page_obj,
+        'page_obj': page_obj,
+        'cert_type': cert_type,
+        'student_name': student_name,
+        'course_name': course_name,
         'coordinator_count': Coordinator.objects.count(),
         'student_count': Student.objects.count(),
         'total_certificates': Certificate.objects.count(),
-        'certificates': page_obj,
-        'page_obj': page_obj,
-        'query': query,
-        'cert_type': cert_type,
-        'student_id_filter': student_id,
-        'domain_filter': domain,
     }
-
     return render(request, 'login/admin-dashboard.html', context)
 
 
 # =========================
 # 🧑‍🏫 COORDINATOR DASHBOARD
 # =========================
+
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.shortcuts import render
+from .models import Certificate
 @login_required
 @user_passes_test(is_coordinator)
-
-
 def coordinator_dashboard(request):
     certificates = Certificate.objects.filter(created_by=request.user).order_by('-created_at')
 
-    # --- Filtering ---
+    # --- Get filters from query params ---
     cert_type = request.GET.get('type')
-    student_id = request.GET.get('student_id')
-    domain = request.GET.get('domain')
+    student_name = request.GET.get('student_name')
+    course_name = request.GET.get('course_name')
 
+    # --- Apply filters ---
     if cert_type:
         certificates = certificates.filter(certificate_type=cert_type)
-
-    if student_id:
-        certificates = certificates.filter(student_id__icontains=student_id)
-
-    if domain:
-        certificates = certificates.filter(course_name__icontains=domain)
+    if student_name:
+        certificates = certificates.filter(student_name__icontains=student_name)
+    if course_name:
+        certificates = certificates.filter(course_name__icontains=course_name)
 
     # --- Pagination ---
-    paginator = Paginator(certificates, 10)  # Show 10 per page
+    paginator = Paginator(certificates, 10)  # Show 10 certificates per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -191,16 +198,13 @@ def coordinator_dashboard(request):
         'certificates': page_obj,
         'page_obj': page_obj,
         'cert_type': cert_type or '',
-        'student_id': student_id or '',
-        'domain': domain or '',
+        'student_name': student_name or '',
+        'course_name': course_name or '',
     }
     return render(request, 'login/coordinator-dashboard.html', context)
 
 
 
-# =========================
-# 👨‍🎓 STUDENT DASHBOARD
-# =========================
 
 
 # =========================
@@ -258,30 +262,29 @@ def generate_certificate_pdf(certificate, template_name):
     os.remove(tmp_file.name)
 
 # COORDINATOR ADD STUDENT FORM #
+from django.http import JsonResponse
+from .models import Student
+
 def add_student(request):
     if request.method == 'POST':
-        name = request.POST.get('student_name')
+        full_name = request.POST.get('student_name')
         email = request.POST.get('student_email')
         student_id = request.POST.get('student_id')
-        department = request.POST.get('student_department')  # ← use department now
+        department = request.POST.get('student_department')
 
-        if not all([name, email, student_id, department]):
-            return JsonResponse({'status': 'error', 'message': 'All fields are required'}, status=400)
-
-        if Student.objects.filter(student_id=student_id).exists():
-            return JsonResponse({'status': 'error', 'message': 'Student already exists'}, status=400)
+        if not all([full_name, email, student_id, department]):
+            return JsonResponse({'status': 'error', 'message': 'All fields are required'})
 
         Student.objects.create(
-            full_name=name,
+            full_name=full_name,
             email=email,
             student_id=student_id,
-            department=department  # ← updated here too
+            department=department
         )
 
         return JsonResponse({'status': 'success', 'message': 'Student added successfully!'})
 
-    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
-
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 @login_required
 @user_passes_test(is_coordinator)
