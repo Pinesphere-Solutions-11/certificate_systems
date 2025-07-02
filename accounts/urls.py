@@ -1,12 +1,15 @@
+from django import views
 from django.conf import settings
 from django.urls import path
 from .views import add_student
+from . import views
 
 from .views import (
     login_view, logout_view, dashboard_redirect,
     admin_dashboard, coordinator_dashboard, student_dashboard,
-    create_offer_letter, create_completion_certificate,
+    create_offer_letter, create_completion_certificate
 )
+
 
 urlpatterns = [
     path('login/<str:role>/', login_view, name='login'),

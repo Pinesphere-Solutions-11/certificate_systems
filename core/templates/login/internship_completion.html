@@ -59,13 +59,13 @@
             This is to certify that <strong>{{ certificate.title }} {{ certificate.student_name }}</strong> 
             (Reg no: <strong>{{ certificate.student_id }}</strong>), student of 
             <strong>{{ certificate.department }}</strong> from 
-            <strong>{{ certificate.college }}</strong> has successfully completed her internship on 
+            <strong>{{ certificate.college }}</strong> has successfully completed their internship on 
             <strong>{{ certificate.course_name }}</strong> in our concern from <strong>{{ certificate.start_date|date:"d M Y" }}</strong> to <strong>{{ certificate.end_date|date:"d M Y" }}</strong>.
         </p>
 
         <p style="text-align: justify;">
-            During this period, we found her to be sincere in her work and 100% regular in attendance. 
-            We certify that her conduct and character have been good.
+            During this period, we found them to be sincere in their work and 100% regular in attendance. 
+            We certify that their conduct and character have been good.
         </p>
     </div>
 
@@ -90,8 +90,9 @@
     </div>
 
     <div class="issue-date">
-        Date of issue: {{ certificate.issue_date|date:"d M Y" }}
+    <strong>Date of issue: {{ certificate.issue_date|date:"d M Y" }}</strong>
     </div>
+
 </div>
 </body>
 </html>

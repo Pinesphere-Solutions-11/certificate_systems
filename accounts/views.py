@@ -204,9 +204,6 @@ def coordinator_dashboard(request):
     return render(request, 'login/coordinator-dashboard.html', context)
 
 
-
-
-
 # =========================
 # 👨‍🎓 STUDENT DASHBOARD
 # =========================
@@ -255,7 +252,7 @@ def generate_certificate_pdf(certificate, template_name):
 
     with open(tmp_file.name, 'rb') as pdf_file:
         certificate.generated_pdf.save(
-            f"{certificate.student_id}_{certificate.certificate_type}.pdf",
+            f"{certificate.student_name}_{certificate.certificate_type}.pdf",
             File(pdf_file)
         )
 
@@ -286,14 +283,25 @@ def add_student(request):
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
+# Offer Letter Generation #
+from datetime import datetime, date
+
 @login_required
 @user_passes_test(is_coordinator)
 def create_offer_letter(request):
     if request.method == 'POST':
         data = request.POST
         signature_file = request.FILES.get('offerSignature')
-        start_date = datetime.strptime(data.get('offerStartDate'), '%Y-%m-%d').date()
-        end_date = datetime.strptime(data.get('offerEndDate'), '%Y-%m-%d').date()
+
+        # Convert dates
+        try:
+            start_date = datetime.strptime(data.get('offerStartDate'), '%Y-%m-%d').date()
+            end_date = datetime.strptime(data.get('offerEndDate'), '%Y-%m-%d').date()
+            issue_date = datetime.strptime(data.get('offerIssueDate'), '%Y-%m-%d').date()
+        except Exception:
+            return JsonResponse({'status': 'error', 'message': 'Invalid date format'}, status=400)
+
+        # Create certificate
         cert = Certificate(
             certificate_type='offer',
             title=data.get('offerTitle'),
@@ -304,11 +312,12 @@ def create_offer_letter(request):
             location=data.get('offerLocation'),
             course_name=data.get('offerCourseName'),
             duration=data.get('offerDuration'),
-            completion_date=datetime.strptime(data.get('offerEndDate'), '%Y-%m-%d').date(),
+            start_date=start_date,
+            end_date=end_date,
+            completion_date=issue_date,
+            issue_date=issue_date,  # ✅ CURRENT DATE FOR ISSUE DATE
             director_name=data.get('offerDirector'),
             signature=signature_file,
-            start_date = start_date,
-            end_date = end_date,
             created_by=request.user,
         )
 
@@ -321,34 +330,28 @@ def create_offer_letter(request):
             'certificate_number': cert.certificate_number,
             'student': cert.student_name,
             'course': cert.course_name,
-            'date': cert.completion_date.strftime('%Y-%m-%d')
+            'date': cert.issue_date.strftime('%Y-%m-%d')
         })
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
+# Completion Letter Generation #
+from datetime import datetime
 
 @login_required
 @user_passes_test(is_coordinator)
 def create_completion_certificate(request):
     if request.method == 'POST':
         data = request.POST
-
-        # Get and validate dates
-        start_date_str = data.get('completionStartDate')
-        end_date_str = data.get('completionEndDate')
-        completion_date_str = data.get('completionDate')
-
-        if not start_date_str or not end_date_str or not completion_date_str:
-            return JsonResponse({'status': 'error', 'message': 'All dates are required'}, status=400)
+        signature_file = request.FILES.get('completionSignature')
 
         try:
-            start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
-            end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
-            completion_date = datetime.strptime(completion_date_str, '%Y-%m-%d').date()
-        except ValueError:
-            return JsonResponse({'status': 'error', 'message': 'Invalid date format (must be YYYY-MM-DD)'}, status=400)
+            start_date = datetime.strptime(data.get('completionStartDate'), '%Y-%m-%d').date()
+            end_date = datetime.strptime(data.get('completionEndDate'), '%Y-%m-%d').date()
+            issue_date = datetime.strptime(data.get('completionIssueDate'), '%Y-%m-%d').date()
+        except (ValueError, TypeError):
+            return JsonResponse({'status': 'error', 'message': 'Invalid or missing date(s)'}, status=400)
 
-        # Create certificate
         cert = Certificate(
             certificate_type='completion',
             title=data.get('completionTitle'),
@@ -359,10 +362,12 @@ def create_completion_certificate(request):
             location=data.get('completionLocation'),
             course_name=data.get('completionCourseName'),
             duration=data.get('completionDuration'),
-            completion_date=completion_date,
-            director_name=data.get('completionDirector'),
             start_date=start_date,
             end_date=end_date,
+            completion_date=issue_date,  # ⬅️ Assign to model field
+            issue_date=issue_date,       # ⬅️ IMPORTANT: assign it properly
+            director_name=data.get('completionDirector'),
+            signature=signature_file,
             created_by=request.user,
         )
 
@@ -375,7 +380,7 @@ def create_completion_certificate(request):
             'certificate_number': cert.certificate_number,
             'student': cert.student_name,
             'course': cert.course_name,
-            'date': cert.completion_date.strftime('%Y-%m-%d')
+            'date': cert.issue_date.strftime('%Y-%m-%d')
         })
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
