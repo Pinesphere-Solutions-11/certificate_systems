@@ -61,6 +61,7 @@ class Certificate(models.Model):
     title = models.CharField(max_length=10)
     student_name = models.CharField(max_length=100)
     student_id = models.CharField(max_length=30)
+    degree = models.CharField(max_length=50, blank=True, null=True)
     department = models.CharField(max_length=100)
     college = models.CharField(max_length=200)
     location = models.CharField(max_length=200)

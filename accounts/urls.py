@@ -19,7 +19,8 @@ urlpatterns = [
     path('dashboard/coordinator/', coordinator_dashboard, name='coordinator_dashboard'),
     path('dashboard/student/', student_dashboard, name='student_dashboard'),
     path('student/add/', add_student, name='add_student'),
-    # ✅ Certificate creation endpoints
+    path('certificate/offer/bulk-upload/', views.bulk_offer_upload, name='bulk_offer_upload'),
+    path('certificate/completion/bulk-upload/', views.bulk_completion_upload, name='bulk_completion_upload'),
     path('certificate/offer/create/', create_offer_letter, name='create_offer_letter'),
     path('certificate/completion/create/', create_completion_certificate, name='create_completion_certificate'),
 ] 

@@ -340,6 +340,9 @@
             <button class="action-btn" id="showStudentForm">
                 <i class="fas fa-user-plus"></i> Add Student
             </button>
+            <button class="action-btn" id="showBulkUploadForm">
+            <i class="fas fa-upload"></i> Bulk Upload
+            </button>
         </div>
 
         <!-- Completion Certificate Form -->
@@ -375,8 +378,8 @@
                     <label for="completionDegree">Degree</label>
                     <select id="completionDegree" name="completionDegree" required onchange="populateDepartments('completionDegree', 'completionDepartment')">
                         <option value="">Select Degree</option>
-                        <option value="BE">Bachelor's of Engineering</option>
-                        <option value="BTech">B.Tech</option>
+                        <option value="B.E">Bachelor's of Engineering</option>
+                        <option value="B.Tech">B Tech</option>
                         <option value="Arts">Arts and Science</option>
                         <option value="MBA">MBA</option>
                         <option value="Diploma">Diploma</option>
@@ -437,7 +440,7 @@
                     <select id="completionDirector" name="completionDirector" required onchange="updateSignaturePreviewCompletion()">
                         <option value="">Select Director</option>
                         <option value="Mr. Surendiran S">Mr. Surendiran S</option>
-                        <option value="Mr. Vasanth Nagarajan CTO & Co-Founder">Mr. Vasanth Nagarajan</option>
+                        <option value="Mr. Vasanth Nagarajan ">Mr. Vasanth Nagarajan</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -498,6 +501,21 @@
   </div>
 </div>
 
+    <!--Bulk Generation-->
+    <div class="certificate-form" id="bulkUploadForm" style="display: none;">
+    <div class="data-section">
+        <h3>Bulk Upload Certificates</h3>
+        <form id="bulkOfferUploadForm" enctype="multipart/form-data">
+            <input type="file" name="csvFile" accept=".csv, .xls, .xlsx" required>
+            <button type="submit" class="action-btn">Upload Offer Letters</button>
+        </form>
+        <br>
+        <form id="bulkCompletionUploadForm" enctype="multipart/form-data">
+            <input type="file" name="csvFile" accept=".csv, .xls, .xlsx" required>
+            <button type="submit" class="action-btn">Upload Completion Certificates</button>
+        </form>
+    </div>
+</div>
         <!-- Offer Letter Form -->
         <div class="certificate-form" id="offerForm">
             <div class="data-section">
@@ -531,8 +549,8 @@
                             <label for="offerDegree">Degree</label>
                             <select id="offerDegree" name="offerDegree" required onchange="populateDepartments('offerDegree', 'offerDepartment')">
                                 <option value="">Select Degree</option>
-                                <option value="BE">Bachelor's of Engineering</option>
-                                <option value="BTech">B.Tech</option>
+                                <option value="B.E">Bachelor's of Engineering</option>
+                                <option value="B.Tech">B Tech</option>
                                 <option value="Arts">Arts and Science</option>
                                 <option value="MBA">MBA</option>
                                 <option value="Diploma">Diploma</option>
@@ -554,7 +572,7 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="offerLocation">Location</label>
-                            <input type="text" id="offerLocation" name="offerLocation" required>
+                            <input type="text" id="offerLocation" name="offerLocation" >
                         </div>
                         <div class="form-group">
                             <label for="offerCourseName">Domain</label>
@@ -585,12 +603,12 @@
                     <select id="offerDirector" name="offerDirector" required onchange="updateSignaturePreviewCompletion()">
                         <option value="">Select Director</option>
                         <option value="Mr. Surendiran S">Mr. Surendiran S</option>
-                        <option value="Mr. Vasanth Nagarajan CTO & Co-Founder">Mr. Vasanth Nagarajan</option>
+                        <option value="Mr. Vasanth Nagarajan ">Mr. Vasanth Nagarajan</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Signature Preview</label><br>
-                    <img id="completionSignaturePreview" src="" alt="Signature" style="height: 100px; display: none;">
+                    <img id="offerSignaturePreview" src="" alt="Signature" style="height: 100px; display: none;">
                 </div>
             </div>
             <div class="form-row">
@@ -750,28 +768,43 @@
     </div>
 
   <script>
-       
     function updateSignaturePreviewCompletion() {
-    const director = document.getElementById('completionDirector').value;
-    const img = document.getElementById('completionSignaturePreview');
+        const director = document.getElementById('completionDirector').value;
+        const img = document.getElementById('completionSignaturePreview');
 
-    const signatureMap = {
-        "Mr. Surendiran S": "/static/images/signatures/surendar_s.png",
-        "Mr. Vasanth Nagarajan CTO & Co-Founder": "/static/images/signatures/vasanth_nagarajan.png"
-    };
+        const signatureMap = {
+            "Mr. Surendiran S": "/static/images/signatures/surendar_s.png",
+            "Mr. Vasanth Nagarajan CTO & Co-Founder": "/static/images/signatures/vasanth_nagarajan.png"
+        };
 
-    if (signatureMap[director]) {
-        img.src = signatureMap[director];
-        img.style.display = 'block';
-    } else {
-        img.style.display = 'none';
+        if (signatureMap[director]) {
+            img.src = signatureMap[director];
+            img.style.display = 'block';
+        } else {
+            img.style.display = 'none';
+        }
     }
-}
 
+    function updateSignaturePreview() {
+        const director = document.getElementById('offerDirector').value;
+        const img = document.getElementById('offerSignaturePreview');
+
+        const signatureMap = {
+            "Mr. Surendiran S": "/static/images/signatures/surendar_s.png",
+            "Mr. Vasanth Nagarajan CTO & Co-Founder": "/static/images/signatures/vasanth_nagarajan.png"
+        };
+
+        if (signatureMap[director]) {
+            img.src = signatureMap[director];
+            img.style.display = 'block';
+        } else {
+            img.style.display = 'none';
+        }
+    }
 
     const departmentData = {
-        "BE": ["Computer Science and Engineering","AI & DS", "Mechanical Engineering", "Electrical Engineering", "Civil Engineering", "Electronics and Communication"],
-        "BTech": ["Information Technology", "AI & DS","Biotechnology", "Chemical Engineering"],
+        "B.E": ["Computer Science and Engineering", "AI & DS", "Mechanical Engineering", "Electrical Engineering", "Civil Engineering", "Electronics and Communication"],
+        "B.Tech": ["Information Technology", "AI & DS", "Biotechnology", "Chemical Engineering"],
         "Arts": ["Computer Science", "Mathematics", "English Literature", "Physics", "Commerce"]
     };
 
@@ -843,15 +876,18 @@
         const showOfferForm = document.getElementById('showOfferForm');
         const showCompletionForm = document.getElementById('showCompletionForm');
         const showStudentForm = document.getElementById('showStudentForm');
+        const showBulkUploadForm = document.getElementById('showBulkUploadForm');
         const offerForm = document.getElementById('offerForm');
         const completionForm = document.getElementById('completionForm');
         const studentForm = document.getElementById('addstudentForm');
+        const bulkUploadForm = document.getElementById('bulkUploadForm');
         const tableBody = document.querySelector('.data-table tbody');
 
         function hideAllForms() {
             offerForm.style.display = 'none';
             completionForm.style.display = 'none';
             studentForm.style.display = 'none';
+            bulkUploadForm.style.display = 'none';
         }
 
         hideAllForms();
@@ -871,7 +907,12 @@
             studentForm.style.display = 'block';
         });
 
-        function addCertificateToTable(student, course, date, certId, type) {
+        showBulkUploadForm?.addEventListener('click', () => {
+            hideAllForms();
+            bulkUploadForm.style.display = 'block';
+        });
+
+        function addCertificateToTable(student, course, date, certId, type, downloadUrl) {
             const emptyRow = document.querySelector('.empty-state');
             if (emptyRow) emptyRow.remove();
             const row = document.createElement('tr');
@@ -881,7 +922,9 @@
                 <td>${date}</td>
                 <td>${certId}</td>
                 <td>${type}</td>
-                <td><button class="action-btn">Download</button></td>`;
+                <td>
+                    ${downloadUrl ? `<a href="${downloadUrl}" class="action-btn" download>Download</a>` : '<span class="action-btn disabled">N/A</span>'}
+                </td>`;
             tableBody.appendChild(row);
         }
 
@@ -893,9 +936,7 @@
 
                 fetch(url, {
                     method: 'POST',
-                    headers: {
-                        'X-CSRFToken': getCookie('csrftoken')
-                    },
+                    headers: { 'X-CSRFToken': getCookie('csrftoken') },
                     body: formData
                 })
                 .then(response => {
@@ -909,7 +950,8 @@
                             data.course,
                             data.date,
                             data.certificate_number || 'CERT-' + Math.floor(100000 + Math.random() * 900000),
-                            type
+                            type,
+                            data.download_url || ''
                         );
                         showPopup(data.message, true);
                         form.reset();
@@ -926,6 +968,46 @@
                 });
             });
         }
+
+        document.getElementById('bulkOfferUploadForm')?.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch('/accounts/certificate/offer/bulk-upload/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showPopup(`Successfully generated ${data.created.length} offer certificates.`, true);
+                    this.reset();
+                    hideAllForms();
+                } else {
+                    showPopup(data.message || 'Bulk upload failed.', false);
+                }
+            })
+            .catch(() => showPopup('Something went wrong!', false));
+        });
+
+        document.getElementById('bulkCompletionUploadForm')?.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch('/accounts/certificate/completion/bulk-upload/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showPopup(`Successfully generated ${data.created.length} completion certificates.`, true);
+                    this.reset();
+                    hideAllForms();
+                } else {
+                    showPopup(data.message || 'Bulk upload failed.', false);
+                }
+            })
+            .catch(() => showPopup('Something went wrong!', false));
+        });
 
         function getCookie(name) {
             let cookieValue = null;

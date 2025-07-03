@@ -1,3 +1,4 @@
+import csv
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -9,7 +10,7 @@ from weasyprint import HTML
 from django.core.files.base import File
 import tempfile
 from django.conf import settings
-from datetime import datetime
+from datetime import datetime, timezone
 from .forms import LoginForm, CoordinatorForm, StudentForm, AdminUserForm
 from .models import Certificate, Coordinator, Student, AdminUser, User
 from datetime import datetime
@@ -307,6 +308,7 @@ def create_offer_letter(request):
             title=data.get('offerTitle'),
             student_name=data.get('offerStudentName'),
             student_id=data.get('offerRegisterNumber'),
+            degree=data.get('offerDegree'),
             department=data.get('offerDepartment'),
             college=data.get('offerCollege'),
             location=data.get('offerLocation'),
@@ -315,7 +317,7 @@ def create_offer_letter(request):
             start_date=start_date,
             end_date=end_date,
             completion_date=issue_date,
-            issue_date=issue_date,  # ✅ CURRENT DATE FOR ISSUE DATE
+            issue_date=issue_date,  
             director_name=data.get('offerDirector'),
             signature=signature_file,
             created_by=request.user,
@@ -357,6 +359,7 @@ def create_completion_certificate(request):
             title=data.get('completionTitle'),
             student_name=data.get('completionStudentName'),
             student_id=data.get('completionRegisterNumber'),
+            degree=data.get('completionDegree'),
             department=data.get('completionDepartment'),
             college=data.get('completionCollege'),
             location=data.get('completionLocation'),
@@ -364,8 +367,8 @@ def create_completion_certificate(request):
             duration=data.get('completionDuration'),
             start_date=start_date,
             end_date=end_date,
-            completion_date=issue_date,  # ⬅️ Assign to model field
-            issue_date=issue_date,       # ⬅️ IMPORTANT: assign it properly
+            completion_date=issue_date,  
+            issue_date=issue_date,       
             director_name=data.get('completionDirector'),
             signature=signature_file,
             created_by=request.user,
@@ -385,3 +388,73 @@ def create_completion_certificate(request):
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
+@csrf_exempt
+@login_required
+@user_passes_test(is_coordinator)
+def bulk_offer_upload(request):
+    if request.method == 'POST' and request.FILES.get('csvFile'):
+        csv_file = request.FILES['csvFile']
+        decoded = csv_file.read().decode('utf-8').splitlines()
+        reader = csv.DictReader(decoded)
+        created = []
+
+        for row in reader:
+            cert = Certificate.objects.create(
+                certificate_type='offer',
+                title=row['Title'],
+                student_name=row['Student Name'],
+                student_id=row['Student ID'],
+                department=row['Department'],
+                degree=row['Degree'],
+                college=row['College'],
+                location=row['Location'],
+                course_name=row['Course Name'],
+                duration=row['Duration'],
+                start_date=datetime.strptime(row['Start Date'], '%Y-%m-%d'),
+                end_date=datetime.strptime(row['End Date'], '%Y-%m-%d'),
+                completion_date=datetime.strptime(row['Issue Date'], '%Y-%m-%d'),
+                issue_date=datetime.strptime(row['Issue Date'], '%Y-%m-%d'),
+                director_name=row['Director Name'],
+                created_by=request.user
+            )
+            generate_certificate_pdf(cert, 'login/internship_offer.html')
+            created.append(cert.pk)
+
+        return JsonResponse({'status': 'success', 'created': created})
+    return JsonResponse({'status': 'error', 'message': 'CSV not found'}, status=400)
+
+
+@csrf_exempt
+@login_required
+@user_passes_test(is_coordinator)
+def bulk_completion_upload(request):
+    if request.method == 'POST' and request.FILES.get('csvFile'):
+        csv_file = request.FILES['csvFile']
+        decoded = csv_file.read().decode('utf-8').splitlines()
+        reader = csv.DictReader(decoded)
+        created = []
+
+        for row in reader:
+            cert = Certificate.objects.create(
+                certificate_type='completion',
+                title=row['Title'],
+                student_name=row['Student Name'],
+                student_id=row['Student ID'],
+                department=row['Department'],
+                degree=row['Degree'],
+                college=row['College'],
+                location=row['Location'],
+                course_name=row['Course Name'],
+                duration=row['Duration'],
+                start_date=datetime.strptime(row['Start Date'], '%Y-%m-%d'),
+                end_date=datetime.strptime(row['End Date'], '%Y-%m-%d'),
+                completion_date=datetime.strptime(row['Issue Date'], '%Y-%m-%d'),
+                issue_date=datetime.strptime(row['Issue Date'], '%Y-%m-%d'),
+                director_name=row['Director Name'],
+                created_by=request.user
+            )
+            generate_certificate_pdf(cert, 'login/internship_completion.html')
+            created.append(cert.pk)
+
+        return JsonResponse({'status': 'success', 'created': created})
+    return JsonResponse({'status': 'error', 'message': 'CSV not found'}, status=400)

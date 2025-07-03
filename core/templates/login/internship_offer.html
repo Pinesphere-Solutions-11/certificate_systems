@@ -57,7 +57,7 @@
     <div class="content">
         <p style="text-align: justify;">
             This is to certify that <strong>{{ certificate.title }}. {{ certificate.student_name }}</strong>, 
-            a {{ certificate.department }} student from {{ certificate.college }}, has Permitted to do their internship in 
+            a {{certificate.degree }} {{ certificate.department }} student from {{ certificate.college }}, has Permitted to do their internship in 
             <strong>{{ certificate.course_name }}</strong> at <strong>Pinesphere</strong> under our supervision and guidance. The internship duration 
             is from <strong>{{ certificate.start_date|date:"d M Y" }}</strong> to <strong>{{ certificate.end_date|date:"d M Y" }}</strong>.
         </p>
@@ -72,14 +72,10 @@
             <img src="{{ base_url }}/images/signatures/surendar_s.png" class="signature-img">
             {{ certificate.director_name }}<br>
             <strong>Director</strong>
-        {% elif certificate.director_name == "Mr. Vasanth Nagarajan" %}
+        {% else %}
             <img src="{{ base_url }}/images/signatures/vasanth_nagarajan.png" class="signature-img">
             {{ certificate.director_name }}<br>
             <Strong>CTO & Co-Founder</Strong>
-        {% else %}
-            <img src="{{ base_url }}/images/signatures/default_signature.png" class="signature-img">
-            {{ certificate.director_name }}<br>
-            <strong>Designation</strong>
         {% endif %}
     </div>
 

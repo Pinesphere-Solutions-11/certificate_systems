@@ -57,7 +57,7 @@
     <div class="content">
         <p style="text-align: justify;">
             This is to certify that <strong>{{ certificate.title }} {{ certificate.student_name }}</strong> 
-            (Reg no: <strong>{{ certificate.student_id }}</strong>), student of 
+            (Reg no: <strong>{{ certificate.student_id }}</strong>), student of <strong>{{ certificate.degree }}</strong> 
             <strong>{{ certificate.department }}</strong> from 
             <strong>{{ certificate.college }}</strong> has successfully completed their internship on 
             <strong>{{ certificate.course_name }}</strong> in our concern from <strong>{{ certificate.start_date|date:"d M Y" }}</strong> to <strong>{{ certificate.end_date|date:"d M Y" }}</strong>.
@@ -78,14 +78,10 @@
             <img src="{{ base_url }}/images/signatures/surendar_s.png" class="signature-img">
             {{ certificate.director_name }}<br>
             <strong>Director</strong>
-        {% elif certificate.director_name == "Mr. Vasanth Nagarajan" %}
+        {% else %}
             <img src="{{ base_url }}/images/signatures/vasanth_nagarajan.png" class="signature-img">
             {{ certificate.director_name }}<br>
             <Strong>CTO & Co-Founder</Strong>
-        {% else %}
-            <img src="{{ base_url }}/images/signatures/default_signature.png" class="signature-img">
-            {{ certificate.director_name }}<br>
-            <strong>Designation</strong>
         {% endif %}
     </div>
 
