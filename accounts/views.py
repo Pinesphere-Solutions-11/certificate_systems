@@ -18,10 +18,10 @@ from django.http import JsonResponse
 from .models import Certificate
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.core.mail import send_mail, BadHeaderError
+from django.conf import settings
 
-# =========================
-# 🔐 AUTH SYSTEM
-# =========================
+
 
 def login_view(request, role):
     logout(request)

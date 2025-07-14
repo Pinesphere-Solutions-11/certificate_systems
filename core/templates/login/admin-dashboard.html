@@ -38,7 +38,7 @@ body {
 }
 
 .admin-container {
-    max-width: 1200px;
+    max-width: 100%;
     margin: 0 auto;
 }
 
@@ -193,16 +193,21 @@ body {
     margin-bottom: 0.5rem;
     display: block;
 }
+
 .logout-btn {
-    background-color:#026aaf; 
+    background-color:#3794D0; 
     text-decoration: none !important; 
     font-size: 14px;                 
-    padding: 6px 14px;                 
+    padding: 0.50rem 1.5rem;                
     color: white;                    
-    display: inline-flex;             
-    align-items: center;             
+    display: flex;             
+    align-items: center;
+    font-weight: 500;             
     gap: 6px;                        
     border: none;
+     border-radius: 0.75rem;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
     cursor: pointer;
     
 }
@@ -361,7 +366,7 @@ body {
         <!-- Buttons -->
         <div class="form-group" style="display: flex; align-items: flex-end; gap: 1rem;">
             <button type="submit" class="action-btn"><i class="fas fa-search"></i> Search</button>
-            <a href="{% url 'admin_dashboard' %}" class="action-btn"><i class="fas fa-sync-alt"></i> Reset</a>
+            <a style="text-decoration: none;" href="{% url 'admin_dashboard' %}" class="action-btn"><i class="fas fa-sync-alt"></i> Reset</a>
         </div>
     </div>
 </form>
@@ -393,7 +398,7 @@ body {
                 <td>{{ cert.certificate_number }}</td>
                 <td>
                     {% if cert.generated_pdf %}
-                    <a href="{{ cert.generated_pdf.url }}" target="_blank" class="action-btn">Preview</a>
+                    <a style="text-decoration: none;" href="{{ cert.generated_pdf.url }}" target="_blank" class="action-btn">Preview</a>
                     {% else %}
                     <span style="color:gray;">Not generated</span>
                     {% endif %}
@@ -412,7 +417,7 @@ body {
             <div class="pagination" style="display: flex; justify-content: center; align-items: center; gap: 1rem;">
 
                 {% if page_obj.has_previous %}
-                    <a href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ page_obj.previous_page_number }}" class="action-btn">
+                    <a style="text-decoration: none;" href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ page_obj.previous_page_number }}" class="action-btn">
                         <i class="fas fa-angle-left"></i> Previous
                     </a>
                 {% endif %}

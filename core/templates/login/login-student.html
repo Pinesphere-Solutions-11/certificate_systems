@@ -161,6 +161,162 @@
         </div>
     </footer>
 
+    <!-- Modern Loading Overlay with Your Logo -->
+<div id="loadingOverlay" class="modern-loader">
+    <div class="loader-content">
+        <div class="loader-animation">
+            <div class="logo-container">
+                <img src="https://i.ibb.co/r2xvtYsR/logo-removebg-preview.png" alt="Company Logo" class="spinning-logo">
+                <div class="pulse-ring"></div>
+                <div class="pulse-ring delay"></div>
+            </div>
+        </div>
+        <h3 class="loader-text">Preparing your dashboard</h3>
+        <p class="loader-subtext">Just a moment...</p>
+    </div>
+</div>
+
+<style>
+/* Modern Loader Styles */
+.modern-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255,255,255,0.98);
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Poppins', sans-serif;
+    backdrop-filter: blur(2px);
+}
+
+.loader-content {
+    text-align: center;
+    transform: translateY(-20%);
+}
+
+.loader-animation {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 30px;
+}
+
+.logo-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.spinning-logo {
+    width: 80px;
+    height: 80px;
+    animation: gentleSpin 3s linear infinite;
+    z-index: 2;
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.1));
+}
+
+.pulse-ring {
+    position: absolute;
+    border: 3px solid rgba(55, 148, 208, 0.5);
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    animation: pulse 3s ease-out infinite;
+}
+
+.pulse-ring.delay {
+    animation-delay: 1s;
+}
+
+.loader-text {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 1.3rem;
+}
+
+.loader-subtext {
+    color: #7f8c8d;
+    font-weight: 400;
+    font-size: 0.9rem;
+}
+
+@keyframes gentleSpin {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.05); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.1);
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(1.4);
+        opacity: 0;
+    }
+}
+
+/* Add smooth transition for the loader appearance */
+.modern-loader {
+    transition: opacity 0.3s ease;
+}
+
+/* Optional: Add a subtle gradient background */
+.modern-loader::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(245,248,250,0.9) 100%);
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const loginForm = document.querySelector("form");
+    const loadingOverlay = document.getElementById("loadingOverlay");
+    
+    // Preload the logo image to prevent flickering
+    const logoImage = new Image();
+    logoImage.src = "https://i.ibb.co/r2xvtYsR/logo-removebg-preview.png";
+    
+    if (loginForm) {
+        loginForm.addEventListener("submit", function() {
+            // Show the modern loader
+            loadingOverlay.style.display = "flex";
+            
+            // Add slight delay before showing to prevent flash on failed validation
+            setTimeout(() => {
+                loadingOverlay.style.opacity = "1";
+            }, 100);
+        });
+    }
+    
+    // Handle page transitions between dashboard loads
+    window.addEventListener('beforeunload', function() {
+        if (!window.location.pathname.includes("login")) {
+            loadingOverlay.style.display = "flex";
+        }
+    });
+});
+</script>
     
 </body>
 </html>

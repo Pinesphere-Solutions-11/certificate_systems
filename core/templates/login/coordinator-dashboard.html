@@ -36,7 +36,7 @@
         }
         
         .dashboard-container {
-            max-width: 1200px;
+            max-width: 100%;
             margin: 0 auto;
             padding: 2rem;
         }
@@ -55,6 +55,9 @@
             border-radius: 0.75rem;
             box-shadow: var(--shadow);
             transition: var(--transition);
+        }
+        .navbar {
+            font-family: 'Poppins', sans-serif;
         }
         .logout-btn:hover {
             background-color:#b61a1a;
@@ -443,19 +446,13 @@
                         <option value="Mr. Vasanth Nagarajan ">Mr. Vasanth Nagarajan</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label>Signature Preview</label><br>
-                    <img id="completionSignaturePreview" src="" alt="Signature" style="height: 100px; display: none;">
-                </div>
-            </div>
-
-            <!-- Completion Date -->
-            <div class="form-row">
-                <div class="form-group">
+                 <div class="form-group">
                     <label for="completionIssueDate">Date of Issue</label>
                     <input type="date" id="completionIssueDate" name="completionIssueDate" required>
                 </div>
             </div>
+
+           
 
             <!-- Submit -->
             <div class="form-actions">
@@ -607,16 +604,11 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Signature Preview</label><br>
-                    <img id="offerSignaturePreview" src="" alt="Signature" style="height: 100px; display: none;">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
                     <label for="offerIssueDate">Date of Issue</label>
                     <input type="date" id="offerIssueDate" name="offerIssueDate" required>
                 </div>
             </div>
+            
                     <!-- Submit -->
                     <div class="form-actions">
                         <button type="submit" class="action-btn">
@@ -658,7 +650,7 @@
         <!-- Buttons -->
         <div class="form-group" style="display: flex; align-items: flex-end; gap: 1rem;">
             <button type="submit" class="action-btn"><i class="fas fa-search"></i> Search</button>
-            <a href="{% url 'coordinator_dashboard' %}" class="action-btn"><i class="fas fa-sync-alt"></i> Reset</a>
+            <a style="text-decoration: none;" href="{% url 'coordinator_dashboard' %}" class="action-btn"><i class="fas fa-sync-alt"></i> Reset</a>
         </div>
     </div>
 </form>
@@ -691,7 +683,7 @@
                         <td>{{ cert.get_certificate_type_display }}</td>
                         <td>
                             {% if cert.generated_pdf %}
-                                <a href="{{ cert.generated_pdf.url }}" class="action-btn" download>Download</a>
+                                <a style="text-decoration: none;" href="{{ cert.generated_pdf.url }}" class="action-btn" download>Download</a>
                             {% else %}
                                 <span class="action-btn disabled">N/A</span>
                             {% endif %}

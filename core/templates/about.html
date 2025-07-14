@@ -20,7 +20,24 @@
       --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       --transition: all 0.3s ease;
     }
-    /* Core nav styles reused from home page */
+    
+    /* Core styles */
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    /* Header styles */
     header {
       background-color: #ffffff;
       padding: 1rem 0;
@@ -34,20 +51,17 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      position: relative;
-      width: 90%;
-      max-width: 1200px;
-      margin: 0 auto;
     }
 
-    .logo h1 {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: #2563eb;
+    .logo a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
     }
 
-    .logo span {
-      color: #1e293b;
+    .logo img {
+      height: 40px;
     }
 
     nav ul {
@@ -55,6 +69,8 @@
       display: flex;
       align-items: center;
       gap: 2rem;
+      margin: 0;
+      padding: 0;
     }
 
     nav ul li a {
@@ -64,18 +80,19 @@
       transition: all 0.3s ease;
     }
 
-     nav > ul > li > a:hover,
-     nav > ul > li > a:active
-         {
-        color: #026aaf;
-        }
-     .login-dropdown {
+    nav ul li a:hover,
+    nav ul li a:active {
+      color: #026aaf;
+    }
+    
+    .login-dropdown {
       position: relative;
     }
 
     .login-dropdown > a > i {
       font-size: 1.8rem;
       cursor: pointer;
+      color: var(--primary-color);
     }
 
     .login-dropdown .dropdown-content {
@@ -106,18 +123,158 @@
       background-color: #f0f4f8;
       color: #026aaf;
     }
-     .login-dropdown:hover .dropdown-content {
-      /* remove hover behavior */
-      display: none;
-    }
-    .login-dropdown.active .dropdown-content {
-      display: block;
-    }
+    
     #mobile-menu {
       display: none;
       font-size: 1.8rem;
       cursor: pointer;
       color: #026aaf;
+    }
+
+    /* Hero section */
+    .about-hero {
+      background: linear-gradient(90deg, #3794D0, #026aaf);
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      text-align: center;
+      margin-top: 0;
+    }
+
+    .about-hero h1 {
+      font-size: 2.8rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .about-hero h1 span {
+      color: #000000;
+    }
+
+    /* About content */
+    .about-content,
+    .mission {
+      padding: 3rem 0;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .about-text h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .about-text p {
+      margin-bottom: 1rem;
+    }
+
+    .about-text p:last-child {
+      margin-bottom: 0;
+    }
+
+    .about-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+    }
+
+    /* Mission section */
+    .mission {
+      background-color: var(--secondary-color);
+      padding-bottom: 3rem;
+    }
+    
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .service-card {
+      background: var(--white);
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      border: 1px solid rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      margin: 0;
+    }
+
+    .service-icon {
+      width: 80px;
+      height: 80px;
+      background-color: var(--primary-light);
+      color: var(--primary-color);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 2rem;
+      transition: var(--transition);
+    }
+
+    .service-card h3 {
+      font-size: 1.4rem;
+      margin: 0 0 1rem 0;
+      color: var(--text-color);
+    }
+
+    .service-card p {
+      color: var(--text-light);
+      line-height: 1.6;
+      margin: 0 0 1rem 0;
+      flex-grow: 1;
+    }
+
+    .service-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    .service-card:hover .service-icon {
+      background-color: var(--primary-color);
+      color: var(--white);
+    }
+
+    /* Footer */
+    footer {
+      background-color: #1e293b;
+      color: #ffffff;
+      padding: 1rem 0;
+      text-align: center;
+    }
+
+  
+
+    .social-links a {
+      color: #ffffff;
+      margin: 0 10px;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+      align-items: center;
+    }
+
+    .social-links a:hover {
+      color: #60a5fa;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 992px) {
+      .services-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      }
     }
 
     @media (max-width: 768px) {
@@ -139,94 +296,27 @@
       #mobile-menu {
         display: block;
       }
-    }
-
-    .about-hero {
-      background: linear-gradient(90deg, #3794D0, #026aaf);
-      height: 140px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #ffffff;
-      text-align: center;
-      padding: 1rem 1rem 1rem;
-      margin-top: 0%;
-    }
-
-    .about-hero h1 {
-      font-size: 2.8rem;
-      font-weight: 600;
-    }
-
-    .about-hero h1 span {
-      color: #026aaf;
-    }
-
-    .about-content,
-    .mission {
-      padding: 80px 0;
-    }
-
-    .about-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 50px;
-      align-items: center;
-    }
-
-    .about-image img {
-      width: 100%;
-      border-radius: 10px;
-      box-shadow: var(--shadow);
-    }
-
-    .mission-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 30px;
-    }
-
-    .mission-card {
-      background-color: #ffffff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: var(--shadow);
-      text-align: center;
-      transform: translateY(-3px);
-      transition: transform 0.3s ease;
-    }
-
-    .mission-card i {
-      font-size: 2.5rem;
-      color: #2563eb;
-      margin-bottom: 20px;
-    }
-
-    footer {
-      background-color: #1e293b;
-      color: #ffffff;
-      padding: 30px 0;
-      text-align: center;
-    }
-
-    .social-links a {
-      color: #ffffff;
-      margin: 0 10px;
-      font-size: 1.2rem;
-      transition: all 0.3s ease;
-    }
-
-    .social-links a:hover {
-      color: #60a5fa;
-    }
-
-    @media (max-width: 768px) {
+      
+      .about-hero h1 {
+        font-size: 2.2rem;
+      }
+      
       .about-grid {
         grid-template-columns: 1fr;
       }
+      
+      .about-image {
+        order: -1;
+      }
+      
+      .services-grid {
+        grid-template-columns: 1fr;
+      }
+    }
 
+    @media (max-width: 576px) {
       .about-hero h1 {
-        font-size: 2.2rem;
+        font-size: 1.8rem;
       }
     }
   </style>
@@ -235,7 +325,7 @@
   <header>
     <div class="container">
       <div class="logo">
-        <a href="{% url 'index' %}" style="display: flex; align-items: center;">
+        <a href="{% url 'index' %}">
           <img src="https://i.ibb.co/PZqtNG29/logo.png" alt="Logo" style="height: 40px;">
           <img src="{% static 'images/company name.png' %}" alt="PineSphere" style="height: 50px;">
         </a>
@@ -265,7 +355,7 @@
 
   <section class="about-hero">
     <div class="container">
-      <h1>About <span style="color: #000000;">Pinesphere</span></h1>
+      <h1>About <span>Pinesphere</span></h1>
     </div>
   </section>
 
@@ -280,7 +370,6 @@
         </div>
         <div class="about-image">
           <img src="https://i.ibb.co/svkgc4L3/IMG-9543.jpg" alt="Our Campus">
-         
         </div>
       </div>
     </div>
@@ -288,21 +377,29 @@
 
   <section class="mission">
     <div class="container">
-      <div class="mission-grid">
-        <div class="mission-card">
-          <i class="fas fa-eye"></i>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-eye"></i>
+          </div>
           <h3>Vision</h3>
           <p>To be a globally recognized center of excellence in education that transforms lives through innovative learning.</p>
         </div>
-        <div class="mission-card">
-          <i class="fas fa-bullseye"></i>
+        
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-bullseye"></i>
+          </div>
           <h3>Mission</h3>
-          <p>To provide accessible, high-quality education that empowers students to achieve their full potential and make meaningful contributions to society.</p>
+          <p>To provide accessible, high-quality education that empowers students to achieve their full potential.</p>
         </div>
-        <div class="mission-card">
-          <i class="fas fa-chart-line"></i>
+        
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
           <h3>Values</h3>
-          <p>Integrity, Excellence, Innovation, Diversity, and Community are the core values that guide our institution.</p>
+          <p>Integrity, Excellence, Innovation, Diversity, and Community are our guiding principles.</p>
         </div>
       </div>
     </div>

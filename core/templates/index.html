@@ -37,8 +37,8 @@
     }
 
     .container {
-      width: 90%;
-      max-width: 1200px;
+      width: 100%;
+      max-width: 100%;
       margin: 0 auto;
     }
 
@@ -128,104 +128,171 @@
     }
 
     .hero {
-      padding: 3rem 0;
+      background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1471&q=80');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      padding: 8rem 0;
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
-      gap: 2rem;
+      min-height: 70vh;
+      position: relative;
+      margin-top: 0;
     }
 
     .hero-content {
-      flex: 1 1 500px;
+      max-width: 600px;
+      text-align: center;
+      margin: 0 auto;
+      color: var(--white);
+      z-index: 2;
     }
 
     .hero-content h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
+      font-size: 3rem;
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     }
 
     .hero-content span {
-      color: var(--primary-color);
+      color: #60a5fa;
+    }
+
+    .hero-content p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
     }
 
     .hero-content .btn {
       display: inline-block;
-      margin-top: 1rem;
-      padding: 0.75rem 1.5rem;
+      padding: 1rem 2rem;
       background-color: var(--primary-color);
       color: var(--white);
       border-radius: 0.5rem;
       text-decoration: none;
       transition: var(--transition);
+      font-weight: 600;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 
     .hero-content .btn:hover {
       background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
     }
 
-    .hero-image img {
-      width: 100%;
-      border-radius: 0.5rem;
-    }
-
-    .features {
-      padding: 3rem 0;
-      background-color: var(--white);
-    }
-
-    .features h2 {
-      text-align: center;
-      margin-bottom: 2rem;
-      color: var(--primary-color);
-    }
-
-    .features-grid {
-      display: grid;
-      gap: 2rem;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    }
-
-    .feature-card {
-      background: var(--light-gray);
-      padding: 2rem;
-      text-align: center;
-      border-radius: 0.5rem;
-      transition: transform 0.3s ease;
-    }
-
-    .feature-card i {
-      font-size: 2rem;
-      color: var(--primary-color);
-      margin-bottom: 1rem;
-    }
-
-    .feature-card:hover {
-      transform: translateY(-5px);
-    }
+   .features {
+    padding: 5rem 0;
+    background-color: var(--white);
+  }
+  
+  .section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  
+  .section-header h2 {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+  }
+  
+  .section-header h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background-color: var(--primary-color);
+    border-radius: 2px;
+  }
+  
+  .section-header p {
+    color: var(--text-light);
+    max-width: 700px;
+    margin: 0 auto;
+    font-size: 1.1rem;
+  }
+  
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+  
+  .service-card {
+    background: var(--white);
+    padding: 2.5rem;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.05);
+  }
+  
+  .service-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+  }
+  
+  .service-icon {
+    width: 80px;
+    height: 80px;
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2rem;
+    transition: var(--transition);
+  }
+  
+  .service-card:hover .service-icon {
+    background-color: var(--primary-color);
+    color: var(--white);
+  }
+  
+  .service-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+  }
+  
+  .service-card p {
+    color: var(--text-light);
+    line-height: 1.6;
+  }
 
     footer {
       background-color: var(--text-color);
       color: var(--white);
-      padding: 2rem 0;
+      padding: 1rem 0;
       text-align: center;
     }
 
     footer .social-links a {
       color: var(--white);
-      margin: 0 0.5rem;
+  
       font-size: 1.2rem;
       transition: var(--transition);
     }
     .login-dropdown > a > i {
-  font-size: 1.8rem; /* or try 2rem, 2.2rem, etc., for even larger */
-  
-}
+      font-size: 1.8rem;
+    }
 
     footer .social-links a:hover {
       color: #60a5fa;
     }
     .login-dropdown:hover .dropdown-content {
-      /* remove hover behavior */
       display: none;
     }
     .login-dropdown.active .dropdown-content {
@@ -254,14 +321,37 @@
       }
 
       .hero {
-        flex-direction: column;
-        text-align: center;
+        background-attachment: scroll;
+        padding: 6rem 0;
+        min-height: 60vh;
       }
 
       .hero-content h1 {
+        font-size: 2.5rem;
+      }
+
+      .hero-content p {
+        font-size: 1.1rem;
+      }
+
+      .features {
+        padding: 3rem 0;
+      }
+      
+      .section-header h2 {
         font-size: 2rem;
       }
+      
+      .services-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      
+      .service-card {
+        padding: 2rem;
+      }
     }
+    
     .logo img {
       display: inline-block;
       vertical-align: middle;
@@ -304,38 +394,46 @@
   <section class="hero">
     <div class="container">
       <div class="hero-content">
-        <h1>Welcome to <span>Pinesphere</span> Solutions</h1>
-        <p>Empowering education through innovative technology and dedicated support</p>
+        <h1 style="color: white;">Welcome to <span>Pinesphere</span> Solutions</h1>
+        <p style="color: white;">Empowering education through innovative technology and dedicated support</p>
         <a href="#features" class="btn">Explore More</a>
-      </div>
-      <div class="hero-image">
-        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1471&q=80" alt="Students learning" />
       </div>
     </div>
   </section>
 
   <section id="features" class="features">
-    <div class="container">
+  <div class="container">
+    <div class="section-header">
       <h2>Our Services</h2>
-      <div class="features-grid">
-        <div class="feature-card">
+      <p>Comprehensive solutions tailored to your educational needs</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon">
           <i class="fas fa-chalkboard-teacher"></i>
-          <h3>Expert Faculty</h3>
-          <p>Learn from industry professionals and academic experts.</p>
         </div>
-        <div class="feature-card">
+        <h3>Expert Faculty</h3>
+        <p>Learn from industry professionals and academic experts with years of practical experience.</p>
+      </div>
+      
+      <div class="service-card">
+        <div class="service-icon">
           <i class="fas fa-laptop-code"></i>
-          <h3>Modern Facilities</h3>
-          <p>State-of-the-art labs and learning environments.</p>
         </div>
-        <div class="feature-card">
+        <h3>Modern Facilities</h3>
+        <p>State-of-the-art labs and learning environments equipped with latest technology.</p>
+      </div>
+      
+      <div class="service-card">
+        <div class="service-icon">
           <i class="fas fa-handshake"></i>
-          <h3>Industry Connections</h3>
-          <p>Strong ties with leading companies for placements.</p>
         </div>
+        <h3>Industry Connections</h3>
+        <p>Strong ties with leading companies for placements and real-world experience.</p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
   <footer>
     <div class="container">
