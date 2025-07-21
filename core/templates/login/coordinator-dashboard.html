@@ -650,7 +650,7 @@
         <!-- Buttons -->
         <div class="form-group" style="display: flex; align-items: flex-end; gap: 1rem;">
             <button type="submit" class="action-btn"><i class="fas fa-search"></i> Search</button>
-            <a style="text-decoration: none;" href="{% url 'coordinator_dashboard' %}" class="action-btn"><i class="fas fa-sync-alt"></i> Reset</a>
+            <a style="text-decoration: none; padding: 0.55rem 1.5rem; " href="{% url 'coordinator_dashboard' %}" class="action-btn"><i class="fas fa-sync-alt"></i> Reset</a>
         </div>
     </div>
 </form>
@@ -758,41 +758,7 @@
     </div>
 
   <script>
-    function updateSignaturePreviewCompletion() {
-        const director = document.getElementById('completionDirector').value;
-        const img = document.getElementById('completionSignaturePreview');
-
-        const signatureMap = {
-            "Mr. Surendiran S": "/static/images/signatures/surendar_s.png",
-            "Mr. Vasanth Nagarajan CTO & Co-Founder": "/static/images/signatures/vasanth_nagarajan.png"
-        };
-
-        if (signatureMap[director]) {
-            img.src = signatureMap[director];
-            img.style.display = 'block';
-        } else {
-            img.style.display = 'none';
-        }
-    }
-
-    function updateSignaturePreview() {
-        const director = document.getElementById('offerDirector').value;
-        const img = document.getElementById('offerSignaturePreview');
-
-        const signatureMap = {
-            "Mr. Surendiran S": "/static/images/signatures/surendar_s.png",
-            "Mr. Vasanth Nagarajan CTO & Co-Founder": "/static/images/signatures/vasanth_nagarajan.png"
-        };
-
-        if (signatureMap[director]) {
-            img.src = signatureMap[director];
-            img.style.display = 'block';
-        } else {
-            img.style.display = 'none';
-        }
-    }
-
-    const departmentData = {
+       const departmentData = {
         "B.E": ["Computer Science and Engineering", "AI & DS", "Mechanical Engineering", "Electrical Engineering", "Civil Engineering", "Electronics and Communication"],
         "B.Tech": ["Information Technology", "AI & DS", "Biotechnology", "Chemical Engineering"],
         "Arts": ["Computer Science", "Mathematics", "English Literature", "Physics", "Commerce"]
@@ -919,45 +885,105 @@
         }
 
         function handleCertificateSubmit(formId, url, type) {
-            const form = document.getElementById(formId);
-            form?.addEventListener('submit', function (e) {
-                e.preventDefault();
-                const formData = new FormData(form);
+    const form = document.getElementById(formId);
+    form?.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(form);
 
-                fetch(url, {
-                    method: 'POST',
-                    headers: { 'X-CSRFToken': getCookie('csrftoken') },
-                    body: formData
-                })
-                .then(response => {
-                    if (!response.ok) throw new Error('Server error. Please check the form.');
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.status === 'success') {
-                        addCertificateToTable(
-                            data.student,
-                            data.course,
-                            data.date,
-                            data.certificate_number || 'CERT-' + Math.floor(100000 + Math.random() * 900000),
-                            type,
-                            data.download_url || ''
-                        );
-                        showPopup(data.message, true);
-                        form.reset();
-                        hideAllForms();
-                        document.querySelectorAll('.signature-preview').forEach(el => {
-                            el.style.display = 'none';
-                        });
-                    } else {
-                        showPopup(data.message || 'Failed to generate certificate.', false);
-                    }
-                })
-                .catch(err => {
-                    showPopup(err.message, false);
-                });
-            });
+        // Common validation rules
+        const alphaRegex = /^[A-Za-z\s]+$/; // Letters + spaces
+        const domainRegex = /^[A-Za-z0-9\s.,-]+$/; // Letters, numbers, spaces, dots, commas, hyphens
+
+        // 1️⃣ Student Name Validation
+        const nameInput = form.querySelector('[name$="StudentName"], [name="student_name"]');
+        if (nameInput) {
+            const value = nameInput.value.trim();
+            if (!alphaRegex.test(value)) {
+                showPopup('Only letters and spaces allowed in student name.', false);
+                return;
+            }
         }
+
+        // 2️⃣ College Validation
+        const collegeInput = form.querySelector('[name$="College"]');
+        if (collegeInput) {
+            const value = collegeInput.value.trim();
+            if (!alphaRegex.test(value)) {
+                showPopup('Only letters and spaces allowed in college name.', false);
+                return;
+            }
+        }
+
+        // 3️⃣ Location Validation
+        const locationInput = form.querySelector('[name$="Location"]');
+        if (locationInput) {
+            const value = locationInput.value.trim();
+            if (value && !alphaRegex.test(value)) {
+                showPopup('Only letters and spaces allowed in location field.', false);
+                return;
+            }
+        }
+
+        // 4️⃣ Course/Domain Validation
+        const domainInput = form.querySelector('[name$="CourseName"]');
+        if (domainInput) {
+            const value = domainInput.value.trim();
+            if (!domainRegex.test(value)) {
+                showPopup('Only letters, numbers, spaces, and basic punctuation allowed in domain.', false);
+                return;
+            }
+        }
+
+        // 5️⃣ Student Department Validation
+        const departmentInput = form.querySelector('[name="student_department"]');
+        if (departmentInput) {
+            const value = departmentInput.value.trim();
+            if (!alphaRegex.test(value)) {
+                showPopup('Only letters and spaces allowed in department field.', false);
+                return;
+            }
+        }
+
+        fetch(url, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Server error. Please check the form.');
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                addCertificateToTable(
+                    data.student,
+                    data.course,
+                    data.date,
+                    data.certificate_number || 'CERT-' + Math.floor(100000 + Math.random() * 900000),
+                    type,
+                    data.download_url || ''
+                );
+                showPopup(data.message, true);
+                form.reset();
+                hideAllForms();
+
+                document.querySelectorAll('.signature-preview').forEach(el => {
+                    el.style.display = 'none';
+                });
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                showPopup(data.message || 'Failed to generate certificate.', false);
+            }
+        })
+        .catch(err => {
+            showPopup(err.message, false);
+        });
+    });
+}
+
 
         document.getElementById('bulkOfferUploadForm')?.addEventListener('submit', function (e) {
             e.preventDefault();
