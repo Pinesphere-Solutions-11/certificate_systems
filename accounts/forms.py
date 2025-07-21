@@ -15,7 +15,7 @@ class LoginForm(AuthenticationForm):
 
 
 
-from django import forms
+
 from .models import Coordinator, Student, AdminUser
 
 class CoordinatorForm(forms.ModelForm):
@@ -37,3 +37,11 @@ class AdminUserForm(forms.ModelForm):
             'password': forms.PasswordInput(),
         }
 
+# forms.py
+
+from .models import ContactMessage
+
+class ContactMessageForm(forms.ModelForm):
+    class Meta:
+        model = ContactMessage
+        fields = ['name', 'email', 'subject', 'message']

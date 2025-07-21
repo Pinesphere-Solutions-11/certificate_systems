@@ -11,8 +11,8 @@ from django.core.files.base import File
 import tempfile
 from django.conf import settings
 from datetime import datetime, timezone
-from .forms import LoginForm, CoordinatorForm, StudentForm, AdminUserForm
-from .models import Certificate, Coordinator, Student, AdminUser, User
+from .forms import ContactMessageForm, LoginForm, CoordinatorForm, StudentForm, AdminUserForm
+from .models import ContactMessage, Certificate, Coordinator, Student, AdminUser, User
 from datetime import datetime
 from django.http import JsonResponse
 from .models import Certificate
@@ -20,8 +20,47 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.core.mail import send_mail, BadHeaderError
 from django.conf import settings
+from django.core.mail import send_mail
 
+def contact_view(request):
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        email = request.POST.get('email', '').strip()
+        subject = request.POST.get('subject', '').strip()
+        message = request.POST.get('message', '').strip()
 
+        print("===> POST received")
+        print("Name:", name)
+        print("Email:", email)
+        print("Subject:", subject)
+        print("Message:", message)
+
+        if name and email and subject and message:
+            obj = ContactMessage.objects.create(
+                name=name,
+                email=email,
+                subject=subject,
+                message=message
+            )
+            print("SAVED TO DATABASE:", obj)
+
+            # Email sending
+            from django.core.mail import send_mail
+            from django.conf import settings
+
+            full_message = f"From: {name} <{email}>\n\n{message}"
+            send_mail(subject, full_message, settings.EMAIL_HOST_USER, [settings.ADMIN_EMAIL])
+
+            from django.contrib import messages
+            messages.success(request, "Your message has been sent!")
+            return redirect('contact')
+
+        else:
+            print("❌ Validation failed — missing fields")
+            from django.contrib import messages
+            messages.error(request, "Please fill in all fields.")
+
+    return render(request, 'contact.html')
 
 def login_view(request, role):
     logout(request)
