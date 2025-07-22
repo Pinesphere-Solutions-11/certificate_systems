@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.urls import reverse
-from django.http import JsonResponse, FileResponse
+from django.http import Http404, JsonResponse, FileResponse
 from django.template.loader import render_to_string
 from weasyprint import HTML
 from django.core.files.base import File
@@ -21,6 +21,19 @@ from django.db.models import Q
 from django.core.mail import send_mail, BadHeaderError
 from django.conf import settings
 from django.core.mail import send_mail
+import threading
+from .models import User
+from .models import Student
+from django.contrib.auth.forms import AuthenticationForm
+
+def create_student_user(name, student_id):
+    username = name.strip().lower().replace(" ", "")
+    if not User.objects.filter(username=username).exists():
+        user = User.objects.create_user(username=username, password=student_id)
+        user.save()
+
+def send_email_async(subject, message, from_email, recipient_list):
+    threading.Thread(target=send_mail, args=(subject, message, from_email, recipient_list)).start()
 
 def contact_view(request):
     if request.method == 'POST':
@@ -28,12 +41,6 @@ def contact_view(request):
         email = request.POST.get('email', '').strip()
         subject = request.POST.get('subject', '').strip()
         message = request.POST.get('message', '').strip()
-
-        print("===> POST received")
-        print("Name:", name)
-        print("Email:", email)
-        print("Subject:", subject)
-        print("Message:", message)
 
         if name and email and subject and message:
             obj = ContactMessage.objects.create(
@@ -44,12 +51,8 @@ def contact_view(request):
             )
             print("SAVED TO DATABASE:", obj)
 
-            # Email sending
-            from django.core.mail import send_mail
-            from django.conf import settings
-
-            full_message = f"From: {name} <{email}>\n\n{message}"
-            send_mail(subject, full_message, settings.EMAIL_HOST_USER, [settings.ADMIN_EMAIL])
+            full_message = f"From: {name} <{email}>\n\nMessage: \n\t {message}"
+            send_email_async(subject, full_message, settings.EMAIL_HOST_USER, [settings.ADMIN_EMAIL])
 
             from django.contrib import messages
             messages.success(request, "Your message has been sent!")
@@ -63,7 +66,12 @@ def contact_view(request):
     return render(request, 'contact.html')
 
 def login_view(request, role):
+    from django.contrib.auth.forms import AuthenticationForm
+    from django.contrib.auth import login, logout
+
     logout(request)
+    form = None
+
     template_map = {
         'admin': 'login-admin.html',
         'coordinator': 'login-coordinator.html',
@@ -73,21 +81,45 @@ def login_view(request, role):
     if role not in template_map:
         return redirect('login', role='student')
 
-    form = LoginForm(data=request.POST or None)
+    # ✅ STUDENT LOGIN using Certificate model
+    if role == 'student':
+        if request.method == 'POST':
+            username = request.POST.get('username', '').strip().lower().replace(" ", "")
+            password = request.POST.get('password', '').strip()
 
-    if request.method == 'POST':
-        if form.is_valid():
-            user = form.get_user()
-            if user.role != role:
-                messages.error(request, "You are not authorized to log in as this role.")
+            # Search in Certificate table
+            try:
+                certificate = next(
+                    cert for cert in Certificate.objects.all()
+                    if cert.student_name.strip().lower().replace(" ", "") == username
+                    and cert.student_id == password
+                )
+
+                # Save student ID in session for dashboard use
+                request.session['student_id'] = certificate.student_id
+                return redirect('student_dashboard')
+
+            except StopIteration:
+                messages.error(request, "Invalid student name or register number.")
+        
+        return render(request, f'login/{template_map[role]}')  # no form context needed for student
+
+    # ✅ ADMIN / COORDINATOR login
+    else:
+        form = AuthenticationForm(data=request.POST or None)
+
+        if request.method == 'POST':
+            if form.is_valid():
+                user = form.get_user()
+                if user.role != role:
+                    messages.error(request, "You are not authorized to log in as this role.")
+                else:
+                    login(request, user)
+                    return redirect('dashboard_redirect')
             else:
-                login(request, user)
-                return redirect('dashboard_redirect')
-        else:
-            messages.error(request, "Invalid credentials. Please try again.")
+                messages.error(request, "Invalid credentials. Please try again.")
 
     return render(request, f'login/{template_map[role]}', {'form': form})
-
 
 def logout_view(request):
     logout(request)
@@ -248,17 +280,22 @@ def coordinator_dashboard(request):
 # 👨‍🎓 STUDENT DASHBOARD
 # =========================
 
-@login_required
-@user_passes_test(is_student)
-def student_dashboard(request):
-    certs = Certificate.objects.filter(student_id=request.user.username)
-    return render(request, 'login/student-dashboard.html', {'certificates': certs})
 
-@login_required
-@user_passes_test(is_student)
-def download_certificate(request, cert_id):
-    cert = get_object_or_404(Certificate, id=cert_id, student_id=request.user.username)
-    return FileResponse(cert.generated_pdf, as_attachment=True)
+def student_dashboard(request):
+    student_id = request.session.get('student_id')
+    if not student_id:
+        return redirect('login', role='student')
+
+    # ✅ Get all certificates where student_id matches
+    certificates = Certificate.objects.filter(student_id=student_id)
+
+    # ✅ Use the name from the first certificate, fallback to "Student"
+    student_name = certificates.first().student_name if certificates.exists() else "Student"
+
+    return render(request, 'student-dashboard.html', {
+        'student_name': student_name,
+        'certificates': certificates
+    })
 
 
 # =========================
@@ -362,6 +399,7 @@ def create_offer_letter(request):
             created_by=request.user,
         )
 
+        
         cert.save()
         generate_certificate_pdf(cert, 'login/internship_offer.html')
 
@@ -412,6 +450,7 @@ def create_completion_certificate(request):
             signature=signature_file,
             created_by=request.user,
         )
+        
 
         cert.save()
         generate_certificate_pdf(cert, 'login/internship_completion.html')
@@ -456,6 +495,9 @@ def bulk_offer_upload(request):
                 director_name=row['Director Name'],
                 created_by=request.user
             )
+
+            
+
             generate_certificate_pdf(cert, 'login/internship_offer.html')
             created.append(cert.pk)
 
@@ -492,8 +534,44 @@ def bulk_completion_upload(request):
                 director_name=row['Director Name'],
                 created_by=request.user
             )
+
+            
+
             generate_certificate_pdf(cert, 'login/internship_completion.html')
             created.append(cert.pk)
 
         return JsonResponse({'status': 'success', 'created': created})
     return JsonResponse({'status': 'error', 'message': 'CSV not found'}, status=400)
+
+
+
+def download_certificate(request, cert_id):
+    student_id = request.session.get('student_id')
+    cert = get_object_or_404(Certificate, id=cert_id, student_id=student_id)
+
+    if not cert.generated_pdf:
+        raise Http404("PDF not available.")
+
+    return FileResponse(cert.generated_pdf.open('rb'), as_attachment=True, filename=f"{cert.student_name}.pdf")
+
+def student_login_view(request):
+   if request.method == 'POST':
+        username = request.POST.get('username', '').strip().lower()
+        password = request.POST.get('password', '').strip()
+
+        try:
+            student = Student.objects.get(name__iexact=username, student_id=password)
+            # ✅ Only allow login if student has at least 1 certificate
+            has_cert = Certificate.objects.filter(student_name=student.name).exists()
+            if not has_cert:
+                messages.error(request, "Certificate not generated yet for this student.")
+                return redirect('student_login')
+
+            # ✅ Save to session
+            request.session['student_id'] = student.id
+            return redirect('student_dashboard')
+
+        except Student.DoesNotExist:
+            messages.error(request, "Invalid name or register number.")
+
+        return render(request, 'student-login.html')

@@ -340,9 +340,9 @@
             <button class="action-btn" id="showCompletionForm">
                 <i class="fas fa-award"></i> Generate Completion Certificate
             </button>
-            <button class="action-btn" id="showStudentForm">
+            <!-- <button class="action-btn" id="showStudentForm">
                 <i class="fas fa-user-plus"></i> Add Student
-            </button>
+            </button> -->
             <button class="action-btn" id="showBulkUploadForm">
             <i class="fas fa-upload"></i> Bulk Upload
             </button>
@@ -440,7 +440,7 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="completionDirector">Director Name</label>
-                    <select id="completionDirector" name="completionDirector" required onchange="updateSignaturePreviewCompletion()">
+                    <select id="completionDirector" name="completionDirector" required >
                         <option value="">Select Director</option>
                         <option value="Mr. Surendiran S">Mr. Surendiran S</option>
                         <option value="Mr. Vasanth Nagarajan ">Mr. Vasanth Nagarajan</option>
@@ -597,7 +597,7 @@
                     <div class="form-row">
                 <div class="form-group">
                     <label for="offerDirector">Director Name</label>
-                    <select id="offerDirector" name="offerDirector" required onchange="updateSignaturePreviewCompletion()">
+                    <select id="offerDirector" name="offerDirector" required >
                         <option value="">Select Director</option>
                         <option value="Mr. Surendiran S">Mr. Surendiran S</option>
                         <option value="Mr. Vasanth Nagarajan ">Mr. Vasanth Nagarajan</option>
@@ -778,8 +778,10 @@
                 department.appendChild(option);
             });
             departmentGroup.style.display = "block";
+            department.required = true;
         } else {
             departmentGroup.style.display = "none";
+            department.required = false;
         }
     }
 

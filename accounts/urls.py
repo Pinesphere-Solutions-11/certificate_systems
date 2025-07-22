@@ -2,9 +2,10 @@ from django import views
 from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import path
-from .views import add_student
+from .views import add_student, student_login_view
 from .views import contact_view
 from . import views
+from .views import download_certificate
 
 from .views import (
     login_view, logout_view, dashboard_redirect,
@@ -28,4 +29,5 @@ urlpatterns = [
     path('certificate/completion/create/', create_completion_certificate, name='create_completion_certificate'),
     path('accounts/login/', lambda request: redirect('login', role='coordinator')),
     path('contact/', contact_view, name='contact'),
+    path('certificate/download/<int:cert_id>/', download_certificate, name='download_certificate'),
 ] 
