@@ -1,16 +1,19 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PineSphere | About</title>
   <link rel="icon" type="image/png" href="https://i.ibb.co/r2xvtYsR/logo-removebg-preview.png">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/style.css' %}" />
   <style>
-     :root {
+    :root {
       --primary-color: #3794D0;
       --primary-dark: #026aaf;
       --secondary-color: #f8fafc;
@@ -20,7 +23,7 @@
       --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       --transition: all 0.3s ease;
     }
-    
+
     /* Core styles */
     body {
       font-family: 'Poppins', sans-serif;
@@ -29,14 +32,14 @@
       color: var(--text-color);
       line-height: 1.6;
     }
-    
+
     .container {
       width: 100%;
-      max-width: 1200px;
+      max-width: 100%;
       margin: 0 auto;
       padding: 0 20px;
     }
-    
+
     /* Header styles */
     header {
       background-color: #ffffff;
@@ -84,15 +87,14 @@
     nav ul li a:active {
       color: #026aaf;
     }
-    
+
     .login-dropdown {
       position: relative;
     }
 
-    .login-dropdown > a > i {
+    .login-dropdown>a>i {
       font-size: 1.8rem;
       cursor: pointer;
-      color: var(--primary-color);
     }
 
     .login-dropdown .dropdown-content {
@@ -123,7 +125,7 @@
       background-color: #f0f4f8;
       color: #026aaf;
     }
-    
+
     #mobile-menu {
       display: none;
       font-size: 1.8rem;
@@ -192,7 +194,7 @@
       background-color: var(--secondary-color);
       padding-bottom: 3rem;
     }
-    
+
     .services-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -203,8 +205,8 @@
       background: var(--white);
       padding: 1.5rem;
       border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-      border: 1px solid rgba(0,0,0,0.05);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(0, 0, 0, 0.05);
       display: flex;
       flex-direction: column;
       height: 100%;
@@ -240,7 +242,7 @@
 
     .service-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     }
 
     .service-card:hover .service-icon {
@@ -248,26 +250,105 @@
       color: var(--white);
     }
 
-    /* Footer */
+    /* Footer Styles */
     footer {
-      background-color: #1e293b;
+      background-color: #000000;
       color: #ffffff;
-      padding: 1rem 0;
-      text-align: center;
+      padding: 40px 0;
+      margin-top: auto;
     }
 
-  
+    footer .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
 
-    .social-links a {
+    /* Copyright Text */
+    footer p {
+      font-size: 16px;
+      font-weight: 400;
       color: #ffffff;
-      margin: 0 10px;
-      font-size: 1.2rem;
-      transition: all 0.3s ease;
+      margin: 0;
+      opacity: 0.9;
+    }
+
+    /* Social Links Container */
+    .social-links {
+      display: flex;
+      gap: 20px;
       align-items: center;
     }
 
-    .social-links a:hover {
-      color: #60a5fa;
+    /* Social Icons Base Styles */
+    .social-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      background-color: transparent;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      color: #ffffff;
+      font-size: 20px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Twitter/X Default State - White Background with Black X */
+    .social-icon.twitter {
+      background-color: #000000;
+      border-color: #ffffff88;
+      color: #ffffff;
+
+    }
+
+    .social-icon.twitter i {
+      font-weight: 700;
+      font-size: 20px;
+      font-family: sans-serif;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .social-icon:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Facebook Hover */
+    .social-icon.facebook:hover {
+      background-color: #1877f2;
+      border-color: #1877f2;
+      color: #ffffff;
+    }
+
+    /* Twitter/X Hover */
+    .social-icon.twitter:hover {
+      background-color: #ffffff;
+      border-color: #000000;
+      color: #000000;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    /* LinkedIn Hover */
+    .social-icon.linkedin:hover {
+      background-color: #0269a0;
+      border-color: #046091;
+      color: #ffffff;
+    }
+
+    /* Instagram Hover - Gradient */
+    .social-icon.instagram:hover {
+      background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      border-color: #bc1888;
+      color: #ffffff;
     }
 
     /* Responsive styles */
@@ -296,19 +377,19 @@
       #mobile-menu {
         display: block;
       }
-      
+
       .about-hero h1 {
         font-size: 2.2rem;
       }
-      
+
       .about-grid {
         grid-template-columns: 1fr;
       }
-      
+
       .about-image {
         order: -1;
       }
-      
+
       .services-grid {
         grid-template-columns: 1fr;
       }
@@ -321,6 +402,7 @@
     }
   </style>
 </head>
+
 <body>
   <header>
     <div class="container">
@@ -364,9 +446,12 @@
       <div class="about-grid">
         <div class="about-text">
           <h2>Our Institution</h2>
-          <p>Founded in 2005, EduConnect has been at the forefront of educational excellence, providing students with the tools and knowledge they need to succeed in an ever-changing world.</p>
-          <p>Our institution boasts a 98% satisfaction rate among students and maintains strong industry connections that lead to excellent placement opportunities.</p>
-          <p>With state-of-the-art facilities and a faculty comprising industry experts and academic leaders, we're committed to delivering an education that goes beyond textbooks.</p>
+          <p>Founded in 2005, EduConnect has been at the forefront of educational excellence, providing students with
+            the tools and knowledge they need to succeed in an ever-changing world.</p>
+          <p>Our institution boasts a 98% satisfaction rate among students and maintains strong industry connections
+            that lead to excellent placement opportunities.</p>
+          <p>With state-of-the-art facilities and a faculty comprising industry experts and academic leaders, we're
+            committed to delivering an education that goes beyond textbooks.</p>
         </div>
         <div class="about-image">
           <img src="https://i.ibb.co/svkgc4L3/IMG-9543.jpg" alt="Our Campus">
@@ -383,9 +468,10 @@
             <i class="fas fa-eye"></i>
           </div>
           <h3>Vision</h3>
-          <p>To be a globally recognized center of excellence in education that transforms lives through innovative learning.</p>
+          <p>To be a globally recognized center of excellence in education that transforms lives through innovative
+            learning.</p>
         </div>
-        
+
         <div class="service-card">
           <div class="service-icon">
             <i class="fas fa-bullseye"></i>
@@ -393,7 +479,7 @@
           <h3>Mission</h3>
           <p>To provide accessible, high-quality education that empowers students to achieve their full potential.</p>
         </div>
-        
+
         <div class="service-card">
           <div class="service-icon">
             <i class="fas fa-chart-line"></i>
@@ -407,12 +493,24 @@
 
   <footer>
     <div class="container">
-      <p>&copy; 2023 EduConnect. All rights reserved.</p>
+      <p>&copy; 2025 Pinephere Solutions Private Limited</p>
       <div class="social-links">
-        <a href="https://www.facebook.com/profile.php?id=100094365712042&amp;mibextid=ZbWKwL"><i class="fab fa-facebook-f"></i></a>
-        <a href="https://twitter.com/Pinesphere10941"><i class="fab fa-twitter"></i></a>
-        <a href="https://www.linkedin.com/company/pinespheresolutions/posts/?feedView=all"><i class="fab fa-linkedin-in"></i></a>
-        <a href="https://www.instagram.com/pinesphere_official?igsh=MWd5eWVpNzIyN2hudg=="><i class="fab fa-instagram"></i></a>
+        <a href="https://www.facebook.com/profile.php?id=100094365712042&mibextid=ZbWKwL" target="_blank"
+          rel="noopener noreferrer" class="social-icon facebook">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="https://twitter.com/Pinesphere10941" target="_blank" rel="noopener noreferrer"
+          class="social-icon twitter">
+          <span style="font-size: 22px;  font-family: 'Segoe UI', sans-serif;">𝕏</span>
+        </a>
+        <a href="https://www.linkedin.com/company/pinespheresolutions/posts/?feedView=all" target="_blank"
+          rel="noopener noreferrer" class="social-icon linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+        <a href="https://www.instagram.com/pinesphere_official?igsh=MWd5eWVpNzIyN2hudg==" target="_blank"
+          rel="noopener noreferrer" class="social-icon instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
       </div>
     </div>
   </footer>
@@ -443,4 +541,5 @@
     });
   </script>
 </body>
+
 </html>

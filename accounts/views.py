@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.urls import reverse
-from django.http import Http404, JsonResponse, FileResponse
+from django.http import Http404, HttpResponse, JsonResponse, FileResponse
 from django.template.loader import render_to_string
 from weasyprint import HTML
 from django.core.files.base import File
@@ -25,6 +25,10 @@ import threading
 from .models import User
 from .models import Student
 from django.contrib.auth.forms import AuthenticationForm
+
+@login_required
+def ping_session(request):
+    return HttpResponse("pong")
 
 def create_student_user(name, student_id):
     username = name.strip().lower().replace(" ", "")
@@ -96,6 +100,7 @@ def login_view(request, role):
                 )
 
                 # Save student ID in session for dashboard use
+                request.session['student_name'] = certificate.student_name
                 request.session['student_id'] = certificate.student_id
                 return redirect('student_dashboard')
 
@@ -283,17 +288,20 @@ def coordinator_dashboard(request):
 
 def student_dashboard(request):
     student_id = request.session.get('student_id')
-    if not student_id:
+    student_name = request.session.get('student_name')
+    if not student_name:
         return redirect('login', role='student')
 
     # ✅ Get all certificates where student_id matches
-    certificates = Certificate.objects.filter(student_id=student_id)
+    if (student_name == student_name and student_id == student_id):
+        certificates = Certificate.objects.filter(student_name=student_name, student_id=student_id)
 
     # ✅ Use the name from the first certificate, fallback to "Student"
     student_name = certificates.first().student_name if certificates.exists() else "Student"
 
     return render(request, 'student-dashboard.html', {
         'student_name': student_name,
+        'student_id' : student_id,
         'certificates': certificates
     })
 
@@ -546,8 +554,9 @@ def bulk_completion_upload(request):
 
 
 def download_certificate(request, cert_id):
+    student_name = request.session.get('student_name')
     student_id = request.session.get('student_id')
-    cert = get_object_or_404(Certificate, id=cert_id, student_id=student_id)
+    cert = get_object_or_404(Certificate, id=cert_id, student_name=student_name, student_id=student_id)
 
     if not cert.generated_pdf:
         raise Http404("PDF not available.")

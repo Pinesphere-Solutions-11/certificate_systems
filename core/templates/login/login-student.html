@@ -2,13 +2,16 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pinesphere | Student Login</title>
     <link rel="icon" type="image/png" href="https://i.ibb.co/r2xvtYsR/logo-removebg-preview.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <style>
         .login-container {
@@ -18,7 +21,7 @@
             min-height: calc(100vh - 120px);
             padding: 40px 0;
         }
-        
+
         .login-box {
             background-color: var(--white);
             padding: 40px;
@@ -28,29 +31,29 @@
             max-width: 500px;
             text-align: center;
         }
-        
+
         .login-box h2 {
             margin-bottom: 30px;
             color: var(--primary-color);
         }
-        
+
         .login-box i {
             font-size: 3rem;
             color: var(--primary-color);
             margin-bottom: 20px;
         }
-        
+
         .form-group {
             margin-bottom: 20px;
             text-align: left;
         }
-        
+
         .form-group label {
             display: block;
             margin-bottom: 8px;
             font-weight: 500;
         }
-        
+
         .form-group input {
             width: 100%;
             padding: 12px 15px;
@@ -58,7 +61,7 @@
             border-radius: 5px;
             font-family: 'Poppins', sans-serif;
         }
-        
+
         .login-btn {
             width: 100%;
             padding: 12px;
@@ -71,52 +74,156 @@
             transition: var(--transition);
             margin-top: 10px;
         }
-        
+
         .login-btn:hover {
             background-color: var(--primary-dark);
         }
-        
+
         .login-footer {
             margin-top: 20px;
             font-size: 0.9rem;
         }
-        
+
         .extra-options {
             margin-top: 20px;
         }
-        
+
         .extra-options a {
             color: var(--primary-color);
             text-decoration: none;
             display: block;
             margin: 10px 0;
         }
-        
+
         .extra-options a:hover {
             text-decoration: underline;
         }
+
+        /* Footer Styles */
+        footer {
+            background-color: #000000;
+            color: #ffffff;
+            padding: 40px 0;
+            margin-top: auto;
+        }
+
+        footer .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* Copyright Text */
+        footer p {
+            font-size: 16px;
+            font-weight: 400;
+            color: #ffffff;
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        /* Social Links Container */
+        .social-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        /* Social Icons Base Styles */
+        .social-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background-color: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            color: #ffffff;
+            font-size: 20px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Twitter/X Default State - White Background with Black X */
+        .social-icon.twitter {
+            background-color: #000000;
+            border-color: #ffffff88;
+            color: #ffffff;
+
+        }
+
+        .social-icon.twitter i {
+            font-weight: 700;
+            font-size: 20px;
+            font-family: sans-serif;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .social-icon:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Facebook Hover */
+        .social-icon.facebook:hover {
+            background-color: #1877f2;
+            border-color: #1877f2;
+            color: #ffffff;
+        }
+
+        /* Twitter/X Hover */
+        .social-icon.twitter:hover {
+            background-color: #ffffff;
+            border-color: #000000;
+            color: #000000;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* LinkedIn Hover */
+        .social-icon.linkedin:hover {
+            background-color: #0269a0;
+            border-color: #046091;
+            color: #ffffff;
+        }
+
+        /* Instagram Hover - Gradient */
+        .social-icon.instagram:hover {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            border-color: #bc1888;
+            color: #ffffff;
+        }
     </style>
 </head>
+
 <body>
     <header>
         <div class="container">
-           <div class="logo">
-        <a href="{% url 'index' %}" style="display: flex; align-items: center; gap: 0.5rem;">
-          <img src="https://i.ibb.co/PZqtNG29/logo.png" alt="Logo" style="height: 40px;">
-          <img src="{% static 'images/company name.png' %}" alt="PineSphere" style="height: 50px;">
-        </a>
-      </div>
+            <div class="logo">
+                <a href="{% url 'index' %}" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <img src="https://i.ibb.co/PZqtNG29/logo.png" alt="Logo" style="height: 40px;">
+                    <img src="{% static 'images/company name.png' %}" alt="PineSphere" style="height: 50px;">
+                </a>
+            </div>
             <nav>
                 <ul>
-                   <li><a href="{% url 'index' %}">Home</a></li>
+                    <li><a href="{% url 'index' %}">Home</a></li>
                     <li><a href="{% url 'about' %}">About</a></li>
                     <li><a href="{% url 'contact' %}">Contact</a></li>
                     <li class="login-dropdown">
                         <a href="#"><i class="fas fa-user-circle"></i></a>
                         <div class="dropdown-content">
                             <a href="{% url 'login' role='admin' %}"><i class="fas fa-user-shield"></i> Admin Login</a>
-                            <a href="{% url 'login' role='coordinator' %}"><i class="fas fa-user-tie"></i> Coordinator Login</a>
-                            <a href="{% url 'login' role='student' %}"><i class="fas fa-user-graduate"></i> Student Login</a>
+                            <a href="{% url 'login' role='coordinator' %}"><i class="fas fa-user-tie"></i> Coordinator
+                                Login</a>
+                            <a href="{% url 'login' role='student' %}"><i class="fas fa-user-graduate"></i> Student
+                                Login</a>
                         </div>
                     </li>
                 </ul>
@@ -128,23 +235,23 @@
         <div class="login-box">
             <i class="fas fa-user-graduate"></i>
             <h2>Student Login</h2>
-            <form method="post" action=""> 
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input name="username" type="text">
+            <form method="post" action="">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input name="username" type="text">
 
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input name="password" type="password">
-                    </div>
-                    <button type="submit" class="login-btn">Login</button>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input name="password" type="password">
+                </div>
+                <button type="submit" class="login-btn">Login</button>
             </form>
             {% if messages %}
-                {% for message in messages %}
-                    <div style="color: red;">{{ message }}</div>
-                {% endfor %}
+            {% for message in messages %}
+            <div style="color: red;">{{ message }}</div>
+            {% endfor %}
             {% endif %}
             <div class="login-footer">
                 <p>Having trouble logging in? Contact the student help desk.</p>
@@ -154,172 +261,196 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2023 EduConnect. All rights reserved.</p>
+            <p>&copy; 2025 Pinephere Solutions Private Limited</p>
             <div class="social-links">
-                <a href="https://www.facebook.com/profile.php?id=100094365712042&amp;mibextid=ZbWKwL"><i class="fab fa-facebook-f"></i></a>
-                <a href="https://twitter.com/Pinesphere10941"><i class="fab fa-twitter"></i></a>
-                <a href="https://www.linkedin.com/company/pinespheresolutions/posts/?feedView=all"><i class="fab fa-linkedin-in"></i></a>
-                <a href="https://www.instagram.com/pinesphere_official?igsh=MWd5eWVpNzIyN2hudg=="><i class="fab fa-instagram"></i></a>
+                <a href="https://www.facebook.com/profile.php?id=100094365712042&mibextid=ZbWKwL" target="_blank"
+                    rel="noopener noreferrer" class="social-icon facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://twitter.com/Pinesphere10941" target="_blank" rel="noopener noreferrer"
+                    class="social-icon twitter">
+                    <span style="font-size: 22px;  font-family: 'Segoe UI', sans-serif;">𝕏</span>
+                </a>
+                <a href="https://www.linkedin.com/company/pinespheresolutions/posts/?feedView=all" target="_blank"
+                    rel="noopener noreferrer" class="social-icon linkedin">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="https://www.instagram.com/pinesphere_official?igsh=MWd5eWVpNzIyN2hudg==" target="_blank"
+                    rel="noopener noreferrer" class="social-icon instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
             </div>
         </div>
     </footer>
 
     <!-- Modern Loading Overlay with Your Logo -->
-<div id="loadingOverlay" class="modern-loader">
-    <div class="loader-content">
-        <div class="loader-animation">
-            <div class="logo-container">
-                <img src="https://i.ibb.co/r2xvtYsR/logo-removebg-preview.png" alt="Company Logo" class="spinning-logo">
-                <div class="pulse-ring"></div>
-                <div class="pulse-ring delay"></div>
+    <div id="loadingOverlay" class="modern-loader">
+        <div class="loader-content">
+            <div class="loader-animation">
+                <div class="logo-container">
+                    <img src="https://i.ibb.co/r2xvtYsR/logo-removebg-preview.png" alt="Company Logo"
+                        class="spinning-logo">
+                    <div class="pulse-ring"></div>
+                    <div class="pulse-ring delay"></div>
+                </div>
             </div>
+            <h3 class="loader-text">Preparing your dashboard</h3>
+            <p class="loader-subtext">Just a moment...</p>
         </div>
-        <h3 class="loader-text">Preparing your dashboard</h3>
-        <p class="loader-subtext">Just a moment...</p>
     </div>
-</div>
 
-<style>
-/* Modern Loader Styles */
-.modern-loader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(255,255,255,0.98);
-    z-index: 9999;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    font-family: 'Poppins', sans-serif;
-    backdrop-filter: blur(2px);
-}
-
-.loader-content {
-    text-align: center;
-    transform: translateY(-20%);
-}
-
-.loader-animation {
-    position: relative;
-    width: 150px;
-    height: 150px;
-    margin: 0 auto 30px;
-}
-
-.logo-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.spinning-logo {
-    width: 80px;
-    height: 80px;
-    animation: gentleSpin 3s linear infinite;
-    z-index: 2;
-    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.1));
-}
-
-.pulse-ring {
-    position: absolute;
-    border: 3px solid rgba(55, 148, 208, 0.5);
-    border-radius: 50%;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    animation: pulse 3s ease-out infinite;
-}
-
-.pulse-ring.delay {
-    animation-delay: 1s;
-}
-
-.loader-text {
-    color: #2c3e50;
-    font-weight: 600;
-    margin-bottom: 5px;
-    font-size: 1.3rem;
-}
-
-.loader-subtext {
-    color: #7f8c8d;
-    font-weight: 400;
-    font-size: 0.9rem;
-}
-
-@keyframes gentleSpin {
-    0% { transform: rotate(0deg) scale(1); }
-    50% { transform: rotate(180deg) scale(1.05); }
-    100% { transform: rotate(360deg) scale(1); }
-}
-
-@keyframes pulse {
-    0% {
-        transform: scale(0.1);
-        opacity: 0;
-    }
-    50% {
-        opacity: 0.5;
-    }
-    100% {
-        transform: scale(1.4);
-        opacity: 0;
-    }
-}
-
-/* Add smooth transition for the loader appearance */
-.modern-loader {
-    transition: opacity 0.3s ease;
-}
-
-/* Optional: Add a subtle gradient background */
-.modern-loader::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(245,248,250,0.9) 100%);
-}
-</style>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    const loginForm = document.querySelector("form");
-    const loadingOverlay = document.getElementById("loadingOverlay");
-    
-    // Preload the logo image to prevent flickering
-    const logoImage = new Image();
-    logoImage.src = "https://i.ibb.co/r2xvtYsR/logo-removebg-preview.png";
-    
-    if (loginForm) {
-        loginForm.addEventListener("submit", function() {
-            // Show the modern loader
-            loadingOverlay.style.display = "flex";
-            
-            // Add slight delay before showing to prevent flash on failed validation
-            setTimeout(() => {
-                loadingOverlay.style.opacity = "1";
-            }, 100);
-        });
-    }
-    
-    // Handle page transitions between dashboard loads
-    window.addEventListener('beforeunload', function() {
-        if (!window.location.pathname.includes("login")) {
-            loadingOverlay.style.display = "flex";
+    <style>
+        /* Modern Loader Styles */
+        .modern-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.98);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            backdrop-filter: blur(2px);
         }
-    });
-});
-</script>
-    
+
+        .loader-content {
+            text-align: center;
+            transform: translateY(-20%);
+        }
+
+        .loader-animation {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 30px;
+        }
+
+        .logo-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .spinning-logo {
+            width: 80px;
+            height: 80px;
+            animation: gentleSpin 3s linear infinite;
+            z-index: 2;
+            filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.1));
+        }
+
+        .pulse-ring {
+            position: absolute;
+            border: 3px solid rgba(55, 148, 208, 0.5);
+            border-radius: 50%;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            animation: pulse 3s ease-out infinite;
+        }
+
+        .pulse-ring.delay {
+            animation-delay: 1s;
+        }
+
+        .loader-text {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 1.3rem;
+        }
+
+        .loader-subtext {
+            color: #7f8c8d;
+            font-weight: 400;
+            font-size: 0.9rem;
+        }
+
+        @keyframes gentleSpin {
+            0% {
+                transform: rotate(0deg) scale(1);
+            }
+
+            50% {
+                transform: rotate(180deg) scale(1.05);
+            }
+
+            100% {
+                transform: rotate(360deg) scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.1);
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(1.4);
+                opacity: 0;
+            }
+        }
+
+        /* Add smooth transition for the loader appearance */
+        .modern-loader {
+            transition: opacity 0.3s ease;
+        }
+
+        /* Optional: Add a subtle gradient background */
+        .modern-loader::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(245, 248, 250, 0.9) 100%);
+        }
+    </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const loginForm = document.querySelector("form");
+            const loadingOverlay = document.getElementById("loadingOverlay");
+
+            // Preload the logo image to prevent flickering
+            const logoImage = new Image();
+            logoImage.src = "https://i.ibb.co/r2xvtYsR/logo-removebg-preview.png";
+
+            if (loginForm) {
+                loginForm.addEventListener("submit", function () {
+                    // Show the modern loader
+                    loadingOverlay.style.display = "flex";
+
+                    // Add slight delay before showing to prevent flash on failed validation
+                    setTimeout(() => {
+                        loadingOverlay.style.opacity = "1";
+                    }, 100);
+                });
+            }
+
+            // Handle page transitions between dashboard loads
+            window.addEventListener('beforeunload', function () {
+                if (!window.location.pathname.includes("login")) {
+                    loadingOverlay.style.display = "flex";
+                }
+            });
+        });
+    </script>
+
 </body>
+
 </html>

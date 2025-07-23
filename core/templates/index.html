@@ -1,15 +1,19 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PineSphere | Home</title>
   <link rel="icon" type="image/png" href="https://i.ibb.co/r2xvtYsR/logo-removebg-preview.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/style.css' %}" />
   <style>
     :root {
@@ -135,10 +139,11 @@
       background-attachment: fixed;
       padding: 8rem 0;
       display: flex;
-      align-items: center;
+      align-items: right;
       min-height: 70vh;
       position: relative;
       margin-top: 0;
+
     }
 
     .hero-content {
@@ -184,117 +189,200 @@
       box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
     }
 
-   .features {
-    padding: 5rem 0;
-    background-color: var(--white);
-  }
-  
-  .section-header {
-    text-align: center;
-    margin-bottom: 3rem;
-  }
-  
-  .section-header h2 {
-    font-size: 2.5rem;
-    color: var(--primary-color);
-    margin-bottom: 1rem;
-    position: relative;
-    display: inline-block;
-  }
-  
-  .section-header h2::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 4px;
-    background-color: var(--primary-color);
-    border-radius: 2px;
-  }
-  
-  .section-header p {
-    color: var(--text-light);
-    max-width: 700px;
-    margin: 0 auto;
-    font-size: 1.1rem;
-  }
-  
-  .services-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-  }
-  
-  .service-card {
-    background: var(--white);
-    padding: 2.5rem;
-    border-radius: 10px;
-    transition: all 0.3s ease;
-    text-align: center;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    border: 1px solid rgba(0,0,0,0.05);
-  }
-  
-  .service-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-  }
-  
-  .service-icon {
-    width: 80px;
-    height: 80px;
-    background-color: var(--primary-light);
-    color: var(--primary-color);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1.5rem;
-    font-size: 2rem;
-    transition: var(--transition);
-  }
-  
-  .service-card:hover .service-icon {
-    background-color: var(--primary-color);
-    color: var(--white);
-  }
-  
-  .service-card h3 {
-    font-size: 1.4rem;
-    margin-bottom: 1rem;
-    color: var(--text-color);
-  }
-  
-  .service-card p {
-    color: var(--text-light);
-    line-height: 1.6;
-  }
-
-    footer {
-      background-color: var(--text-color);
-      color: var(--white);
-      padding: 1rem 0;
-      text-align: center;
+    .features {
+      padding: 5rem 0;
+      background-color: var(--white);
     }
 
-    footer .social-links a {
-      color: var(--white);
-  
-      font-size: 1.2rem;
+    .section-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .section-header h2 {
+      font-size: 2.5rem;
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      position: relative;
+      display: inline-block;
+    }
+
+    .section-header h2::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background-color: var(--primary-color);
+      border-radius: 2px;
+    }
+
+    .section-header p {
+      color: var(--text-light);
+      max-width: 700px;
+      margin: 0 auto;
+      font-size: 1.1rem;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .service-card {
+      background: var(--white);
+      padding: 2.5rem;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .service-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .service-icon {
+      width: 80px;
+      height: 80px;
+      background-color: var(--primary-light);
+      color: var(--primary-color);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 2rem;
       transition: var(--transition);
     }
-    .login-dropdown > a > i {
-      font-size: 1.8rem;
+
+    .service-card:hover .service-icon {
+      background-color: var(--primary-color);
+      color: var(--white);
     }
 
-    footer .social-links a:hover {
-      color: #60a5fa;
+    .service-card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      color: var(--text-color);
     }
+
+    .service-card p {
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    /* Footer Styles */
+    footer {
+      background-color: #000000;
+      color: #ffffff;
+      padding: 40px 0;
+      margin-top: auto;
+    }
+
+    footer .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* Copyright Text */
+    footer p {
+      font-size: 16px;
+      font-weight: 400;
+      color: #ffffff;
+      margin: 0;
+      opacity: 0.9;
+    }
+
+    /* Social Links Container */
+    .social-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    /* Social Icons Base Styles */
+    .social-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      background-color: transparent;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      color: #ffffff;
+      font-size: 20px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Twitter/X Default State - White Background with Black X */
+    .social-icon.twitter {
+      background-color: #000000;
+      border-color: #ffffff88;
+      color: #ffffff;
+
+    }
+
+    .social-icon.twitter i {
+      font-weight: 700;
+      font-size: 20px;
+      font-family: sans-serif;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .social-icon:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Facebook Hover */
+    .social-icon.facebook:hover {
+      background-color: #1877f2;
+      border-color: #1877f2;
+      color: #ffffff;
+    }
+
+    /* Twitter/X Hover */
+    .social-icon.twitter:hover {
+      background-color: #ffffff;
+      border-color: #000000;
+      color: #000000;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    /* LinkedIn Hover */
+    .social-icon.linkedin:hover {
+      background-color: #0269a0;
+      border-color: #046091;
+      color: #ffffff;
+    }
+
+    /* Instagram Hover - Gradient */
+    .social-icon.instagram:hover {
+      background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      border-color: #bc1888;
+      color: #ffffff;
+    }
+
+
     .login-dropdown:hover .dropdown-content {
       display: none;
     }
+
     .login-dropdown.active .dropdown-content {
       display: block;
     }
@@ -337,28 +425,28 @@
       .features {
         padding: 3rem 0;
       }
-      
+
       .section-header h2 {
         font-size: 2rem;
       }
-      
+
       .services-grid {
         grid-template-columns: 1fr;
         gap: 1.5rem;
       }
-      
+
       .service-card {
         padding: 2rem;
       }
     }
-    
+
     .logo img {
       display: inline-block;
       vertical-align: middle;
     }
-
   </style>
 </head>
+
 <body>
   <header>
     <div class="container">
@@ -402,51 +490,62 @@
   </section>
 
   <section id="features" class="features">
-  <div class="container">
-    <div class="section-header">
-      <h2>Our Services</h2>
-      <p>Comprehensive solutions tailored to your educational needs</p>
+    <div class="container">
+      <div class="section-header">
+        <h2>Our Services</h2>
+        <p>Comprehensive solutions tailored to your educational needs</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-chalkboard-teacher"></i>
+          </div>
+          <h3>Expert Faculty</h3>
+          <p>Learn from industry professionals and academic experts with years of practical experience.</p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-laptop-code"></i>
+          </div>
+          <h3>Modern Facilities</h3>
+          <p>State-of-the-art labs and learning environments equipped with latest technology.</p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-handshake"></i>
+          </div>
+          <h3>Industry Connections</h3>
+          <p>Strong ties with leading companies for placements and real-world experience.</p>
+        </div>
+      </div>
     </div>
-    <div class="services-grid">
-      <div class="service-card">
-        <div class="service-icon">
-          <i class="fas fa-chalkboard-teacher"></i>
-        </div>
-        <h3>Expert Faculty</h3>
-        <p>Learn from industry professionals and academic experts with years of practical experience.</p>
-      </div>
-      
-      <div class="service-card">
-        <div class="service-icon">
-          <i class="fas fa-laptop-code"></i>
-        </div>
-        <h3>Modern Facilities</h3>
-        <p>State-of-the-art labs and learning environments equipped with latest technology.</p>
-      </div>
-      
-      <div class="service-card">
-        <div class="service-icon">
-          <i class="fas fa-handshake"></i>
-        </div>
-        <h3>Industry Connections</h3>
-        <p>Strong ties with leading companies for placements and real-world experience.</p>
-      </div>
-    </div>
-  </div>
-</section>
+  </section>
 
   <footer>
     <div class="container">
-      <p>&copy; 2023 EduConnect. All rights reserved.</p>
+      <p>&copy; 2025 Pinephere Solutions Private Limited</p>
       <div class="social-links">
-        <a href="https://www.facebook.com/profile.php?id=100094365712042&amp;mibextid=ZbWKwL"><i class="fab fa-facebook-f"></i></a>
-        <a href="https://twitter.com/Pinesphere10941"><i class="fab fa-twitter"></i></a>
-        <a href="https://www.linkedin.com/company/pinespheresolutions/posts/?feedView=all"><i class="fab fa-linkedin-in"></i></a>
-        <a href="https://www.instagram.com/pinesphere_official?igsh=MWd5eWVpNzIyN2hudg=="><i class="fab fa-instagram"></i></a>
+        <a href="https://www.facebook.com/profile.php?id=100094365712042&mibextid=ZbWKwL" target="_blank"
+          rel="noopener noreferrer" class="social-icon facebook">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="https://twitter.com/Pinesphere10941" target="_blank" rel="noopener noreferrer"
+          class="social-icon twitter">
+          <span style="font-size: 22px;  font-family: 'Segoe UI', sans-serif;">𝕏</span>
+        </a>
+        <a href="https://www.linkedin.com/company/pinespheresolutions/posts/?feedView=all" target="_blank"
+          rel="noopener noreferrer" class="social-icon linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+        <a href="https://www.instagram.com/pinesphere_official?igsh=MWd5eWVpNzIyN2hudg==" target="_blank"
+          rel="noopener noreferrer" class="social-icon instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
       </div>
     </div>
   </footer>
-
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const mobileMenu = document.getElementById('mobile-menu');
@@ -474,4 +573,5 @@
     });
   </script>
 </body>
+
 </html>

@@ -1,16 +1,19 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PineSphere | Contact</title>
   <link rel="icon" type="image/png" href="https://i.ibb.co/r2xvtYsR/logo-removebg-preview.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/style.css' %}" />
   <style>
-    :root { 
+    :root {
       --primary-color: #3794D0;
       --primary-dark: #026aaf;
       --secondary-color: #f8fafc;
@@ -20,6 +23,7 @@
       --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       --transition: all 0.3s ease;
     }
+
     * {
       margin: 0;
       padding: 0;
@@ -81,7 +85,7 @@
       position: relative;
     }
 
-    .login-dropdown > a > i {
+    .login-dropdown>a>i {
       font-size: 1.8rem;
       cursor: pointer;
     }
@@ -231,22 +235,105 @@
       border: none;
     }
 
+    /* Footer Styles */
     footer {
-      background-color: #1e293b;
-      color: white;
-      padding: 1rem 0;
-      text-align: center;
+      background-color: #000000;
+      color: #ffffff;
+      padding: 40px 0;
+      margin-top: auto;
     }
 
-    footer .social-links a {
-      color: white;
-
-      font-size: 1.2rem;
-      transition: color 0.3s ease;
+    footer .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
     }
 
-    footer .social-links a:hover {
-      color: #60a5fa;
+    /* Copyright Text */
+    footer p {
+      font-size: 16px;
+      font-weight: 400;
+      color: #ffffff;
+      margin: 0;
+      opacity: 0.9;
+    }
+
+    /* Social Links Container */
+    .social-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    /* Social Icons Base Styles */
+    .social-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      background-color: transparent;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      color: #ffffff;
+      font-size: 20px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Twitter/X Default State - White Background with Black X */
+    .social-icon.twitter {
+      background-color: #000000;
+      border-color: #ffffff88;
+      color: #ffffff;
+
+    }
+
+    .social-icon.twitter i {
+      font-weight: 700;
+      font-size: 20px;
+      font-family: sans-serif;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .social-icon:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Facebook Hover */
+    .social-icon.facebook:hover {
+      background-color: #1877f2;
+      border-color: #1877f2;
+      color: #ffffff;
+    }
+
+    /* Twitter/X Hover */
+    .social-icon.twitter:hover {
+      background-color: #ffffff;
+      border-color: #000000;
+      color: #000000;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    /* LinkedIn Hover */
+    .social-icon.linkedin:hover {
+      background-color: #0269a0;
+      border-color: #046091;
+      color: #ffffff;
+    }
+
+    /* Instagram Hover - Gradient */
+    .social-icon.instagram:hover {
+      background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      border-color: #bc1888;
+      color: #ffffff;
     }
 
     @media (max-width: 768px) {
@@ -282,16 +369,18 @@
         font-size: 2rem;
       }
     }
-     .login-dropdown:hover .dropdown-content {
+
+    .login-dropdown:hover .dropdown-content {
       /* remove hover behavior */
       display: none;
     }
+
     .login-dropdown.active .dropdown-content {
       display: block;
     }
-
   </style>
 </head>
+
 <body>
   <header>
     <div class="container">
@@ -338,28 +427,30 @@
           <p style="margin-bottom: 1.5rem;">Have questions or need assistance? Our team is here to help you.</p>
           <div class="info-item">
             <i class="fas fa-map-marker-alt"></i>
-            <p><strong>Address:</strong><br>123 Education Avenue, Knowledge City, 101010</p>
+            <p><strong>Address:</strong><br>Pinesphere Solutions
+              1ˢᵗ Floor, C block, NGP Institutions Campus, Kalapatti Main Rd, Sharp Nagar, Nehru Nagar West, Coimbatore,
+              Tamil Nadu 641048</p>
           </div>
           <div class="info-item">
             <i class="fas fa-phone-alt"></i>
-            <p><strong>Phone:</strong><br>+1 (555) 123-4567</p>
+            <p><strong>Phone:</strong><br>+91 94436 71149</p>
           </div>
           <div class="info-item">
             <i class="fas fa-envelope"></i>
-            <p><strong>Email:</strong><br>info@educonnect.edu</p>
+            <p><strong>Email:</strong><br>pinespheresolutions144@gmail.com</p>
           </div>
           <div class="info-item">
             <i class="fas fa-clock"></i>
-            <p><strong>Hours:</strong><br>Mon - Fri: 8:00 AM – 6:00 PM<br>Sat: 9:00 AM – 3:00 PM</p>
+            <p><strong>Hours:</strong><br>Mon - Fri: 9:00 AM – 6:00 PM</p>
           </div>
         </div>
 
         <div class="contact-form">
           {% if messages %}
-                {% for msg in messages %}
-                    <div style="color: green;">{{ msg }}</div>
-                {% endfor %}
-            {% endif %}
+          {% for msg in messages %}
+          <div style="color: green;">{{ msg }}</div>
+          {% endfor %}
+          {% endif %}
           <h2>Send Us a Message</h2>
           <form method="POST">
             {% csrf_token %}
@@ -385,7 +476,8 @@
 
         <!-- Map directly under both contact sections -->
         <div class="map-container">
-          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1957.8496930651959!2d77.03370168458316!3d11.061149938391209!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba8f786a0a49db7%3A0xf5b61d1204a86138!2sPinesphere%20Solutions!5e0!3m2!1sen!2sin!4v1750745894708!5m2!1sen!2sin"
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1957.8496930651959!2d77.03370168458316!3d11.061149938391209!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba8f786a0a49db7%3A0xf5b61d1204a86138!2sPinesphere%20Solutions!5e0!3m2!1sen!2sin!4v1750745894708!5m2!1sen!2sin"
             allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
       </div>
@@ -394,12 +486,24 @@
 
   <footer>
     <div class="container">
-      <p>&copy; 2023 EduConnect. All rights reserved.</p>
+      <p>&copy; 2025 Pinephere Solutions Private Limited</p>
       <div class="social-links">
-        <a href="https://www.facebook.com/profile.php?id=100094365712042&amp;mibextid=ZbWKwL"><i class="fab fa-facebook-f"></i></a>
-        <a href="https://twitter.com/Pinesphere10941"><i class="fab fa-twitter"></i></a>
-        <a href="https://www.linkedin.com/company/pinespheresolutions/posts/?feedView=all"><i class="fab fa-linkedin-in"></i></a>
-        <a href="https://www.instagram.com/pinesphere_official?igsh=MWd5eWVpNzIyN2hudg=="><i class="fab fa-instagram"></i></a>
+        <a href="https://www.facebook.com/profile.php?id=100094365712042&mibextid=ZbWKwL" target="_blank"
+          rel="noopener noreferrer" class="social-icon facebook">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="https://twitter.com/Pinesphere10941" target="_blank" rel="noopener noreferrer"
+          class="social-icon twitter">
+          <span style="font-size: 22px;  font-family: 'Segoe UI', sans-serif;">𝕏</span>
+        </a>
+        <a href="https://www.linkedin.com/company/pinespheresolutions/posts/?feedView=all" target="_blank"
+          rel="noopener noreferrer" class="social-icon linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+        <a href="https://www.instagram.com/pinesphere_official?igsh=MWd5eWVpNzIyN2hudg==" target="_blank"
+          rel="noopener noreferrer" class="social-icon instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
       </div>
     </div>
   </footer>
@@ -423,4 +527,5 @@
     });
   </script>
 </body>
+
 </html>

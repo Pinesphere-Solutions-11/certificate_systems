@@ -310,38 +310,42 @@
     </div>
     
 
-    
-    <footer class="dashboard-footer">
-      <div class="footer-section">
-        <h3>EduConnect</h3>
-        <p>Empowering education through digital certificates. Create, manage, and distribute professional certificates with ease.</p>
-      </div>
-      <div class="footer-section">
-        <h3>Quick Links</h3>
-        <ul>
-          <li><a href="#">About Us</a></li>
-          <li><a href="#">Services</a></li>
-          <li><a href="#">Support</a></li>
-          <li><a href="#">Privacy Policy</a></li>
-        </ul>
-      </div>
-      <div class="footer-section">
-        <h3>Contact Info</h3>
-        <ul>
-          <li><i class="fas fa-envelope"></i> info@educonnect.edu</li>
-          <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
-          <li><i class="fas fa-map-marker-alt"></i> 123 Education St, Learning City</li>
-        </ul>
-      </div>
-    </footer>
+     <!-- Footer -->
+        <footer class="dashboard-footer">
+            <div class="footer-section">
+                <h3>Pinesphere Solutions</h3>
+                <p>Empowering education through digital certificates. Create, manage, and distribute professional
+                    certificates with ease.</p>
+            </div>
 
-    <div class="copyright">
-      <p>&copy; 2023 EduConnect. All rights reserved.</p>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="{% url 'index' %}">Home</a></li>
+                    <li><a href="{% url 'about' %}">About us</a></li>
+                    <li><a href="{% url 'contact' %}">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Info</h3>
+                <ul>
+                    <li><i class="fas fa-envelope"></i> pinespheresolutions144@gmil.com</li>
+                    <li><i class="fas fa-phone"></i> +91 94436 71149</li>
+                    <li><i class="fas fa-map-marker-alt"></i>  1ˢᵗ Floor, C block, NGP Institutions Campus, Kalapatti Main Rd, Sharp Nagar, Nehru Nagar West, Coimbatore, Tamil Nadu 641048</li>
+                </ul>
+            </div>
+        </footer>
+
+        <div class="copyright">
+            <p>&copy; 2025 Pinephere Solutions Private Limited</p>
+        </div>
     </div>
-  </div>
 
   <script>
     
+      setInterval(() => {
+          fetch('/accounts/ping/');
+      }, 5 * 60 * 1000);
 
   </script>
 </body>

@@ -13,6 +13,7 @@ from .views import (
     create_offer_letter, create_completion_certificate
 )
 
+LOGIN_URL = '/accounts/login/coordinator/'
 
 
 urlpatterns = [
@@ -30,4 +31,5 @@ urlpatterns = [
     path('accounts/login/', lambda request: redirect('login', role='coordinator')),
     path('contact/', contact_view, name='contact'),
     path('certificate/download/<int:cert_id>/', download_certificate, name='download_certificate'),
+    path('accounts/ping/', views.ping_session, name='ping_session'),
 ] 
