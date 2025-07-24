@@ -641,9 +641,9 @@
                     <label>Filter by Type</label>
                     <select name="type" style="padding: 0.5rem; border-radius: 8px; border: 1px solid #ccc;">
                         <option value="">All Types</option>
-                        <option value="offer" {% if request.GET.type=='offer' %} selected {% endif %}>Offer Letter
+                        <option value="offer" {% if request.GET.type == 'offer' %} selected {% endif %}>Offer Letter
                         </option>
-                        <option value="completion" {% if request.GET.type=='completion' %} selected {% endif %}>
+                        <option value="completion" {% if request.GET.type == 'completion' %} selected {% endif %}>
                             Completion
                             Certificate</option>
                     </select>

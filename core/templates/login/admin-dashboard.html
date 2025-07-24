@@ -362,7 +362,7 @@
         </div> -->
 
         <!-- Stats Section -->
-        <div class="stats-grid">
+        {% comment %} <div class="stats-grid">
             <div class="stat-card">
                 <h3>Total Certificates</h3>
                 <div class="number">{{ total_certificates }}</div>
@@ -375,7 +375,7 @@
                 <h3>Active Students</h3>
                 <div class="number">{{ student_count }}</div>
             </div>
-        </div>
+        </div> {% endcomment %}
         <!-- Filter & Search -->
         <form method="get" style="margin-bottom: 1.5rem;">
             <div class="form-row">
@@ -384,9 +384,9 @@
                     <label>Filter by Type</label>
                     <select name="type" style="padding: 0.5rem; border-radius: 8px; border: 1px solid #ccc;">
                         <option value="">All Types</option>
-                        <option value="offer" {% if request.GET.type=='offer' %}selected{% endif %}>Offer Letter
+                        <option value="offer" {% if request.GET.type == 'offer' %}selected{% endif %}>Offer Letter
                         </option>
-                        <option value="completion" {% if request.GET.type=='completion' %}selected{% endif %}>Completion
+                        <option value="completion" {% if request.GET.type == 'completion' %}selected{% endif %}>Completion
                             Certificate</option>
                     </select>
                 </div>
