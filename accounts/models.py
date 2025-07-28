@@ -67,7 +67,6 @@ class Certificate(models.Model):
     end_date = models.DateField()
     duration = models.CharField(max_length=50)
     completion_date = models.DateField()
-    
     director_name = models.CharField(max_length=100)
     issue_date = models.DateField(null=False, blank=False)
     signature = models.ImageField(upload_to='signatures/', null=True, blank=True)

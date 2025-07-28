@@ -1,210 +1,261 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Create/Edit Certificate Template</title>
-    <script src="https://cdn.tiny.cloud/1/bt9iryyhig7s7z0423ft4gzz8sbr6b6itda8agf3422lhw3a/tinymce/8/tinymce.min.js" referrerpolicy="origin" crossorigin="anonymous"></script>
-    <style>
-        :root {
-            --primary-color: #3794D0;
-            --primary-dark: #026aaf;
-            --accent-color: #10b981;
-            --background: #f1f5f9;
-            --card-bg: rgba(255, 255, 255, 0.8);
-            --card-blur: 10px;
-            --text-dark: #1e293b;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            --shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            --transition: all 0.3s ease;
-        }
+  <meta charset="UTF-8" />
+  <title>Create/Edit Certificate Template</title>
+  <script src="https://cdn.tiny.cloud/1/bt9iryyhig7s7z0423ft4gzz8sbr6b6itda8agf3422lhw3a/tinymce/8/tinymce.min.js" referrerpolicy="origin"></script>
+  <style>
+    :root {
+      --primary-color: #3794D0;
+      --primary-dark: #026aaf;
+      --background: #f1f5f9;
+      --card-bg: #fff;
+      --border-color: #e2e8f0;
+      --text-dark: #1e293b;
+    }
 
-        body {
-            font-family: 'Segoe UI', Roboto, -apple-system, sans-serif;
-            background-color: var(--background);
-            color: var(--text-dark);
-            padding: 2rem;
-            margin: 0;
-            min-height: 100vh;
-        }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--background);
+      margin: 0;
+      padding: 2rem;
+    }
 
-        .editor-container {
-            background: var(--card-bg);
-            backdrop-filter: blur(var(--card-blur));
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            max-width: 1000px;
-            margin: 0 auto;
-            border: 1px solid var(--border-color);
-        }
+    .editor-container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 2rem;
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            color: var(--primary-dark);
-            font-weight: 600;
-        }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
 
-        label {
-            font-weight: 500;
-            display: block;
-            margin: 1.25rem 0 0.5rem;
-            color: var(--text-dark);
-            font-size: 0.95rem;
-        }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
 
-        input[type="text"],
-        select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background: white;
-            transition: var(--transition);
-            font-size: 0.95rem;
-        }
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
 
-        input[type="text"]:focus,
-        select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(55, 148, 208, 0.1);
-        }
+    input, select, textarea {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 0.95rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+    }
 
-        input[type="file"] {
-            margin-top: 0.5rem;
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px dashed var(--border-color);
-            border-radius: 8px;
-            background: white;
-        }
+    button {
+      background: var(--primary-color);
+      color: white;
+      padding: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 2rem;
+      font-weight: 600;
+      width: 100%;
+    }
 
-        .current-image {
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
+    button:hover {
+      background: var(--primary-dark);
+    }
 
-        .current-image a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 500;
-        }
+    .placeholder-section {
+      margin-bottom: 1.5rem;
+      background: #f8fafc;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
 
-        .current-image a:hover {
-            text-decoration: underline;
-        }
+    .placeholder-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
 
-        button {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 0.85rem 2.5rem;
-            font-size: 1rem;
-            font-weight: 500;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 2rem;
-            transition: var(--transition);
-            display: block;
-            width: 100%;
-            text-align: center;
-        }
+    .placeholder-buttons button {
+      padding: 0.5rem 0.75rem;
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      color: #000000c2;
+      margin: 0;
+      width: auto;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-        button:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
+    .placeholder-buttons button:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+      transform: translateY(-1px);
+    }
 
-        /* TinyMCE Editor Customization */
-        .tox-tinymce {
-            border-radius: 8px !important;
-            border: 1px solid var(--border-color) !important;
-            margin-top: 0.5rem;
-        }
+    .placeholder-buttons button:active {
+      transform: translateY(0);
+    }
 
-        .tox .tox-toolbar__primary {
-            background: white !important;
-            border-bottom: 1px solid var(--border-color) !important;
-        }
+    .preview-link a {
+      color: var(--primary-color);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
 
-        .tox .tox-statusbar {
-            border-top: 1px solid var(--border-color) !important;
-        }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: center;
+    }
 
-        /* Form grid layout */
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-        }
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 500px;
+      max-width: 90%;
+    }
 
-        .form-group {
-            margin-bottom: 1rem;
-        }
+    .modal-content h2 {
+      margin-top: 0;
+    }
 
-        @media (max-width: 768px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .editor-container {
-                padding: 1.5rem;
-            }
-        }
-    </style>
+    .modal-content ul {
+      padding-left: 20px;
+    }
+
+    .close-modal {
+      float: right;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: red;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title h3 {
+      margin: 0;
+      font-size: 1rem;
+      color: #334155;
+    }
+
+    .help-link {
+      font-size: 0.85rem;
+      color: #64748b;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-<div class="editor-container">
+  <div class="editor-container">
     <h1>Create/Edit Certificate Template</h1>
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-
-        <div class="form-grid">
-            <div class="form-group">
-                <label for="name">Template Name</label>
-                <input type="text" name="name" id="name" value="{{ template.name|default:'' }}" required>
-            </div>
-
-            <div class="form-group">
-                <label for="certificate_type">Certificate Type</label>
-                <select name="certificate_type" id="certificate_type" required>
-                    <option value="offer" {% if template.certificate_type == 'offer' %}selected{% endif %}>Internship Offer</option>
-                    <option value="completion" {% if template.certificate_type == 'completion' %}selected{% endif %}>Internship Completion</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="font_style">Font Style</label>
-                <select name="font_style" id="font_style">
-                    <option value="Times New Roman" {% if template.font_style == 'Times New Roman' %}selected{% endif %}>Times New Roman</option>
-                    <option value="Arial" {% if template.font_style == 'Arial' %}selected{% endif %}>Arial</option>
-                    <option value="Georgia" {% if template.font_style == 'Georgia' %}selected{% endif %}>Georgia</option>
-                    <option value="Roboto" {% if template.font_style == 'Roboto' %}selected{% endif %}>Roboto</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="background_image">Background Image</label>
-                {% if template.background_image %}
-                    <p class="current-image">Current Image: <a href="{{ template.background_image.url }}" target="_blank">View</a></p>
-                {% endif %}
-                <input type="file" name="background_image" id="background_image" accept="image/*">
-            </div>
+    <form method="POST" enctype="multipart/form-data" onsubmit="return validatePlaceholders()">
+      {% csrf_token %}
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="certificate_type">Certificate Type</label>
+          <select name="certificate_type" id="certificate_type" required>
+            <option value="offer" {% if template.certificate_type == 'offer' %}selected{% endif %}>Internship Offer</option>
+            <option value="completion" {% if template.certificate_type == 'completion' %}selected{% endif %}>Internship Completion</option>
+          </select>
+          <div class="preview-link">
+            <a id="previewLink" target="_blank" href="{% static 'images/offer_letter_template.png' %}">Preview Default Template</a>
+          </div>
         </div>
+        <div class="form-group">
+          <label for="background_image">Background Image</label>
+          {% if template.background_image %}
+            <div class="preview-link">
+              Current: <a href="{{ template.background_image.url }}" target="_blank">View</a>
+            </div>
+          {% endif %}
+          <input type="file" name="background_image" id="background_image" accept="image/*" />
+        </div>
+      </div>
 
-        <label for="html_content">HTML Content (use placeholders like {{ '{{ student_name' }}}}, {{ '{{ issue_date' }}}})</label>
-        <textarea name="html_content" id="htmlContent">{{ template.html_content|safe }}</textarea>
+      <div class="placeholder-section">
+        <div class="section-title">
+          <h3>Available Placeholder Tags</h3>
+          <span class="help-link" onclick="document.getElementById('tagHelp').style.display='flex'">What do these tags mean?</span>
+        </div>
+        <div class="placeholder-buttons" id="tagButtons">
+          
+        </div>
+      </div>
 
-        <button type="submit">Save Template</button>
+      <label for="html_content">Certificate HTML Content</label>
+      <textarea name="html_content" id="htmlContent">{{ template.html_content|safe }}</textarea>
+
+      <button type="submit">Save Template</button>
     </form>
-</div>
+  </div>
 
-<script>
+  <!-- Placeholder Info Modal -->
+  <div id="tagHelp" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="document.getElementById('tagHelp').style.display='none'">&times;</span>
+      <h2>Available Placeholders</h2>
+      <ul>
+        <li><b>{{ student_name }}</b> – Full name of the student</li>
+        <li><b>{{ course_name }}</b> – Course/Domain name</li>
+        <li><b>{{ student_id }}</b> – Registration ID</li>
+        <li><b>{{ issue_date }}</b> – Certificate issue date</li>
+        <li><b>{{ title }}</b>, <b>{{ degree }}</b>, <b>{{ department }}</b>, etc.</li>
+      </ul>
+    </div>
+  </div>
+{% verbatim %}
+  <script>
+    const tagList = [
+      "{{ title }}", "{{ student_name }}",  "{{ student_id }}","{{ course_name }}",
+       "{{ degree }}", "{{ department }}", "{{ college }}", 
+      "{{ location }}", "{{ start_date }}", "{{ end_date }}", "{{ duration }}", 
+      "{{ completion_date }}",  "{{ issue_date }}"
+    ];
+
+    // Insert button tags dynamically
+    const buttonContainer = document.getElementById("tagButtons");
+    tagList.forEach(tag => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.textContent = tag;
+      btn.title = "Click to insert this placeholder";
+      btn.onclick = () => {
+        if (tinymce.activeEditor) tinymce.activeEditor.insertContent(tag);
+      };
+      buttonContainer.appendChild(btn);
+    });
+
+    // TinyMCE
     tinymce.init({
         selector: '#htmlContent',
         height: 500,
@@ -215,13 +266,8 @@
         toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
         tinycomments_mode: 'embedded',
         tinycomments_author: 'Author name',
-        mergetags_list: [
-            { value: '{{ student_name }}', title: 'Student Name' },
-            { value: '{{ course_name }}', title: 'Course Name' },
-            { value: '{{ issue_date }}', title: 'Issue Date' },
-
-        ],
-        ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+      mergetags_list: tagList.map(tag => ({ value: tag, title: tag.replace(/{{\s*|\s*}}/g, '') })),
+      ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
         skin: 'oxide',
         content_css: 'default',
         statusbar: true,
@@ -230,19 +276,52 @@
             editor.on('init', function () {
                 if (!editor.getContent()) {
                     editor.setContent(`
-                        <div style="text-align: center; font-family: 'Times New Roman', serif;">
+                    <div style="text-align: center; font-family: 'Times New Roman', serif;">
                             <h1 style="color: #2c3e50;">Certificate of Completion</h1>
-                            <p>This is to certify that</p>
-                            <h2 style="color: var(--primary-color);">{{ student_name }}</h2>
-                            <p>has successfully completed the course</p>
-                            <h3>{{ course_name }}</h3>
-                            <p>on {{ issue_date }}</p>
+                    <h3>Customize your own certificate content</h3>
+                    <p style="color: #2c3e50;">
+                         This is to certify that {{ title }}. {{ student_name }} (Reg no:{{ student_id }}) , student of  {{ degree }} from {{ college }}, {{ location }} has successfully completed their internship on {{ course_name }}  in our concern from {{ start_date }} to {{ end_date }}.
+                        </p>
                         </div>
                     `);
                 }
             });
         }
     });
-</script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const certTypeSelect = document.getElementById('certificate_type');
+        const previewImage = document.getElementById('templatePreview');
+
+        const offerImage = "{% static 'images/offer_letter_template.png' %}";
+        const completionImage = "{% static 'images/completion_letter_template.png' %}";
+
+        function updatePreview() {
+            const selected = certTypeSelect.value;
+            previewImage.src = selected === 'completion' ? completionImage : offerImage;
+        }
+
+        if (certTypeSelect && previewImage) {
+            updatePreview();
+            certTypeSelect.addEventListener('change', updatePreview);
+        } else {
+            console.warn('Element not found for preview update.');
+        }
+    });
+
+    // Placeholder syntax validation
+    function validatePlaceholders() {
+      const requiredTags = ["{{ student_name }}", "{{ course_name }}", "{{ issue_date }}"];
+      const content = tinymce.activeEditor.getContent();
+      for (let tag of requiredTags) {
+        if (!content.includes(tag)) {
+          alert(`Missing required placeholder: ${tag}`);
+          return false;
+        }
+      }
+      return true;
+    }
+  </script>
+  {% endverbatim %}
 </body>
 </html>

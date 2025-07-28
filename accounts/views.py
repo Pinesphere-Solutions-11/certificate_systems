@@ -3,29 +3,25 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
-from django.urls import reverse
 from django.http import Http404, HttpResponse, JsonResponse, FileResponse
-from django.template.loader import render_to_string
 from weasyprint import HTML
 from django.core.files.base import File
 import tempfile
 from django.conf import settings
-from datetime import datetime, timezone
-from .forms import ContactMessageForm, LoginForm, CoordinatorForm, StudentForm, AdminUserForm
-from .models import ContactMessage, Certificate, Coordinator, Student, AdminUser, User
+from datetime import datetime
+from .forms import CoordinatorForm, StudentForm, AdminUserForm
+from .models import ContactMessage, Certificate, Coordinator, Student, User
 from datetime import datetime
 from django.http import JsonResponse
 from .models import Certificate
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.core.mail import send_mail, BadHeaderError
+from django.core.mail import send_mail
 from django.conf import settings
 from django.core.mail import send_mail
 import threading
 from .models import User
 from .models import Student
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.admin.views.decorators import staff_member_required
 from .models import CertificateTemplate
 from django.core.files.storage import default_storage
 
@@ -43,7 +39,6 @@ def save_template(request):
     if request.method == 'POST':
         name = request.POST.get('template_name')
         certificate_type = request.POST.get('certificate_type')
-        font_family = request.POST.get('font_family')
         html_content = request.POST.get('html_content')
         background_image = request.FILES.get('background_image')
 
@@ -52,7 +47,6 @@ def save_template(request):
             name=name,
             defaults={
                 'certificate_type': certificate_type,
-                'font_family': font_family,
                 'html_content': html_content,
                 'background_image': background_image if background_image else None,
             }
@@ -66,7 +60,6 @@ def create_certificate_template(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         template_type = request.POST.get('template_type')
-        font_family = request.POST.get('font_family')
         content_html = request.POST.get('content_html')
 
         background_image = request.FILES.get('background_image')
@@ -78,7 +71,6 @@ def create_certificate_template(request):
         CertificateTemplate.objects.create(
             name=name,
             template_type=template_type,
-            font_family=font_family,
             content_html=content_html,
             background_image=image_path
         )
