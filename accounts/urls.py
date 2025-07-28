@@ -32,4 +32,7 @@ urlpatterns = [
     path('contact/', contact_view, name='contact'),
     path('certificate/download/<int:cert_id>/', download_certificate, name='download_certificate'),
     path('accounts/ping/', views.ping_session, name='ping_session'),
+    path('dashboard/admin/template-editor/', views.template_editor, name='template_editor'),
+    path('admin/template-editor/save/', views.save_template, name='save_template'),
+    path('admin/create-template/', views.create_certificate_template, name='create_certificate_template'),
 ] 

@@ -355,14 +355,18 @@
             </div>
         </header>
 
-        <!-- <div class="action-buttons">
+        <div class="action-buttons">
             <button class="action-btn" id="showCoordinatorForm"><i class="fas fa-user-tie"></i> Add Coordinator</button>
             <button class="action-btn" id="showStudentForm"><i class="fas fa-user-graduate"></i> Add Student</button>
             <button class="action-btn" id="showAdminForm"><i class="fas fa-user-shield"></i> New Admin</button>
-        </div> -->
+            <a href="{% url 'create_certificate_template' %}" target="_blank" onclick="window.open(this.href, '_blank'); return false;" class="action-btn">
+                <i class="fas fa-paint-brush"></i>Certificate Template
+            </a>
+
+        </div>
 
         <!-- Stats Section -->
-        {% comment %} <div class="stats-grid">
+         <div class="stats-grid">
             <div class="stat-card">
                 <h3>Total Certificates</h3>
                 <div class="number">{{ total_certificates }}</div>
@@ -375,7 +379,7 @@
                 <h3>Active Students</h3>
                 <div class="number">{{ student_count }}</div>
             </div>
-        </div> {% endcomment %}
+        </div> 
         <!-- Filter & Search -->
         <form method="get" style="margin-bottom: 1.5rem;">
             <div class="form-row">

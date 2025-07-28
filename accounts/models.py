@@ -19,9 +19,6 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.full_name} ({self.username}) - {self.role}"
 
-
-
-
 class Coordinator(models.Model):
     full_name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
@@ -107,3 +104,20 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.subject}"
+
+class CertificateTemplate(models.Model):
+    TEMPLATE_TYPES = (
+        ('offer', 'Internship Offer Letter'),
+        ('completion', 'Internship Completion Certificate'),
+    )
+
+    name = models.CharField(max_length=100)
+    type = models.CharField(max_length=20, choices=TEMPLATE_TYPES)
+    background_image = models.ImageField(upload_to='certificate_templates/')
+    font_family = models.CharField(max_length=100, default='Times New Roman')
+    html_content = models.TextField()
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.get_type_display()})"
