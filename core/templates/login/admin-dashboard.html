@@ -359,10 +359,10 @@
             <button class="action-btn" id="showCoordinatorForm"><i class="fas fa-user-tie"></i> Add Coordinator</button>
             <button class="action-btn" id="showStudentForm"><i class="fas fa-user-graduate"></i> Add Student</button>
             <button class="action-btn" id="showAdminForm"><i class="fas fa-user-shield"></i> New Admin</button>
-            <a href="{% url 'create_certificate_template' %}" target="_blank" onclick="window.open(this.href, '_blank'); return false;" class="action-btn">
+            <button> <a href="{% url 'create_certificate_template' %}" target="_blank" style="text-decoration:none;" onclick="window.open(this.href, '_blank'); return false;" class="action-btn">
                 <i class="fas fa-paint-brush"></i>Certificate Template
             </a>
-
+        </button>
         </div>
 
         <!-- Stats Section -->
@@ -491,43 +491,42 @@
         </div>
         {% endwith %}
         {% endif %}
-        <!-- COORDINATOR FORM -->
-        <div class="management-form" id="coordinatorForm">
-            <h3>Add New Coordinator</h3>
-            <form method="post" action="{% url 'admin_dashboard' %}">
-                {% csrf_token %}
-                <input type="hidden" name="form_type" value="coordinator">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="coordinatorName">Full Name</label>
-                        <input type="text" name="full_name" id="coordinatorName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="coordinatorEmail">Email</label>
-                        <input type="email" name="email" id="coordinatorEmail" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="coordinatorDepartment">Department</label>
-                        <select name="department" id="coordinatorDepartment" required>
-                            <option value="">Select Department</option>
-                            <option value="Computer Science">Computer Science</option>
-                            <option value="Business">Business</option>
-                            <option value="Engineering">Engineering</option>
-                            <option value="Arts">Arts</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="coordinatorPhone">Phone</label>
-                        <input type="tel" name="phone" id="coordinatorPhone">
-                    </div>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="action-btn"><i class="fas fa-save"></i> Save Coordinator</button>
-                </div>
-            </form>
+    <!-- COORDINATOR FORM -->
+<div class="management-form" id="coordinatorForm">
+    <h3>Add New Coordinator</h3>
+    <form method="post" action="{% url 'admin_dashboard' %}">
+        {% csrf_token %}
+        <input type="hidden" name="form_type" value="coordinator">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="coordinatorName">Full Name</label>
+                <input type="text" name="full_name" id="coordinatorName" required>
+            </div>
+            <div class="form-group">
+                <label for="coordinatorEmail">Email</label>
+                <input type="email" name="email" id="coordinatorEmail" required>
+            </div>
         </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="coordinatorDesignation">Designation</label>
+                <input type="text" name="designation" id="coordinatorDesignation" required>
+            </div>
+            <div class="form-group">
+                <label for="coordinatorEmploymentId">Employment ID</label>
+                <input type="text" name="employment_id" id="coordinatorEmploymentId" required>
+            </div>
+            <div class="form-group">
+                <label for="coordinatorPhone">Phone (optional)</label>
+                <input type="tel" name="phone" id="coordinatorPhone">
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="action-btn"><i class="fas fa-save"></i> Save Coordinator</button>
+        </div>
+    </form>
+</div>
+
 
         <!-- STUDENT FORM -->
         <div class="management-form" id="studentForm">
@@ -627,120 +626,135 @@
     </div>
 
     <!-- JS for toggling forms -->
-    <script>
-        setInterval(() => {
-            fetch('/accounts/ping/');
-        }, 5 * 60 * 1000);
+  <script>
+    // Periodic ping to keep session alive
+    setInterval(() => {
+        fetch('/accounts/ping/').catch(() => console.warn("Ping failed"));
+    }, 5 * 60 * 1000);
 
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let cookie of cookies) {
-                    cookie = cookie.trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
                 }
             }
-            return cookieValue;
+        }
+        return cookieValue;
+    }
+
+    function showPopup(message, success = true) {
+        let popup = document.getElementById('popupNotification');
+        if (!popup) {
+            popup = document.createElement('div');
+            popup.id = 'popupNotification';
+            Object.assign(popup.style, {
+                position: 'fixed',
+                top: '20px',
+                right: '20px',
+                zIndex: '9999',
+                padding: '12px 20px',
+                borderRadius: '6px',
+                color: 'white',
+                fontWeight: 'bold',
+                boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+            });
+            document.body.appendChild(popup);
+        }
+        popup.style.backgroundColor = success ? '#10b981' : '#ef4444';
+        popup.textContent = message;
+        popup.style.display = 'block';
+        setTimeout(() => popup.style.display = 'none', 3000);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const showCoordinatorForm = document.getElementById('showCoordinatorForm');
+        const showStudentForm = document.getElementById('showStudentForm');
+        const showAdminForm = document.getElementById('showAdminForm');
+        const coordinatorForm = document.getElementById('coordinatorForm');
+        const studentForm = document.getElementById('studentForm');
+        const adminForm = document.getElementById('adminForm');
+
+        function hideAllForms() {
+            if (coordinatorForm) coordinatorForm.style.display = 'none';
+            if (studentForm) studentForm.style.display = 'none';
+            if (adminForm) adminForm.style.display = 'none';
         }
 
-        function showPopup(message, success = true) {
-            let popup = document.getElementById('popupNotification');
-            if (!popup) {
-                popup = document.createElement('div');
-                popup.id = 'popupNotification';
-                Object.assign(popup.style, {
-                    position: 'fixed',
-                    top: '20px',
-                    right: '20px',
-                    zIndex: '9999',
-                    padding: '12px 20px',
-                    borderRadius: '6px',
-                    color: 'white',
-                    fontWeight: 'bold',
-                    boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
-                });
-                document.body.appendChild(popup);
-            }
-            popup.style.backgroundColor = success ? '#10b981' : '#ef4444';
-            popup.textContent = message;
-            popup.style.display = 'block';
-            setTimeout(() => popup.style.display = 'none', 3000);
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            const showCoordinatorForm = document.getElementById('showCoordinatorForm');
-            const showStudentForm = document.getElementById('showStudentForm');
-            const showAdminForm = document.getElementById('showAdminForm');
-            const coordinatorForm = document.getElementById('coordinatorForm');
-            const studentForm = document.getElementById('studentForm');
-            const adminForm = document.getElementById('adminForm');
-
-            function hideAllForms() {
-                coordinatorForm.style.display = 'none';
-                studentForm.style.display = 'none';
-                adminForm.style.display = 'none';
-            }
-
-            showCoordinatorForm?.addEventListener('click', e => {
-                e.preventDefault();
-                hideAllForms();
-                coordinatorForm.style.display = 'block';
-                coordinatorForm.scrollIntoView({ behavior: 'smooth' });
-            });
-
-            showStudentForm?.addEventListener('click', e => {
-                e.preventDefault();
-                hideAllForms();
-                studentForm.style.display = 'block';
-                studentForm.scrollIntoView({ behavior: 'smooth' });
-            });
-
-            showAdminForm?.addEventListener('click', e => {
-                e.preventDefault();
-                hideAllForms();
-                adminForm.style.display = 'block';
-                adminForm.scrollIntoView({ behavior: 'smooth' });
-            });
-
-            // Generic AJAX form handler
-            function handleAjaxFormSubmit(formSelector, formType) {
-                const form = document.querySelector(formSelector);
-                if (!form) return;
-
-                form.addEventListener('submit', function (e) {
-                    e.preventDefault();
-                    const formData = new FormData(form);
-                    formData.append('form_type', formType);
-
-                    fetch(form.action || window.location.href, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRFToken': getCookie('csrftoken'),
-                            'X-Requested-With': 'XMLHttpRequest',
-                        },
-                        body: formData
-                    })
-                        .then(res => res.json())
-                        .then(data => {
-                            showPopup(data.message || 'Success', data.status === 'success');
-                            if (data.status === 'success') form.reset();
-                        })
-                        .catch(error => {
-                            console.error(error);
-                            showPopup('An error occurred during submission.', false);
-                        });
-                });
-            }
-
-            handleAjaxFormSubmit('#coordinatorForm form', 'coordinator');
-            handleAjaxFormSubmit('#studentForm form', 'student');
-            handleAjaxFormSubmit('#adminForm form', 'admin');
+        showCoordinatorForm?.addEventListener('click', e => {
+            e.preventDefault();
+            hideAllForms();
+            coordinatorForm.style.display = 'block';
+            coordinatorForm.scrollIntoView({ behavior: 'smooth' });
         });
-    </script>
+
+        showStudentForm?.addEventListener('click', e => {
+            e.preventDefault();
+            hideAllForms();
+            studentForm.style.display = 'block';
+            studentForm.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        showAdminForm?.addEventListener('click', e => {
+            e.preventDefault();
+            hideAllForms();
+            adminForm.style.display = 'block';
+            adminForm.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // AJAX submission handler with better error parsing
+        function handleAjaxFormSubmit(formSelector, formType) {
+            const wrapper = document.querySelector(formSelector);
+            if (!wrapper) return;
+
+            const form = wrapper.querySelector('form');
+            if (!form) return;
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const formData = new FormData(form);
+                formData.append('form_type', formType);
+
+                fetch(form.action || window.location.href, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: formData
+                })
+                    .then(async res => {
+                        const contentType = res.headers.get("content-type");
+                        if (!res.ok) {
+                            if (contentType && contentType.includes("application/json")) {
+                                const errorData = await res.json();
+                                throw new Error(errorData.message || 'Server returned an error');
+                            } else {
+                                throw new Error('Server error (non-JSON response)');
+                            }
+                        }
+                        return res.json();
+                    })
+                    .then(data => {
+                        showPopup(data.message || 'Success', data.status === 'success');
+                        if (data.status === 'success') form.reset();
+                    })
+                    .catch(error => {
+                        console.error('Submission error:', error);
+                        showPopup(error.message || 'Failed to submit. Please check your input.', false);
+                    });
+            });
+        }
+
+        handleAjaxFormSubmit('#coordinatorForm', 'coordinator');
+        handleAjaxFormSubmit('#studentForm', 'student');
+        handleAjaxFormSubmit('#adminForm', 'admin');
+    });
+</script>
 
 
 </body>

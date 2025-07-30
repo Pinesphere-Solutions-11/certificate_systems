@@ -213,12 +213,17 @@ from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from .models import Certificate, Coordinator, Student, AdminUser
-from .forms import CoordinatorForm, StudentForm, AdminUserForm
+from .forms import  StudentForm, AdminUserForm, CoordinatorForm
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.hashers import make_password
+from django.core.paginator import Paginator
+from accounts.models import Certificate, Student, Coordinator, AdminUser, User 
+
 
 
 @login_required
 @user_passes_test(is_admin)
+
 def admin_dashboard(request):
     certificates = Certificate.objects.all().order_by('-created_at')
 
@@ -238,19 +243,45 @@ def admin_dashboard(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
+    # === Handle POST Form Submissions ===
     if request.method == 'POST':
         form_type = request.POST.get('form_type')
 
         if form_type == 'coordinator':
-            form = CoordinatorForm(request.POST)
-            if form.is_valid():
-                form.save()
-                if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                    return JsonResponse({'status': 'success', 'message': 'Coordinator added successfully!'})
-                messages.success(request, 'Coordinator added successfully!')
-                return redirect('admin_dashboard')
-            else:
-                return JsonResponse({'status': 'error', 'message': form.errors.as_json()}, status=400)
+            full_name = request.POST.get('full_name')
+            email = request.POST.get('email')
+            designation = request.POST.get('designation')
+            employment_id = request.POST.get('employment_id')
+            phone = request.POST.get('phone', '')
+
+            if not all([full_name, email, designation, employment_id]):
+                return JsonResponse({'status': 'error', 'message': 'All fields except phone are required.'}, status=400)
+
+            if User.objects.filter(username=email).exists():
+                return JsonResponse({'status': 'error', 'message': 'Email already exists.'}, status=400)
+
+            # Create the user account
+            user = User.objects.create_user(
+                username=email,
+                email=email,
+                password=employment_id,
+                role='coordinator'  # Optional: only if your User model has a 'role' field
+            )
+
+            # Create the Coordinator profile
+            Coordinator.objects.create(
+                user=user,
+                full_name=full_name,
+                email=email,
+                designation=designation,
+                employment_id=employment_id,
+                phone=phone
+            )
+
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'success', 'message': 'Coordinator added successfully!'})
+            messages.success(request, 'Coordinator added successfully!')
+            return redirect('admin_dashboard')
 
         elif form_type == 'student':
             form = StudentForm(request.POST)
@@ -266,14 +297,10 @@ def admin_dashboard(request):
         elif form_type == 'admin':
             form = AdminUserForm(request.POST)
             if form.is_valid():
-                from django.contrib.auth.hashers import make_password
-
                 admin = form.save(commit=False)
-                admin.password = make_password(form.cleaned_data['password'])  # ✅ Hashed
+                admin.password = make_password(form.cleaned_data['password'])  # Hash the password
                 admin.save()
                 return JsonResponse({'status': 'success', 'message': 'Admin added successfully!'})
-                messages.success(request, 'Admin added successfully!')
-                return redirect('admin_dashboard')
             else:
                 return JsonResponse({'status': 'error', 'message': form.errors.as_json()}, status=400)
 
@@ -289,45 +316,56 @@ def admin_dashboard(request):
     }
     return render(request, 'login/admin-dashboard.html', context)
 
-
 # =========================
 # 🧑‍🏫 COORDINATOR DASHBOARD
 # =========================
-
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.shortcuts import render
 from .models import Certificate
+
+
+def is_coordinator(user):
+    return user.is_authenticated and getattr(user, 'role', None) == 'coordinator'
+
 @login_required
 @user_passes_test(is_coordinator)
 def coordinator_dashboard(request):
+    # Initial queryset: all certificates created by the logged-in coordinator
     certificates = Certificate.objects.filter(created_by=request.user).order_by('-created_at')
 
-    # --- Get filters from query params ---
-    cert_type = request.GET.get('type')
-    student_name = request.GET.get('student_name')
-    course_name = request.GET.get('course_name')
+    # --- Get filters from request GET parameters ---
+    cert_type = request.GET.get('type', '').strip()
+    student_name = request.GET.get('student_name', '').strip()
+    course_name = request.GET.get('course_name', '').strip()
 
-    # --- Apply filters ---
+    # --- Apply filters using Q objects ---
+    filters = Q()
     if cert_type:
-        certificates = certificates.filter(certificate_type=cert_type)
+        filters &= Q(certificate_type__iexact=cert_type)
     if student_name:
-        certificates = certificates.filter(student_name__icontains=student_name)
+        filters &= Q(student_name__icontains=student_name)
     if course_name:
-        certificates = certificates.filter(course_name__icontains=course_name)
+        filters &= Q(course_name__icontains=course_name)
 
-    # --- Pagination ---
-    paginator = Paginator(certificates, 10)  # Show 10 certificates per page
+    # Apply all filters
+    certificates = certificates.filter(filters)
+
+    # --- Paginate results ---
+    paginator = Paginator(certificates, 10)  # 10 certificates per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
+    # --- Context for the template ---
     context = {
         'certificates': page_obj,
         'page_obj': page_obj,
-        'cert_type': cert_type or '',
-        'student_name': student_name or '',
-        'course_name': course_name or '',
+        'cert_type': cert_type,
+        'student_name': student_name,
+        'course_name': course_name,
     }
+
     return render(request, 'login/coordinator-dashboard.html', context)
 
 
@@ -634,3 +672,4 @@ def student_login_view(request):
             messages.error(request, "Invalid name or register number.")
 
         return render(request, 'student-login.html')
+   

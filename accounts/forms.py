@@ -13,15 +13,10 @@ class LoginForm(AuthenticationForm):
         'class': 'form-control', 'placeholder': 'Enter password'
     }))
 
-
-
-
-from .models import Coordinator, Student, AdminUser
-
 class CoordinatorForm(forms.ModelForm):
     class Meta:
         model = Coordinator
-        fields = ['full_name','email', 'department', 'phone']
+        fields = ['full_name', 'email', 'designation', 'employment_id', 'phone']
 
 class StudentForm(forms.ModelForm):
     class Meta:
