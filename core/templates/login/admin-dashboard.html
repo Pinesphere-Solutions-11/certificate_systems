@@ -4,6 +4,9 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>Pinesphere | Admin Dashboard</title>
     <link rel="icon" type="image/png" href="https://i.ibb.co/r2xvtYsR/logo-removebg-preview.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -349,20 +352,20 @@
             <h1 style="color: #0099ff;">Welcome back, System Administrator</h1>
             <p>Here's what's happening with your institution today</p>
             <div style="display: flex; justify-content: flex-end;">
-                <a href="{% url 'index' %}" class="action-btn logout-btn">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </a>
+                        <a href="#" onclick="logoutUser()" class="action-btn logout-btn">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
             </div>
         </header>
 
         <div class="action-buttons">
             <button class="action-btn" id="showCoordinatorForm"><i class="fas fa-user-tie"></i> Add Coordinator</button>
-            <button class="action-btn" id="showStudentForm"><i class="fas fa-user-graduate"></i> Add Student</button>
+            {% comment %} <button class="action-btn" id="showStudentForm"><i class="fas fa-user-graduate"></i> Add Student</button> {% endcomment %}
             <button class="action-btn" id="showAdminForm"><i class="fas fa-user-shield"></i> New Admin</button>
-            <button> <a href="{% url 'create_certificate_template' %}" target="_blank" style="text-decoration:none;" onclick="window.open(this.href, '_blank'); return false;" class="action-btn">
+            {% comment %} <button> <a href="{% url 'create_certificate_template' %}" target="_blank" style="text-decoration:none;" onclick="window.open(this.href, '_blank'); return false;" class="action-btn">
                 <i class="fas fa-paint-brush"></i>Certificate Template
             </a>
-        </button>
+        </button> {% endcomment %}
         </div>
 
         <!-- Stats Section -->
@@ -509,8 +512,8 @@
         </div>
         <div class="form-row">
             <div class="form-group">
-                <label for="coordinatorDesignation">Designation</label>
-                <input type="text" name="designation" id="coordinatorDesignation" required>
+                <label for="coordinatorDesignation">Designation (optional)</label>
+                <input type="text" name="designation" id="coordinatorDesignation" >
             </div>
             <div class="form-group">
                 <label for="coordinatorEmploymentId">Employment ID</label>
@@ -625,8 +628,34 @@
         </div>
     </div>
 
-    <!-- JS for toggling forms -->
   <script>
+    function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function logoutUser() {
+    fetch("{% url 'logout' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": getCookie('csrftoken'),
+            "X-Requested-With": "XMLHttpRequest"
+        }
+    })
+    .then(() => {
+        window.location.href = "{% url 'index' %}";  // redirect to home after logout
+    });
+}
     // Periodic ping to keep session alive
     setInterval(() => {
         fetch('/accounts/ping/').catch(() => console.warn("Ping failed"));

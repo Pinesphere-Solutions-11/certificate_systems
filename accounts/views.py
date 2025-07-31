@@ -24,6 +24,9 @@ from .models import User
 from .models import Student
 from .models import CertificateTemplate
 from django.core.files.storage import default_storage
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.cache import cache_control
+from django.views.decorators.cache import cache_control, never_cache
 
 def is_admin(user):
     return user.is_authenticated and user.role == 'admin'
@@ -176,9 +179,11 @@ def login_view(request, role):
 
     return render(request, f'login/{template_map[role]}', {'form': form})
 
+
+@csrf_exempt  
 def logout_view(request):
     logout(request)
-    return redirect('login', role='student')
+    return redirect('index')
 
 
 @login_required
@@ -210,7 +215,6 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib import messages
 from django.core.paginator import Paginator
-from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from .models import Certificate, Coordinator, Student, AdminUser
 from .forms import  StudentForm, AdminUserForm, CoordinatorForm
@@ -223,7 +227,8 @@ from accounts.models import Certificate, Student, Coordinator, AdminUser, User
 
 @login_required
 @user_passes_test(is_admin)
-
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+@never_cache
 def admin_dashboard(request):
     certificates = Certificate.objects.all().order_by('-created_at')
 
@@ -331,6 +336,8 @@ def is_coordinator(user):
 
 @login_required
 @user_passes_test(is_coordinator)
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+@never_cache
 def coordinator_dashboard(request):
     # Initial queryset: all certificates created by the logged-in coordinator
     certificates = Certificate.objects.filter(created_by=request.user).order_by('-created_at')
@@ -373,7 +380,8 @@ def coordinator_dashboard(request):
 # 👨‍🎓 STUDENT DASHBOARD
 # =========================
 
-
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+@never_cache
 def student_dashboard(request):
     student_id = request.session.get('student_id')
     student_name = request.session.get('student_name')

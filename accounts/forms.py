@@ -22,15 +22,18 @@ class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = ['full_name', 'email', 'student_id', 'department']
-
+        
 
 class AdminUserForm(forms.ModelForm):
+    username = forms.CharField(max_length=150)
+    email = forms.EmailField()
+    password = forms.CharField(widget=forms.PasswordInput)
+
     class Meta:
         model = AdminUser
-        fields = ['full_name', 'email', 'username', 'password']
-        widgets = {
-            'password': forms.PasswordInput(),
-        }
+        fields = ['full_name', 'username', 'email', 'password']
+
+
 
 # forms.py
 

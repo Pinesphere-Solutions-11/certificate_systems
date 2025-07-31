@@ -8,17 +8,17 @@ import datetime
 from django.conf import settings
 
 class User(AbstractUser):
-    ROLE_CHOICES = [
+    ROLE_CHOICES = (
         ('admin', 'Admin'),
         ('coordinator', 'Coordinator'),
         ('student', 'Student'),
-    ]
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='student')
-    full_name = models.CharField(max_length=100, default='Unknown User')
-
+    )
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    # other fields like email, username, etc. inherited from AbstractUser
 
     def __str__(self):
-        return f"{self.full_name} ({self.username}) - {self.role}"
+        return f"{self.username} ({self.role})"
+
 
 
 class Coordinator(models.Model):
@@ -41,11 +41,15 @@ class Student(models.Model):
     def __str__(self):
         return self.full_name
 
+
 class AdminUser(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     full_name = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
-    username = models.CharField(max_length=100, unique=True)
-    password = models.CharField(max_length=128)
+    
+
+
+    def __str__(self):
+        return self.full_name
 
 
 from django.core.files.storage import FileSystemStorage
