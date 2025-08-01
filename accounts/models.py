@@ -49,7 +49,10 @@ class Student(models.Model):
 class AdminUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     full_name = models.CharField(max_length=100)
-    
+    email = models.EmailField(unique=True)
+    designation = models.CharField(max_length=100)
+    employment_id = models.CharField(max_length=50, unique=True, default="PS001") 
+    phone = models.CharField(max_length=15, blank=True, null=True)
 
 
     def __str__(self):

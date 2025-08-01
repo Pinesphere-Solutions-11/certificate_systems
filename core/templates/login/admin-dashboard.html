@@ -365,10 +365,10 @@
             <button class="action-btn" id="showCoordinatorForm"><i class="fas fa-user-tie"></i> Add Coordinator</button>
             {% comment %} <button class="action-btn" id="showStudentForm"><i class="fas fa-user-graduate"></i> Add Student</button> {% endcomment %}
             <button class="action-btn" id="showAdminForm"><i class="fas fa-user-shield"></i> New Admin</button>
-            {% comment %} <button> <a href="{% url 'create_certificate_template' %}" target="_blank" style="text-decoration:none;" onclick="window.open(this.href, '_blank'); return false;" class="action-btn">
+             <button> <a href="{% url 'create_certificate_template' %}" target="_blank" style="text-decoration:none;" onclick="window.open(this.href, '_blank'); return false;" class="action-btn">
                 <i class="fas fa-paint-brush"></i>Certificate Template
             </a>
-        </button> {% endcomment %}
+        </button>
         </div>
 
         <!-- Stats Section -->
@@ -582,14 +582,18 @@
                         <input type="email" name="email" id="adminEmail" required>
                     </div>
                 </div>
-                <div class="form-row">
+               <div class="form-row">
                     <div class="form-group">
-                        <label for="adminUsername">Username</label>
-                        <input type="text" name="username" id="adminUsername" required>
+                        <label for="adminDesignation">Designation (optional)</label>
+                        <input type="text" name="designation" id="adminDesignation" >
                     </div>
                     <div class="form-group">
-                        <label for="adminPassword">Password</label>
-                        <input type="password" name="password" id="adminPassword" required>
+                        <label for="adminEmploymentId">Employment ID</label>
+                        <input type="text" name="employment_id" id="adminEmploymentId" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminPhone">Phone (optional)</label>
+                        <input type="tel" name="phone" id="adminPhone">
                     </div>
                 </div>
                 <div class="form-actions">
