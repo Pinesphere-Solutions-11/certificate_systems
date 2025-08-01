@@ -66,7 +66,7 @@
 <body>
     <div class="content">
         <p style="text-align: justify;">
-            This is to certify that <strong>{{ certificate.title }}. {{ certificate.student_name }}</strong>, 
+            This is to certify that <strong>{{ certificate.title }}. {{ certificate.student_name }}</strong>({{ certificate.student_id }}), 
             a {{certificate.degree }} {{ certificate.department }} student from {{ certificate.college }}, has Permitted to do their internship in 
             <strong>{{ certificate.course_name }}</strong> at <strong>Pinesphere</strong> under our supervision and guidance. The internship duration 
             is from <strong>{{ certificate.start_date|date:"d M Y" }}</strong> to <strong>{{ certificate.end_date|date:"d M Y" }}</strong>.
