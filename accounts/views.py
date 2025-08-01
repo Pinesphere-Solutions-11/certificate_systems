@@ -1,4 +1,5 @@
 import csv
+from uuid import uuid4
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -180,7 +181,8 @@ def login_view(request, role):
     return render(request, f'login/{template_map[role]}', {'form': form})
 
 
-@csrf_exempt  
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+@never_cache
 def logout_view(request):
     logout(request)
     return redirect('index')
@@ -230,6 +232,7 @@ from accounts.models import Certificate, Student, Coordinator, AdminUser, User
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @never_cache
 def admin_dashboard(request):
+    
     certificates = Certificate.objects.all().order_by('-created_at')
 
     # === Filter Parameters from GET ===
@@ -420,9 +423,13 @@ def generate_certificate_pdf(certificate, template_name):
 
     static_path = os.path.join(settings.BASE_DIR, 'static').replace('\\', '/')
     base_url = f'file:///{static_path}'
+    
+    media_path = os.path.join(settings.MEDIA_ROOT).replace('\\', '/')
+    base_media_url = f'file:///{media_path}'
 
     html_string = render_to_string(template_name, {
         'certificate': certificate,
+        'base_media_url': base_media_url,
         'base_url': base_url
     })
 
@@ -481,7 +488,7 @@ def create_offer_letter(request):
             issue_date = datetime.strptime(data.get('offerIssueDate'), '%Y-%m-%d').date()
         except Exception:
             return JsonResponse({'status': 'error', 'message': 'Invalid date format'}, status=400)
-
+        
         # Create certificate
         cert = Certificate(
             certificate_type='offer',
@@ -501,6 +508,7 @@ def create_offer_letter(request):
             director_name=data.get('offerDirector'),
             signature=signature_file,
             created_by=request.user,
+            
         )
 
         
@@ -511,6 +519,7 @@ def create_offer_letter(request):
             'status': 'success',
             'message': 'Offer Letter created successfully!',
             'certificate_number': cert.certificate_number,
+            'credential_id' : cert.credential_id,
             'student': cert.student_name,
             'course': cert.course_name,
             'date': cert.issue_date.strftime('%Y-%m-%d')
@@ -563,6 +572,7 @@ def create_completion_certificate(request):
             'status': 'success',
             'message': 'Completion Certificate created successfully!',
             'certificate_number': cert.certificate_number,
+            'credential_id' : cert.credential_id,
             'student': cert.student_name,
             'course': cert.course_name,
             'date': cert.issue_date.strftime('%Y-%m-%d')

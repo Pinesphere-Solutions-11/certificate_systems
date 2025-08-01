@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <title>Student Dashboard | EduConnect</title>
+  <title>Pinesphere | Student Dashboard</title>
   <link rel="icon" type="image/png" href="https://i.ibb.co/r2xvtYsR/logo-removebg-preview.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
@@ -275,9 +275,12 @@
       </div>
       <div class="header-actions">
         <div style="display: flex; justify-content: flex-end;">
-                <a href="{% url 'index' %}" class="logout-btn">
+                <form id="logoutForm" method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="action-btn logout-btn">
                     <i class="fas fa-sign-out-alt"></i> Logout
-                </a>
+                </button>
+                </form>
             </div>
       </div>
     </header>

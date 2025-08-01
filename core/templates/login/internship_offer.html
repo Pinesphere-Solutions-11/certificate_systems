@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -46,11 +47,20 @@
         margin-bottom: 5px;
         }
 
-        .issue-date {
-        text-align: right;
-        margin-top: 10px;
+       .issue-details {
+            position: absolute;
+            bottom: 100px;
+            right: 80px;
+            text-align: right;
+            font-size: 16px;
+            line-height: 1.4;
         }
-     
+
+        .qr-img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
@@ -78,11 +88,16 @@
             <Strong>CTO & Co-Founder</Strong>
         {% endif %}
     </div>
-
-    <div class="issue-date">
-    <strong>Date of issue: {{ certificate.issue_date|date:"d M Y" }}</strong>
-    </div>
 </div>
+     <div class="issue-details">
+        {% if certificate.qr_code_path %}
+            <img src="{{ base_media_url }}/{{ certificate.qr_code_path.name }}" alt="QR Code" class="qr-img"><br>
+        {% endif %}
+        <p>Certificate ID: {{ certificate.credential_id }}</p>
+        <p><strong>Date of issue: {{ certificate.issue_date|date:"d M Y" }}</strong></p>
+    </div>
+
+
 
 </body>
 </html>

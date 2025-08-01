@@ -352,9 +352,12 @@
             <h1 style="color: #0099ff;">Welcome back, System Administrator</h1>
             <p>Here's what's happening with your institution today</p>
             <div style="display: flex; justify-content: flex-end;">
-                        <a href="#" onclick="logoutUser()" class="action-btn logout-btn">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </a>
+                <form id="logoutForm" method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="action-btn logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+                </form>
             </div>
         </header>
 
@@ -629,34 +632,16 @@
     </div>
 
   <script>
-    function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let cookie of cookies) {
-            cookie = cookie.trim();
-            if (cookie.startsWith(name + '=')) {
-                cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
+    window.addEventListener("pageshow", function (event) {
+        if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+            
+            // window.location.reload();
 
-function logoutUser() {
-    fetch("{% url 'logout' %}", {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": getCookie('csrftoken'),
-            "X-Requested-With": "XMLHttpRequest"
+            
+            window.location.href = "{% url 'index' %}";
         }
-    })
-    .then(() => {
-        window.location.href = "{% url 'index' %}";  // redirect to home after logout
     });
-}
-    // Periodic ping to keep session alive
+    
     setInterval(() => {
         fetch('/accounts/ping/').catch(() => console.warn("Ping failed"));
     }, 5 * 60 * 1000);

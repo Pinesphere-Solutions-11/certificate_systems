@@ -1,3 +1,4 @@
+import uuid
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
@@ -6,6 +7,9 @@ from django.db import models
 from django.utils import timezone
 import datetime
 from django.conf import settings
+import qrcode
+from io import BytesIO
+from django.core.files import File
 
 class User(AbstractUser):
     ROLE_CHOICES = (
@@ -81,15 +85,16 @@ class Certificate(models.Model):
     director_name = models.CharField(max_length=100)
     issue_date = models.DateField(null=False, blank=False)
     signature = models.ImageField(upload_to='signatures/', null=True, blank=True)
-
-    # ✅ Add these two:
+    credential_id = models.CharField(max_length=64, unique=True, blank=True, editable=False)
+    qr_code_path = models.ImageField(upload_to='qr_codes/', max_length=255, blank=True, null=True)
+    
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     generated_pdf = models.FileField(upload_to='certificates/', blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        # Generate certificate number like PS001
+        
         if not self.certificate_number:
             last = Certificate.objects.order_by('-id').first()
             if last and last.certificate_number:
@@ -100,6 +105,19 @@ class Certificate(models.Model):
             else:
                 num = 1
             self.certificate_number = f"PS{num:03d}"
+          
+        if not self.credential_id:
+            self.credential_id = uuid.uuid4().hex[:16]  
+            
+        qr = qrcode.QRCode(box_size=6, border=2)
+        qr.add_data(self.credential_id)
+        qr.make(fit=True)
+        img = qr.make_image(fill='black', back_color='white')
+
+        buffer = BytesIO()
+        img.save(buffer, format='PNG')
+        self.qr_code_path.save(f"{self.certificate_number}_qr.png", File(buffer), save=False)
+        
         super().save(*args, **kwargs)
 
     def __str__(self):
