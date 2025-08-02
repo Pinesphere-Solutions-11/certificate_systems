@@ -303,14 +303,44 @@ def admin_dashboard(request):
                 return JsonResponse({'status': 'error', 'message': form.errors.as_json()}, status=400)
 
         elif form_type == 'admin':
-            form = AdminUserForm(request.POST)
-            if form.is_valid():
-                admin = form.save(commit=False)
-                admin.password = make_password(form.cleaned_data['password'])  # Hash the password
-                admin.save()
+            full_name = request.POST.get('full_name')
+            email = request.POST.get('email')
+            designation = request.POST.get('designation')
+            employment_id = request.POST.get('employment_id')
+            phone = request.POST.get('phone', '')
+
+            if not all([full_name, email, employment_id]):
+                return JsonResponse({'status': 'error', 'message': 'Full name, email, and employment ID are required.'}, status=400)
+
+            if User.objects.filter(username=email).exists():
+                return JsonResponse({'status': 'error', 'message': 'Email already exists.'}, status=400)
+
+            # Create Django User for login
+            user = User.objects.create_user(
+                username=email,
+                email=email,
+                password=employment_id,
+                role='admin'
+            )
+
+            # Create AdminUser profile
+            AdminUser.objects.create(
+                user=user,
+                full_name=full_name,
+                email=email,
+                designation=designation,
+                employment_id=employment_id,
+                phone=phone
+            )
+
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'status': 'success', 'message': 'Admin added successfully!'})
-            else:
-                return JsonResponse({'status': 'error', 'message': form.errors.as_json()}, status=400)
+            
+            messages.success(request, 'Admin added successfully!')
+            return redirect('admin_dashboard')
+
+        else:
+            return JsonResponse({'status': 'error', 'message': form.errors.as_json()}, status=400)
 
     context = {
         'certificates': page_obj,
@@ -691,3 +721,4 @@ def student_login_view(request):
 
         return render(request, 'student-login.html')
    
+

@@ -88,6 +88,9 @@
             transition: var(--transition);
             cursor: pointer;
         }
+        a.action-btn, .action-link-btn {
+            font-weight: 100;
+        }
 
         .action-btn i {
             margin-right: 0.5rem;
@@ -98,7 +101,33 @@
             transform: translateY(-3px);
         }
 
-        .stats-grid {
+        .action-link-btn {
+    font-weight: normal !important;         /* match the others, not bold */
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif !important;
+    text-decoration: none;
+    color: #fff;
+    background: var(--primary-color);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    transition: var(--transition);
+    cursor: pointer;
+    border: none;
+}
+
+.action-link-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-3px);
+}
+
+.action-link-btn i {
+    margin-right: 0.5rem;
+}
+                
+            .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 1.5rem;
@@ -323,6 +352,10 @@
             font-weight: 500;
             transition: background 0.3s ease;
         }
+        .action-btn:focus {
+            outline: none;
+            border: none;
+        }
 
         .pagination a:hover {
             background-color: var(--primary-color);
@@ -354,7 +387,7 @@
             <div style="display: flex; justify-content: flex-end;">
                 <form id="logoutForm" method="POST" action="{% url 'logout' %}">
                 {% csrf_token %}
-                <button type="submit" class="action-btn logout-btn">
+                <button type="submit" class="action-btn logout-btn" style="padding: 1rem 1.75rem;">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
                 </form>
@@ -365,10 +398,12 @@
             <button class="action-btn" id="showCoordinatorForm"><i class="fas fa-user-tie"></i> Add Coordinator</button>
             {% comment %} <button class="action-btn" id="showStudentForm"><i class="fas fa-user-graduate"></i> Add Student</button> {% endcomment %}
             <button class="action-btn" id="showAdminForm"><i class="fas fa-user-shield"></i> New Admin</button>
-             <button> <a href="{% url 'create_certificate_template' %}" target="_blank" style="text-decoration:none;" onclick="window.open(this.href, '_blank'); return false;" class="action-btn">
-                <i class="fas fa-paint-brush"></i>Certificate Template
+            <a href="{% url 'create_certificate_template' %}" target="_blank"
+                class="action-btn action-link-btn"
+                onclick="window.open(this.href, '_blank'); return false;">
+                <i class="fas fa-paint-brush"></i> Certificate Template
             </a>
-        </button>
+        
         </div>
 
         <!-- Stats Section -->

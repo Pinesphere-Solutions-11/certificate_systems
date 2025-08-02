@@ -1,0 +1,134 @@
+{% extends 'login/admin_manage.html' %}
+{% block content %}
+<div class="admin-panel">
+    <aside class="sidebar">
+        <h2>Admin Panel</h2>
+        <ul>
+            <li data-section="internship">Internship Certificates</li>
+            <li data-section="completion">Completion Certificates</li>
+            <li data-section="admins">Admins</li>
+            <li data-section="coordinators">Coordinators</li>
+            <li data-section="students">Students</li>
+        </ul>
+    </aside>
+
+        <main class="content">
+            <div id="section-internship" class="section">
+        <h2>Internship Certificates</h2>
+        <table id="internship-table">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Course</th>
+                    <th>Issue Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+        <div id="section-completion" class="section" style="display:none;">
+    <h2>Completion Certificates</h2>
+    <table id="completion-table">
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Course</th>
+                <th>Issue Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+        <div id="section-admins" class="section" style="display:none;"></div>
+        <div id="section-coordinators" class="section" style="display:none;"></div>
+        <div id="section-students" class="section" style="display:none;"></div>
+    </main>
+</div>
+{% endblock %}
+<script>
+    function loadCompletionCertificates() {
+    fetch("{% url 'list_completion_certificates' %}")
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.querySelector('#completion-table tbody');
+            tbody.innerHTML = '';
+            data.certificates.forEach(cert => {
+                const row = `
+                    <tr>
+                        <td>${cert.student_name}</td>
+                        <td>${cert.course}</td>
+                        <td>${cert.issue_date}</td>
+                        <td>
+                            <a href="${cert.preview_url}" target="_blank">Preview</a> |
+                            <a href="${cert.download_url}" download>Download</a> |
+                            <a href="#" onclick="deleteCertificate(${cert.id})">Delete</a>
+                        </td>
+                    </tr>`;
+                tbody.innerHTML += row;
+            });
+        });
+}
+
+// Load on tab click
+document.querySelector("li[data-section='completion']").addEventListener("click", loadCompletionCertificates);
+
+    // Sidebar switching logic
+    const links = document.querySelectorAll(".sidebar li");
+    const sections = document.querySelectorAll(".section");
+
+    links.forEach(link => {
+        link.addEventListener("click", () => {
+            const id = "section-" + link.dataset.section;
+            sections.forEach(sec => sec.style.display = "none");
+            document.getElementById(id).style.display = "block";
+        });
+    });
+    
+function loadInternshipCertificates() {
+    fetch("{% url 'list_internship_certificates' %}")
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.querySelector('#internship-table tbody');
+            tbody.innerHTML = '';
+            data.certificates.forEach(cert => {
+                const row = `
+                    <tr>
+                        <td>${cert.student_name}</td>
+                        <td>${cert.course}</td>
+                        <td>${cert.issue_date}</td>
+                        <td>
+                            <a href="${cert.preview_url}" target="_blank">Preview</a> |
+                            <a href="${cert.download_url}" download>Download</a> |
+                            <a href="#" onclick="deleteCertificate(${cert.id})">Delete</a>
+                        </td>
+                    </tr>`;
+                tbody.innerHTML += row;
+            });
+        });
+}
+
+function deleteCertificate(id) {
+    if (confirm("Are you sure you want to delete this certificate?")) {
+        fetch(`/accounts/admin/certificates/delete/${id}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                loadInternshipCertificates();
+            }
+        });
+    }
+}
+
+// Auto-load when internship section is visible
+document.querySelector("li[data-section='internship']").addEventListener("click", loadInternshipCertificates);
+</script>
+

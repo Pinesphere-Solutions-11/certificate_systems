@@ -340,7 +340,7 @@
             <div style="display: flex; justify-content: flex-end;">
                 <form id="logoutForm" method="POST" action="{% url 'logout' %}">
                     {% csrf_token %}
-                    <button type="submit" class="logout-btn">
+                    <button type="submit" class="logout-btn" style="padding: 1rem 1.75rem;">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </button>
                 </form>
