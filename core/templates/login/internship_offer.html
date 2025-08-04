@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <style>
@@ -8,6 +8,7 @@
             size: A4;
             margin: 0;
         }
+
         body {
             background: url("{{ base_url }}/images/offer_letter_template.png") no-repeat center center;
             background-size: cover;
@@ -27,27 +28,27 @@
         }
 
         .footer {
-        position: absolute;
-        bottom: 120px;
-        left: 80px;
-        right: 80px;
-        font-size: 16px;
-        line-height: 1.6;
+            position: absolute;
+            bottom: 120px;
+            left: 80px;
+            right: 80px;
+            font-size: 16px;
+            line-height: 1.6;
         }
 
         .signature-block {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-top: 10px;
         }
 
         .signature-img {
-        height: 60px;
-        margin-bottom: 5px;
+            height: 60px;
+            margin-bottom: 5px;
         }
 
-       .issue-details {
+        .issue-details {
             position: absolute;
             bottom: 100px;
             right: 80px;
@@ -63,35 +64,40 @@
         }
     </style>
 </head>
+
 <body>
     <div class="content">
         <p style="text-align: justify;">
-            This is to certify that <strong>{{ certificate.title }}. {{ certificate.student_name }}</strong>({{ certificate.student_id }}), 
-            a {{certificate.degree }} {{ certificate.department }} student from {{ certificate.college }}, has Permitted to do their internship in 
-            <strong>{{ certificate.course_name }}</strong> at <strong>Pinesphere</strong> under our supervision and guidance. The internship duration 
-            is from <strong>{{ certificate.start_date|date:"d M Y" }}</strong> to <strong>{{ certificate.end_date|date:"d M Y" }}</strong>.
+            This is to certify that <strong>{{ certificate.title }}. {{ certificate.student_name }}</strong>({{
+            certificate.student_id }}),
+            a {{certificate.degree }} {{ certificate.department }} student from {{ certificate.college }}, has Permitted
+            to do their internship in
+            <strong>{{ certificate.course_name }}</strong> at <strong>Pinesphere</strong> under our supervision and
+            guidance. The internship duration
+            is from <strong>{{ certificate.start_date|date:"d M Y" }}</strong> to <strong>{{
+                certificate.end_date|date:"d M Y" }}</strong>.
         </p>
     </div>
 
     <div class="footer">
-    Yours sincerely,<br><br>
-    For Pinesphere Solutions
+        Yours sincerely,<br><br>
+        For Pinesphere Solutions
 
-    <div class="signature-block">
-        {% if certificate.director_name == "Mr. Surendiran S" %}
+        <div class="signature-block">
+            {% if certificate.director_name == "Mr. Surendiran S" %}
             <img src="{{ base_url }}/images/signatures/surendar_s.png" class="signature-img">
             {{ certificate.director_name }}<br>
             <strong>Director</strong>
-        {% else %}
+            {% else %}
             <img src="{{ base_url }}/images/signatures/vasanth_nagarajan.png" class="signature-img">
             {{ certificate.director_name }}<br>
             <Strong>CTO & Co-Founder</Strong>
-        {% endif %}
+            {% endif %}
+        </div>
     </div>
-</div>
-     <div class="issue-details">
+    <div class="issue-details">
         {% if certificate.qr_code_path %}
-            <img src="{{ base_media_url }}/{{ certificate.qr_code_path.name }}" alt="QR Code" class="qr-img"><br>
+        <img src="{{ base_media_url }}/{{ certificate.qr_code_path.name }}" alt="QR Code" class="qr-img"><br>
         {% endif %}
         <p>Certificate ID: {{ certificate.credential_id }}</p>
         <p><strong>Date of issue: {{ certificate.issue_date|date:"d M Y" }}</strong></p>
@@ -100,4 +106,5 @@
 
 
 </body>
+
 </html>

@@ -273,7 +273,7 @@ def admin_dashboard(request):
                 username=email,
                 email=email,
                 password=employment_id,
-                role='coordinator'  # Optional: only if your User model has a 'role' field
+                role='coordinator' 
             )
 
             # Create the Coordinator profile
@@ -356,7 +356,7 @@ def admin_dashboard(request):
 
 # =========================
 # 🧑‍🏫 COORDINATOR DASHBOARD
-# =========================
+# ===========================
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
@@ -722,3 +722,28 @@ def student_login_view(request):
         return render(request, 'student-login.html')
    
 
+@login_required
+@user_passes_test(is_admin)
+def admin_management_panel(request):
+    # Fetch real-time data to populate the admin-management.html
+    admins = AdminUser.objects.select_related('user').all()
+    coordinators = Coordinator.objects.select_related('user').all()
+    certificates = Certificate.objects.all()
+    
+    offer_certificates = Certificate.objects.filter(certificate_type='offer')
+    completion_certificates = Certificate.objects.filter(certificate_type='completion')
+    
+    
+
+    return render(request, 'login/admin-management.html', {
+        'admins': admins,
+        'coordinators': coordinators,
+        'certificates': certificates,
+        'offer_certificates': offer_certificates,
+        'completion_certificates': completion_certificates,
+        'offer_count' : offer_certificates.count(),
+        'completion_count' : completion_certificates.count(),
+        'total_certificates': Certificate.objects.count(),
+        'coordinator_count': Coordinator.objects.count(),
+        'admin_count' : AdminUser.objects.count(),
+    })
