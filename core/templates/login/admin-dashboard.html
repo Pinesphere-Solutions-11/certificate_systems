@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Certificate Management</title>
+    <title>Pinesphere | Admin Dashboard</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/r2xvtYsR/logo-removebg-preview.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --sidebar-width: 320px;
@@ -17,13 +21,13 @@
             --warning-color: #f59e0b;
             --danger-color: #ef4444;
             --info-color: #06b6d4;
-            
+
             /* Dark theme colors */
             --sidebar-bg: linear-gradient(180deg, #0f172a 0%, #020617 100%);
             --sidebar-text: #e2e8f0;
             --sidebar-active: rgba(59, 130, 246, 0.15);
             --sidebar-hover: rgba(255, 255, 255, 0.05);
-            
+
             /* Content colors */
             --content-bg: #f8fafc;
             --card-bg: #ffffff;
@@ -32,13 +36,13 @@
             --text-muted: #94a3b8;
             --border-color: #e2e8f0;
             --border-hover: #cbd5e1;
-            
+
             /* Shadows */
             --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
             --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
             --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
-            
+
             /* Animations */
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             --transition-fast: all 0.15s ease;
@@ -106,8 +110,15 @@
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
         }
 
         .sidebar-header h3 {
@@ -316,6 +327,7 @@
                 opacity: 0;
                 transform: translateY(40px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -346,7 +358,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-           
+
         }
 
         .card-header h3 {
@@ -469,7 +481,7 @@
         }
 
         .data-table th {
-            
+
             color: var(--text-dark);
             font-weight: 700;
             font-size: 0.875rem;
@@ -806,7 +818,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* Alerts */
@@ -925,6 +939,7 @@
                 opacity: 0;
                 transform: translateX(-30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateX(0);
@@ -936,6 +951,7 @@
                 opacity: 0;
                 transform: translateX(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateX(0);
@@ -970,7 +986,8 @@
             transform: translateY(-4px) scale(1.1);
             box-shadow: var(--shadow-xl);
         }
-         .action-btn {
+
+        .action-btn {
             display: flex;
             align-items: center;
             padding: 0.75rem 1.5rem;
@@ -983,7 +1000,9 @@
             transition: var(--transition);
             cursor: pointer;
         }
-        a.action-btn, .action-link-btn {
+
+        a.action-btn,
+        .action-link-btn {
             font-weight: 100;
         }
 
@@ -997,7 +1016,8 @@
         }
 
         .action-link-btn {
-            font-weight: normal !important;         /* match the others, not bold */
+            font-weight: normal !important;
+            /* match the others, not bold */
             font-size: 14px;
             font-family: Arial, Helvetica, sans-serif !important;
             text-decoration: none;
@@ -1021,67 +1041,286 @@
         .action-link-btn i {
             margin-right: 0.5rem;
         }
+
+        /* Unified Form Styling - for both certificate and management forms */
+        .certificate-form,
         .management-form {
             display: none;
-            background: #fff;
+            background: var(--card-bg);
             padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: var(--shadow);
-            margin-bottom: 2rem;
+            border-radius: var(--border-radius);
+            margin: 2rem 0;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
             animation: fadeIn 0.5s ease-in-out;
         }
+
+        .certificate-form h3,
         .management-form h3 {
-        color: #2c3e50;
-        margin-bottom: 1.5rem;
-        font-size: 1.5rem;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 0.5rem;
-    }
-    
-    .form-row {
-        display: flex;
-        gap: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-    
-    .form-group {
-        flex: 1;
-    }
-    
-    .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: #555;
-        font-weight: 500;
-    }
-    
-    .form-group input {
-        width: 100%;
-        padding: 0.75rem;
-        border: 1px solid #ddd;
-        border-radius: 0.5rem;
-        font-size: 1rem;
-        transition: border-color 0.3s;
-    }
-    
-    .form-group input:focus {
-        border-color: #3498db;
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
-    }
-    
-    .form-actions {
-        display: flex;
-        justify-content: flex-end;
-        margin-top: 1rem;
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            font-size: 0.875rem;
+            background: var(--card-bg);
+            color: var(--text-dark);
+            transition: var(--transition);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Dark mode adjustments */
+        @media (prefers-color-scheme: dark) {
+
+            .certificate-form,
+            .management-form {
+                background: var(--card-bg);
+                border-color: var(--border-color);
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                background: #1e293b;
+                border-color: #334155;
+                color: #f1f5f9;
+            }
+
+            .certificate-form h3,
+            .management-form h3 {
+                color: #f1f5f9;
+                border-color: #334155;
+            }
+
+            .form-group label {
+                color: #e2e8f0;
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .certificate-form,
+            .management-form {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Certificate Forms Styling */
+        .certificate-form {
+            display: none;
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            margin-top: 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .certificate-form h3 {
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .certificate-form .form-row {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .certificate-form .form-group {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .certificate-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .certificate-form input,
+        .certificate-form select,
+        .certificate-form textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            font-size: 0.875rem;
+            background: var(--card-bg);
+            color: var(--text-dark);
+            transition: var(--transition);
+        }
+
+        .certificate-form input:focus,
+        .certificate-form select:focus,
+        .certificate-form textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .certificate-form .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        .certificate-form button[type="submit"] {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .certificate-form button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .certificate-form .form-row {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .certificate-form .form-group {
+                width: 100%;
+            }
+
+            .certificate-form {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Dark mode adjustments */
+        @media (prefers-color-scheme: dark) {
+            .certificate-form {
+                background: var(--card-bg);
+                border-color: var(--border-color);
+            }
+
+            .certificate-form input,
+            .certificate-form select,
+            .certificate-form textarea {
+                background: #1e293b;
+                border-color: #334155;
+                color: #f1f5f9;
+            }
+
+            .certificate-form h3 {
+                color: #f1f5f9;
+                border-color: #334155;
+            }
+
+            .certificate-form label {
+                color: #e2e8f0;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .cancel-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--border-color);
+            background: transparent;
+            color: var(--text-dark);
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cancel-btn:hover {
+            background: var(--danger-color);
+            color: white;
+            border-color: var(--danger-color);
+            transform: translateY(-2px);
+        }
     </style>
 </head>
+
 <body>
     <!-- Main Dashboard -->
     <div class="dashboard-container">
@@ -1094,7 +1333,7 @@
                 <h3>Admin Portal</h3>
                 <p>Certificate Management System</p>
             </div>
-            
+
             <div class="sidebar-menu">
                 <div class="menu-section">
                     <div class="menu-category">Dashboard</div>
@@ -1112,7 +1351,7 @@
                         <i class="fas fa-medal"></i> Completion Certificates
                     </a>
                 </div>
-                
+
                 <div class="menu-section">
                     <div class="menu-category">User Management</div>
                     <a href="#" class="menu-item" data-section="admin-management">
@@ -1126,12 +1365,12 @@
                     </a>
                 </div>
                 <form id="logoutForm" method="POST" action="{% url 'logout' %}">
-                {% csrf_token %}
-                <button type="submit" class="menu-item action-btn logout-btn" style="padding: 1rem 1.75rem;">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
+                    {% csrf_token %}
+                    <button type="submit" class="menu-item action-btn logout-btn" style="padding: 1rem 1.75rem;">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
                 </form>
-                
+
             </div>
         </aside>
 
@@ -1150,12 +1389,12 @@
                 </div>
                 <div class="header-actions">
                     <div class="search-container">
-                        
+
                     </div>
-                    
-                        
-                   
-                    
+
+
+
+
                 </div>
             </div>
 
@@ -1170,7 +1409,7 @@
                                     <div class="stat-card-number">{{ total_certificates }}</div>
                                     <div class="stat-card-label">Total Students</div>
                                     <div class="stat-card-change positive">
-                                        
+
                                     </div>
                                 </div>
                                 <div class="stat-card-icon primary">
@@ -1184,7 +1423,7 @@
                                     <div class="stat-card-number">{{ total_certificates }}</div>
                                     <div class="stat-card-label">Total Certificates</div>
                                     <div class="stat-card-change positive">
-                                       
+
                                     </div>
                                 </div>
                                 <div class="stat-card-icon success">
@@ -1198,7 +1437,7 @@
                                     <div class="stat-card-number">{{ coordinator_count }}</div>
                                     <div class="stat-card-label">Coordinators</div>
                                     <div class="stat-card-change positive">
-                                        
+
                                     </div>
                                 </div>
                                 <div class="stat-card-icon warning">
@@ -1212,7 +1451,7 @@
                                     <div class="stat-card-number">{{ admin_count }}</div>
                                     <div class="stat-card-label">Administrators</div>
                                     <div class="stat-card-change">
-                                        
+
                                     </div>
                                 </div>
                                 <div class="stat-card-icon info">
@@ -1228,7 +1467,12 @@
                     <div class="dashboard-card">
                         <div class="card-header">
                             <h3><i class="fas fa-briefcase"></i> Internship Certificates</h3>
-                            <p style="display: flex-end;">{{ offer_count }}</p>
+
+                            <div class="action-buttons">
+                                <button class="action-btn" id="showOfferForm">
+                                    <i class="fas fa-file-signature"></i> Generate Offer Letter
+                                </button>
+                            </div>
                         </div>
                         <div class="card-body">
                             <div class="table-container">
@@ -1245,21 +1489,24 @@
                                     </thead>
                                     <tbody>
                                         {% for cert in offer_certificates %}
-                                            <tr>
-                                                <td>{{ cert.student_name }}</td>
-                                                <td>{{ cert.student_id }}</td>
-                                                <td>{{ cert.course_name }}</td>
-                                                <td>{{ cert.issue_date }}</td>
-        
+                                        <tr>
+                                            <td>{{ cert.student_name }}</td>
+                                            <td>{{ cert.student_id }}</td>
+                                            <td>{{ cert.course_name }}</td>
+                                            <td>{{ cert.issue_date }}</td>
+
                                             <td><span class="status-badge status-active">Active</span></td>
                                             <td>
-                                                <button class="btn btn-info btn-sm" onclick="previewCertificate('1', 'internship')">
+                                                <button class="btn btn-info btn-sm"
+                                                    onclick="previewCertificate('1', 'internship')">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
-                                                <button class="btn btn-success btn-sm" onclick="downloadCertificate('1', 'internship')">
+                                                <button class="btn btn-success btn-sm"
+                                                    onclick="downloadCertificate('1', 'internship')">
                                                     <i class="fas fa-download"></i>
                                                 </button>
-                                                <button class="btn btn-danger btn-sm" onclick="deleteCertificate('1', 'internship')">
+                                                <button class="btn btn-danger btn-sm"
+                                                    onclick="deleteCertificate('1', 'internship')">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </td>
@@ -1267,6 +1514,123 @@
                                         {% endfor %}
                                     </tbody>
                                 </table>
+                                <!-- Offer Letter Form -->
+                                <div class="certificate-form" id="offerForm">
+                                    <div class="data-section">
+                                        <h3>Generate Offer Letter</h3>
+                                        <form id="createOfferForm" enctype="multipart/form-data">
+                                            <!-- Title, Name and Register Number in one line -->
+                                            <div class="form-row">
+                                                <div class="form-group">
+                                                    <label for="offerTitle">Title</label>
+                                                    <select id="offerTitle" name="offerTitle" required>
+                                                        <option value="">Select Title</option>
+                                                        <option value="Mr">Mr</option>
+                                                        <option value="Ms">Ms</option>
+                                                        <option value="Mrs">Mrs</option>
+                                                        <option value="Dr">Dr</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="offerStudentName">Student Name</label>
+                                                    <input type="text" id="offerStudentName" name="offerStudentName"
+                                                        required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="offerRegisterNumber">Register Number</label>
+                                                    <input type="text" id="offerRegisterNumber"
+                                                        name="offerRegisterNumber" required>
+                                                </div>
+                                            </div>
+
+                                            <!-- Degree and College in one line -->
+                                            <div class="form-row">
+                                                <div class="form-group">
+                                                    <label for="offerDegree">Degree</label>
+                                                    <select id="offerDegree" name="offerDegree" required
+                                                        onchange="populateDepartments('offerDegree', 'offerDepartment')">
+                                                        <option value="">Select Degree</option>
+                                                        <option value="B.E">Bachelor's of Engineering</option>
+                                                        <option value="B.Tech">B Tech</option>
+                                                        <option value="B.Sc">B.Sc (Science)</option>
+                                                        <option value="B.A">B.A (Arts)</option>
+                                                        <option value="MBA">MBA</option>
+                                                        <option value="Diploma">Diploma</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group" id="offerDepartmentGroup" style="display:none;">
+                                                    <label for="offerDepartment">Department</label>
+                                                    <select id="offerDepartment" name="offerDepartment" required>
+                                                        <option value="">Select Department</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="offerCollege">College</label>
+                                                    <input type="text" id="offerCollege" name="offerCollege" required>
+                                                </div>
+                                            </div>
+
+                                            <!-- Location and Domain in one line -->
+                                            <div class="form-row">
+                                                <div class="form-group">
+                                                    <label for="offerLocation">Location</label>
+                                                    <input type="text" id="offerLocation" name="offerLocation">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="offerCourseName">Domain</label>
+                                                    <input type="text" id="offerCourseName" name="offerCourseName"
+                                                        required>
+                                                </div>
+                                            </div>
+
+                                            <!-- Start Date, End Date and Duration in one line -->
+                                            <div class="form-row">
+                                                <div class="form-group">
+                                                    <label for="offerStartDate">Start Date</label>
+                                                    <input type="date" id="offerStartDate" name="offerStartDate"
+                                                        required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="offerEndDate">End Date</label>
+                                                    <input type="date" id="offerEndDate" name="offerEndDate" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="offerDuration">Duration</label>
+                                                    <input type="text" id="offerDuration" name="offerDuration"
+                                                        placeholder="e.g., 6 months">
+                                                </div>
+                                            </div>
+
+                                            <!-- Director Name and E-sign in one line -->
+                                            <div class="form-row">
+                                                <div class="form-group">
+                                                    <label for="offerDirector">Director Name</label>
+                                                    <select id="offerDirector" name="offerDirector" required>
+                                                        <option value="">Select Director</option>
+                                                        <option value="Mr. Surendiran S">Mr. Surendiran S</option>
+                                                        <option value="Mr. Vasanth Nagarajan ">Mr. Vasanth Nagarajan
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="offerIssueDate">Date of Issue</label>
+                                                    <input type="date" id="offerIssueDate" name="offerIssueDate"
+                                                        required>
+                                                </div>
+                                            </div>
+
+                                            <!-- Submit -->
+                                            <div class="form-actions">
+                                                <button type="button" class="btn btn-outline cancel-btn">
+                                                    <i class="fas fa-times"></i> Cancel
+                                                </button>
+                                                <button type="submit" class="action-btn">
+                                                    <i class="fas fa-save"></i> Generate Certificate
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1277,8 +1641,12 @@
                     <div class="dashboard-card">
                         <div class="card-header">
                             <h3><i class="fas fa-medal"></i> Completion Certificates</h3>
-                            
-                            <p style="display: flex-end;">{{ completion_count }}</p>
+                            <div class="action-buttons">
+                                <button class="action-btn" id="showCompletionForm">
+                                    <i class="fas fa-award"></i> Generate Completion Certificate
+                                </button>
+                            </div>
+                            <!-- <p style="display: flex-end;">{{ completion_count }}</p> -->
                         </div>
                         <div class="card-body">
                             <div class="table-container">
@@ -1295,20 +1663,23 @@
                                     </thead>
                                     <tbody>
                                         {% for cert in completion_certificates %}
-                                            <tr>
-                                                <td>{{ cert.student_name }}</td>
-                                                <td>{{ cert.student_id }}</td>
-                                                <td>{{ cert.course_name }}</td>
-                                                <td>{{ cert.end_date }}</td>
+                                        <tr>
+                                            <td>{{ cert.student_name }}</td>
+                                            <td>{{ cert.student_id }}</td>
+                                            <td>{{ cert.course_name }}</td>
+                                            <td>{{ cert.end_date }}</td>
                                             <td><span class="status-badge status-active">Completed</span></td>
                                             <td>
-                                                <button class="btn btn-info btn-sm" onclick="previewCertificate('3', 'completion')">
+                                                <button class="btn btn-info btn-sm"
+                                                    onclick="previewCertificate('3', 'completion')">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
-                                                <button class="btn btn-success btn-sm" onclick="downloadCertificate('3', 'completion')">
+                                                <button class="btn btn-success btn-sm"
+                                                    onclick="downloadCertificate('3', 'completion')">
                                                     <i class="fas fa-download"></i>
                                                 </button>
-                                                <button class="btn btn-danger btn-sm" onclick="deleteCertificate('3', 'completion')">
+                                                <button class="btn btn-danger btn-sm"
+                                                    onclick="deleteCertificate('3', 'completion')">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </td>
@@ -1316,7 +1687,136 @@
                                         {% endfor %}
                                     </tbody>
                                 </table>
+
                             </div>
+
+                        </div>
+                    </div>
+                    <!-- Completion Certificate Form -->
+                    <div class="certificate-form" id="completionForm">
+                        <div class="data-section">
+                            <h3>Generate Completion Certificate</h3>
+                            <form id="createCompletionForm">
+                                <!-- Title, Name and Register Number -->
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="completionTitle">Title</label>
+                                        <select id="completionTitle" name="completionTitle" required>
+                                            <option value="">Select Title</option>
+                                            <option value="Mr">Mr</option>
+                                            <option value="Ms">Ms</option>
+                                            <option value="Mrs">Mrs</option>
+                                            <option value="Dr">Dr</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="completionStudentName">Student Name</label>
+                                        <input type="text" id="completionStudentName" name="completionStudentName"
+                                            required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="completionRegisterNumber">Register Number</label>
+                                        <input type="text" id="completionRegisterNumber" name="completionRegisterNumber"
+                                            required>
+                                    </div>
+                                </div>
+
+                                <!-- Degree and College -->
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="completionDegree">Degree</label>
+                                        <select id="completionDegree" name="completionDegree" required
+                                            onchange="populateDepartments('completionDegree', 'completionDepartment')">
+                                            <option value="">Select Degree</option>
+                                            <option value="B.E">Bachelor's of Engineering</option>
+                                            <option value="B.Tech">B Tech</option>
+                                            <option value="B.Sc">B.Sc (Science)</option>
+                                            <option value="B.A">B.A (Arts)</option>
+                                            <option value="MBA">MBA</option>
+                                            <option value="Diploma">Diploma</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" id="completionDepartmentGroup" style="display:none;">
+                                        <label for="completionDepartment">Department</label>
+                                        <select id="completionDepartment" name="completionDepartment" required>
+                                            <option value="">Select Department</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="completionCollege">College</label>
+                                        <input type="text" id="completionCollege" name="completionCollege" required>
+                                    </div>
+                                </div>
+
+                                <!-- Location and Course -->
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="completionLocation">Location</label>
+                                        <input type="text" id="completionLocation" name="completionLocation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="completionCourseName">Course/Domain</label>
+                                        <input type="text" id="completionCourseName" name="completionCourseName"
+                                            required>
+                                    </div>
+                                </div>
+
+                                <!-- Project Field  -->
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="completionProject">Project Name</label>
+                                        <input type="text" id="completionProject" name="completionProject"
+                                            placeholder="e.g., Online Portfolio System">
+                                    </div>
+                                </div>
+
+                                <!-- Start Date, End Date, Duration -->
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="completionStartDate">Start Date</label>
+                                        <input type="date" id="completionStartDate" name="completionStartDate" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="completionEndDate">End Date</label>
+                                        <input type="date" id="completionEndDate" name="completionEndDate" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="completionDuration">Duration</label>
+                                        <input type="text" id="completionDuration" name="completionDuration"
+                                            placeholder="e.g., 2 weeks">
+                                    </div>
+                                </div>
+
+                                <!-- Director -->
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="completionDirector">Director Name</label>
+                                        <select id="completionDirector" name="completionDirector" required>
+                                            <option value="">Select Director</option>
+                                            <option value="Mr. Surendiran S">Mr. Surendiran S</option>
+                                            <option value="Mr. Vasanth Nagarajan ">Mr. Vasanth Nagarajan
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="completionIssueDate">Date of Issue</label>
+                                        <input type="date" id="completionIssueDate" name="completionIssueDate" required>
+                                    </div>
+                                </div>
+
+
+
+                                <!-- Submit -->
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-outline cancel-btn">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+
+                                    <button type="submit" class="action-btn">
+                                        <i class="fas fa-save"></i> Generate Certificate
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </section>
@@ -1326,9 +1826,10 @@
                     <div class="dashboard-card">
                         <div class="card-header">
                             <h3><i class="fas fa-user-shield"></i> Administrator Management</h3>
-                            {% comment %} <p style="display: flex-end;">{{ coordinator_count }}</p> {% endcomment %}
+                            <p style="display: flex-end;">{{ coordinator_count }}</p>
                             <div class="action-buttons">
-                            <button class="action-btn" id="showAdminForm"><i class="fas fa-user-shield"></i> New Admin</button>
+                                <button class="action-btn" id="showAdminForm"><i class="fas fa-user-shield"></i> New
+                                    Admin</button>
                             </div>
                         </div>
                         <div class="card-body">
@@ -1345,64 +1846,73 @@
                                     </thead>
                                     <tbody>
                                         {% for admin in admins %}
-                                            <tr>
+                                        <tr>
                                             <td>{{ admin.full_name }}</td>
                                             <td>{{ admin.email }}</td>
                                             <td>{{ admin.designation }}</td>
                                             <td><span class="status-badge status-active">Active</span></td>
                                             <td>
-                                                <button class="btn btn-info btn-sm" onclick="viewUser('2', 'coordinator')">
+                                                <button class="btn btn-info btn-sm"
+                                                    onclick="viewUser('2', 'coordinator')">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
-                                                <button class="btn btn-warning btn-sm" onclick="editUser('2', 'coordinator')">
+                                                <button class="btn btn-warning btn-sm"
+                                                    onclick="editUser('2', 'coordinator')">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
-                                                <button class="btn btn-danger btn-sm" onclick="deleteUser('2', 'coordinator')">
+                                                <button class="btn btn-danger btn-sm"
+                                                    onclick="deleteUser('2', 'coordinator')">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </td>
-                                            </tr>
-                                            {% empty %}
-                                            <tr><td colspan="4">No admins available.</td></tr>
-                                            {% endfor %}
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="4">No admins available.</td>
+                                        </tr>
+                                        {% endfor %}
 
                                     </tbody>
                                 </table>
-        <!-- ADMIN FORM -->
-        <div class="management-form" id="adminForm">
-            <h3>Add New Admin</h3>
-            <form method="post" action="{% url 'admin_dashboard' %}">
-                {% csrf_token %}
-                <input type="hidden" name="form_type" value="admin">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="adminName">Full Name</label>
-                        <input type="text" name="full_name" id="adminName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="adminEmail">Email</label>
-                        <input type="email" name="email" id="adminEmail" required>
-                    </div>
-                </div>
-               <div class="form-row">
-                    <div class="form-group">
-                        <label for="adminDesignation">Designation (optional)</label>
-                        <input type="text" name="designation" id="adminDesignation" >
-                    </div>
-                    <div class="form-group">
-                        <label for="adminEmploymentId">Employment ID</label>
-                        <input type="text" name="employment_id" id="adminEmploymentId" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="adminPhone">Phone (optional)</label>
-                        <input type="tel" name="phone" id="adminPhone">
-                    </div>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="action-btn"><i class="fas fa-save"></i> Save Admin</button>
-                </div>
-            </form>
-        </div>
+                                <!-- ADMIN FORM -->
+                                <div class="management-form" id="adminForm">
+                                    <h3>Add New Admin</h3>
+                                    <form method="post" action="{% url 'admin_dashboard' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="form_type" value="admin">
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="adminName">Full Name</label>
+                                                <input type="text" name="full_name" id="adminName" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="adminEmail">Email</label>
+                                                <input type="email" name="email" id="adminEmail" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="adminDesignation">Designation (optional)</label>
+                                                <input type="text" name="designation" id="adminDesignation">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="adminEmploymentId">Employment ID</label>
+                                                <input type="text" name="employment_id" id="adminEmploymentId" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="adminPhone">Phone (optional)</label>
+                                                <input type="tel" name="phone" id="adminPhone">
+                                            </div>
+                                        </div>
+                                        <div class="form-actions">
+                                            <button type="button" class="btn btn-outline cancel-btn">
+                                                <i class="fas fa-times"></i> Cancel
+                                            </button>
+                                            <button type="submit" class="action-btn"><i class="fas fa-save"></i> Save
+                                                Admin</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1413,9 +1923,10 @@
                     <div class="dashboard-card">
                         <div class="card-header">
                             <h3><i class="fas fa-users-cog"></i> Coordinator Management</h3>
-                            {% comment %} <p style="display: flex-end;">{{ coordinator_count }}</p> {% endcomment %}
+                            <!-- <p style="display: flex-end;">{{ coordinator_count }}</p> -->
                             <div class="action-buttons">
-                             <button class="action-btn" id="showCoordinatorForm"><i class="fas fa-user-tie"></i> Add Coordinator</button>
+                                <button class="action-btn" id="showCoordinatorForm"><i class="fas fa-user-tie"></i> Add
+                                    Coordinator</button>
                             </div>
                         </div>
                         <div class="card-body">
@@ -1433,62 +1944,71 @@
                                     </thead>
                                     <tbody>
                                         {% for coordinator in coordinators %}
-                                            <tr>
-                                                <td>{{ coordinator.full_name }}</td>
-                                                <td>{{ coordinator.email }}</td>
-                                                <td>{{ coordinator.designation }}</td>
-                                                <td>{{ coordinator.phone }}</td>
-                                                <td><span class="status-badge status-active">Active</span></td>
+                                        <tr>
+                                            <td>{{ coordinator.full_name }}</td>
+                                            <td>{{ coordinator.email }}</td>
+                                            <td>{{ coordinator.designation }}</td>
+                                            <td>{{ coordinator.phone }}</td>
+                                            <td><span class="status-badge status-active">Active</span></td>
                                             <td>
-                                                <button class="btn btn-warning btn-sm" onclick="editUser('1', 'coordinator')">
+                                                <button class="btn btn-warning btn-sm"
+                                                    onclick="editUser('1', 'coordinator')">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
-                                                <button class="btn btn-danger btn-sm" onclick="deleteUser('1', 'coordinator')">
+                                                <button class="btn btn-danger btn-sm"
+                                                    onclick="deleteUser('1', 'coordinator')">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </td>
-                                            </tr>
-                                            {% empty %}
-                                            <tr><td colspan="4">No coordinators available.</td></tr>
-                                            {% endfor %}
-                                        
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="4">No coordinators available.</td>
+                                        </tr>
+                                        {% endfor %}
+
                                     </tbody>
                                 </table>
-                                                          <!-- COORDINATOR FORM -->
-<div class="management-form" id="coordinatorForm">
-    <h3>Add New Coordinator</h3>
-    <form method="post" action="{% url 'admin_dashboard' %}">
-        {% csrf_token %}
-        <input type="hidden" name="form_type" value="coordinator">
-        <div class="form-row">
-            <div class="form-group">
-                <label for="coordinatorName">Full Name</label>
-                <input type="text" name="full_name" id="coordinatorName" required>
-            </div>
-            <div class="form-group">
-                <label for="coordinatorEmail">Email</label>
-                <input type="email" name="email" id="coordinatorEmail" required>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label for="coordinatorDesignation">Designation (optional)</label>
-                <input type="text" name="designation" id="coordinatorDesignation" >
-            </div>
-            <div class="form-group">
-                <label for="coordinatorEmploymentId">Employment ID</label>
-                <input type="text" name="employment_id" id="coordinatorEmploymentId" required>
-            </div>
-            <div class="form-group">
-                <label for="coordinatorPhone">Phone (optional)</label>
-                <input type="tel" name="phone" id="coordinatorPhone">
-            </div>
-        </div>
-        <div class="form-actions">
-            <button type="submit" class="action-btn"><i class="fas fa-save"></i> Save Coordinator</button>
-        </div>
-    </form>
-</div>
+                                <!-- COORDINATOR FORM -->
+                                <div class="management-form" id="coordinatorForm">
+                                    <h3>Add New Coordinator</h3>
+                                    <form method="post" action="{% url 'admin_dashboard' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="form_type" value="coordinator">
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="coordinatorName">Full Name</label>
+                                                <input type="text" name="full_name" id="coordinatorName" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="coordinatorEmail">Email</label>
+                                                <input type="email" name="email" id="coordinatorEmail" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="coordinatorDesignation">Designation (optional)</label>
+                                                <input type="text" name="designation" id="coordinatorDesignation">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="coordinatorEmploymentId">Employment ID</label>
+                                                <input type="text" name="employment_id" id="coordinatorEmploymentId"
+                                                    required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="coordinatorPhone">Phone (optional)</label>
+                                                <input type="tel" name="phone" id="coordinatorPhone">
+                                            </div>
+                                        </div>
+                                        <div class="form-actions">
+                                            <button type="button" class="btn btn-outline cancel-btn">
+                                                <i class="fas fa-times"></i> Cancel
+                                            </button>
+                                            <button type="submit" class="action-btn"><i class="fas fa-save"></i> Save
+                                                Coordinator</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1499,9 +2019,10 @@
                     <div class="dashboard-card">
                         <div class="card-header">
                             <h3><i class="fas fa-user-graduate"></i> Student Management</h3>
-                            {% comment %} <p style="display: flex-end; flex-wrap:wrap;">{{ total_certificates }}</p> {% endcomment %}
+                            <!-- <p style="display: flex-end; flex-wrap:wrap;">{{ total_certificates }}</p>  -->
                             <div class="action-buttons">
-                            <button class="action-btn" id="showStudentForm"><i class="fas fa-user-graduate"></i> Add Student</button>
+                                <button class="action-btn" id="showStudentForm"><i class="fas fa-user-graduate"></i> Add
+                                    Student</button>
                             </div>
                         </div>
                         <div class="card-body">
@@ -1520,59 +2041,67 @@
                                     </thead>
                                     <tbody>
                                         {% for cert in certificates %}
-                                            <tr>
-                                                <td>{{ cert.student_name }}</td>
-                                                <td>{{ cert.student_id }}</td>
-                                                <td>{{ cert.course_name }}</td>
-                                                <td>{{ cert.college }}</td>
-                                                <td>{{ cert.issue_date }}</td>
-                                                <td><span class="status-badge status-active">Active</span></td>
+                                        <tr>
+                                            <td>{{ cert.student_name }}</td>
+                                            <td>{{ cert.student_id }}</td>
+                                            <td>{{ cert.course_name }}</td>
+                                            <td>{{ cert.college }}</td>
+                                            <td>{{ cert.issue_date }}</td>
+                                            <td><span class="status-badge status-active">Active</span></td>
                                             <td>
-                                               
-                                                <button class="btn btn-warning btn-sm" onclick="editUser('1', 'student')">
+
+                                                <button class="btn btn-warning btn-sm"
+                                                    onclick="editUser('1', 'student')">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
-                                                <button class="btn btn-danger btn-sm" onclick="deleteUser('1', 'student')">
+                                                <button class="btn btn-danger btn-sm"
+                                                    onclick="deleteUser('1', 'student')">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
-                                            </tr>
-                                            {% empty %}
-                                            <tr><td colspan="4">No students available.</td></tr>
-                                            {% endfor %}
-                                        
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="4">No students available.</td>
+                                        </tr>
+                                        {% endfor %}
+
                                     </tbody>
                                 </table>
                                 <!-- STUDENT FORM -->
-        <div class="management-form" id="studentForm">
-            <h3>Add New Student</h3>
-            <form method="post" action="{% url 'admin_dashboard' %}">
-                {% csrf_token %}
-                <input type="hidden" name="form_type" value="student">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="newStudentName">Full Name</label>
-                        <input type="text" id="newStudentName" name="full_name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="newStudentEmail">Email</label>
-                        <input type="email" id="newStudentEmail" name="email" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="newStudentID">Student ID</label>
-                        <input type="text" id="newStudentID" name="student_id" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="newStudentDepartment">Department</label>
-                        <input type="text" id="newStudentDepartment" name="department" required>
-                    </div>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="action-btn"><i class="fas fa-save"></i> Save Student</button>
-                </div>
-            </form>
-        </div>
+                                <div class="management-form" id="studentForm">
+                                    <h3>Add New Student</h3>
+                                    <form method="post" action="{% url 'admin_dashboard' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="form_type" value="student">
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="newStudentName">Full Name</label>
+                                                <input type="text" id="newStudentName" name="full_name" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="newStudentEmail">Email</label>
+                                                <input type="email" id="newStudentEmail" name="email" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="newStudentID">Student ID</label>
+                                                <input type="text" id="newStudentID" name="student_id" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="newStudentDepartment">Department</label>
+                                                <input type="text" id="newStudentDepartment" name="department" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-actions">
+                                            <button type="button" class="btn btn-outline cancel-btn">
+                                                <i class="fas fa-times"></i> Cancel
+                                            </button>
+                                            <button type="submit" class="action-btn"><i class="fas fa-save"></i> Save
+                                                Student</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1582,15 +2111,485 @@
     </div>
 
 
-  
+
     <script>
+        // Add this to your existing DOMContentLoaded event listener
+        document.querySelectorAll('.cancel-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                // Hide all forms
+                document.querySelectorAll('.certificate-form, .management-form').forEach(form => {
+                    form.style.display = 'none';
+                });
+
+                // Optional: Reset form fields if needed
+                this.closest('form')?.reset();
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Show/hide forms for certificates
+            const showOfferForm = document.getElementById('showOfferForm');
+            const showCompletionForm = document.getElementById('showCompletionForm');
+            const offerForm = document.getElementById('offerForm');
+            const completionForm = document.getElementById('completionForm');
+
+            function hideAllCertificateForms() {
+                if (offerForm) offerForm.style.display = 'none';
+                if (completionForm) completionForm.style.display = 'none';
+            }
+
+            // Initially hide all forms
+            hideAllCertificateForms();
+
+            // Show offer form when button is clicked
+            showOfferForm?.addEventListener('click', function (e) {
+                e.preventDefault();
+                hideAllCertificateForms();
+                offerForm.style.display = 'block';
+                offerForm.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            // Show completion form when button is clicked
+            showCompletionForm?.addEventListener('click', function (e) {
+                e.preventDefault();
+                hideAllCertificateForms();
+                completionForm.style.display = 'block';
+                completionForm.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            // Handle form submissions
+            function handleCertificateFormSubmit(formId, endpoint) {
+                const form = document.getElementById(formId);
+                if (!form) return;
+
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const formData = new FormData(form);
+
+                    fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken'),
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        body: formData
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                showPopup(data.message, true);
+                                form.reset();
+                                hideAllCertificateForms();
+                                // Optionally refresh the page or update the table
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 1500);
+                            } else {
+                                showPopup(data.message || 'Failed to generate certificate', false);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showPopup('An error occurred. Please try again.', false);
+                        });
+                });
+            }
+
+            // Set up form submissions
+            handleCertificateFormSubmit('createOfferForm', '/accounts/certificate/offer/create/');
+            handleCertificateFormSubmit('createCompletionForm', '/accounts/certificate/completion/create/');
+
+            // Helper function to get CSRF token
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            // Helper function to show popup notifications
+            function showPopup(message, success = true) {
+                const popup = document.getElementById('popupNotification');
+                if (popup) {
+                    popup.style.backgroundColor = success ? '#4BB543' : '#FF3333';
+                    popup.textContent = message;
+                    popup.style.display = 'block';
+                    setTimeout(() => {
+                        popup.style.display = 'none';
+                    }, 3000);
+                }
+            }
+        });
+        const departmentData = {
+            "B.E": [
+                "Computer Science and Engineering", "AI & DS",
+                "Mechanical Engineering",
+                "Electrical Engineering",
+                "Civil Engineering",
+                "Electronics and Communication",
+                "Electronics and Instrumentation Engineering",
+                "Mechatronics",
+                "Automobile Engineering",
+                "Robotics and Automation",
+                "Aeronautical Engineering",
+                "Marine Engineering",
+                "Mining Engineering",
+                "Production Engineering",
+                "Biomedical Engineering"
+            ],
+            "B.Tech": [
+                "Information Technology",
+                "AI & DS",
+                "Biotechnology",
+                "Chemical Engineering",
+                "Food Technology",
+                "Petroleum Engineering",
+                "Textile Technology",
+                "Agricultural Engineering",
+                "Nanotechnology",
+                "Cyber Security",
+                "Data Science",
+                "Artificial Intelligence and Machine Learning"
+            ],
+            "B.Sc": [
+                "Computer Science",
+                "Mathematics",
+                "Physics",
+                "Chemistry",
+                "Biochemistry",
+                "Botany",
+                "Zoology",
+                "Microbiology",
+                "Biotechnology",
+                "Information Technology",
+                "Electronics"
+            ],
+            "B.A": [
+                "English Literature",
+                "History",
+                "Economics",
+                "Sociology",
+                "Political Science",
+                "Psychology",
+                "Tamil Literature",
+                "Public Administration",
+                "Philosophy",
+                "Visual Communication",
+                "Journalism and Mass Communication"
+            ],
+            "MBA": [
+                "Finance",
+                "Marketing",
+                "Human Resource Management",
+                "Operations Management",
+                "International Business"
+            ],
+            "Diploma": [
+                "Computer Engineering",
+                "Mechanical Engineering",
+                "Civil Engineering",
+                "Electrical and Electronics Engineering",
+                "Electronics and Communication Engineering"
+            ]
+        };
+
+        function populateDepartments(degreeId, departmentId) {
+            const degree = document.getElementById(degreeId).value;
+            const department = document.getElementById(departmentId);
+            const departmentGroup = document.getElementById(departmentId + 'Group');
+            department.innerHTML = '<option value="">Select Department</option>';
+
+            if (departmentData[degree]) {
+                departmentData[degree].forEach(opt => {
+                    const option = document.createElement("option");
+                    option.value = opt;
+                    option.textContent = opt;
+                    department.appendChild(option);
+                });
+                departmentGroup.style.display = "block";
+                department.required = true;
+            } else {
+                departmentGroup.style.display = "none";
+                department.required = false;
+            }
+        }
+
+        function checkImageSize(input) {
+            const errorElement = document.getElementById(input.id + 'Error');
+            const previewElement = document.getElementById(input.id + 'Preview');
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const img = new Image();
+                const objectURL = URL.createObjectURL(file);
+                img.onload = function () {
+                    const megapixels = (this.width * this.height) / 1000000;
+                    if (megapixels > 2) {
+                        errorElement.textContent = 'Image exceeds 2MP limit.';
+                        input.value = '';
+                        previewElement.style.display = 'none';
+                    } else {
+                        errorElement.textContent = '';
+                        previewElement.src = objectURL;
+                        previewElement.style.display = 'block';
+                    }
+                    URL.revokeObjectURL(objectURL);
+                };
+                img.src = objectURL;
+            }
+        }
+
+        function showPopup(message, success = true) {
+            let popup = document.getElementById('popupNotification');
+            if (!popup) {
+                popup = document.createElement('div');
+                popup.id = 'popupNotification';
+                popup.style.position = 'fixed';
+                popup.style.top = '20px';
+                popup.style.right = '20px';
+                popup.style.zIndex = '9999';
+                popup.style.padding = '12px 20px';
+                popup.style.borderRadius = '6px';
+                popup.style.color = 'white';
+                popup.style.fontWeight = 'bold';
+                document.body.appendChild(popup);
+            }
+            popup.style.backgroundColor = success ? '#4BB543' : '#FF3333';
+            popup.textContent = message;
+            popup.style.display = 'block';
+            setTimeout(() => { popup.style.display = 'none'; }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const showOfferForm = document.getElementById('showOfferForm');
+            const showCompletionForm = document.getElementById('showCompletionForm');
+            // const showStudentForm = document.getElementById('showStudentForm');
+            const showBulkUploadForm = document.getElementById('showBulkUploadForm');
+            const offerForm = document.getElementById('offerForm');
+            const completionForm = document.getElementById('completionForm');
+            // const studentForm = document.getElementById('addstudentForm');
+            const bulkUploadForm = document.getElementById('bulkUploadForm');
+            const tableBody = document.querySelector('.data-table tbody');
+
+            function hideAllForms() {
+                offerForm.style.display = 'none';
+                completionForm.style.display = 'none';
+                // studentForm.style.display = 'none';
+                bulkUploadForm.style.display = 'none';
+            }
+
+            hideAllForms();
+
+            showOfferForm?.addEventListener('click', () => {
+                hideAllForms();
+                offerForm.style.display = 'block';
+            });
+
+            showCompletionForm?.addEventListener('click', () => {
+                hideAllForms();
+                completionForm.style.display = 'block';
+            });
+
+            // showStudentForm?.addEventListener('click', () => {
+            //     hideAllForms();
+            //     studentForm.style.display = 'block';
+            // });
+
+            showBulkUploadForm?.addEventListener('click', () => {
+                hideAllForms();
+                bulkUploadForm.style.display = 'block';
+            });
+
+            function addCertificateToTable(student, course, date, certId, type, downloadUrl) {
+                const emptyRow = document.querySelector('.empty-state');
+                if (emptyRow) emptyRow.remove();
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                <td>${student}</td>
+                <td>${course}</td>
+                <td>${date}</td>
+                <td>${certId}</td>
+                <td>${type}</td>
+                <td>
+                    ${downloadUrl ? `<a href="${downloadUrl}" class="action-btn" download>Download</a>` : '<span class="action-btn disabled">N/A</span>'}
+                </td>`;
+                tableBody.appendChild(row);
+            }
+
+            function handleCertificateSubmit(formId, url, type) {
+                const form = document.getElementById(formId);
+                form?.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const formData = new FormData(form);
+
+                    // Common validation rules
+                    const alphaRegex = /^[A-Za-z\s]+$/; // Letters + spaces
+                    const domainRegex = /^[A-Za-z0-9\s.,-]+$/; // Letters, numbers, spaces, dots, commas, hyphens
+
+                    // 1️⃣ Student Name Validation
+                    const nameInput = form.querySelector('[name$="StudentName"], [name="student_name"]');
+                    if (nameInput) {
+                        const value = nameInput.value.trim();
+                        if (!alphaRegex.test(value)) {
+                            showPopup('Only letters and spaces allowed in student name.', false);
+                            return;
+                        }
+                    }
+
+
+
+                    // 3️⃣ Location Validation
+                    const locationInput = form.querySelector('[name$="Location"]');
+                    if (locationInput) {
+                        const value = locationInput.value.trim();
+                        if (value && !alphaRegex.test(value)) {
+                            showPopup('Only letters and spaces allowed in location field.', false);
+                            return;
+                        }
+                    }
+
+                    // 4️⃣ Course/Domain Validation
+                    const domainInput = form.querySelector('[name$="CourseName"]');
+                    if (domainInput) {
+                        const value = domainInput.value.trim();
+                        if (!domainRegex.test(value)) {
+                            showPopup('Only letters, numbers, spaces, and basic punctuation allowed in domain.', false);
+                            return;
+                        }
+                    }
+
+                    // 5️⃣ Student Department Validation
+                    const departmentInput = form.querySelector('[name="student_department"]');
+                    if (departmentInput) {
+                        const value = departmentInput.value.trim();
+                        if (!alphaRegex.test(value)) {
+                            showPopup('Only letters and spaces allowed in department field.', false);
+                            return;
+                        }
+                    }
+
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                        body: formData
+                    })
+                        .then(response => {
+                            if (!response.ok) throw new Error('Server error. Please check the form.');
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.status === 'success') {
+                                addCertificateToTable(
+                                    data.student,
+                                    data.course,
+                                    data.date,
+                                    data.certificate_number || 'CERT-' + Math.floor(100000 + Math.random() * 900000),
+                                    type,
+                                    data.download_url || ''
+                                );
+                                showPopup(data.message, true);
+                                form.reset();
+                                hideAllForms();
+
+                                document.querySelectorAll('.signature-preview').forEach(el => {
+                                    el.style.display = 'none';
+                                });
+
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 1500);
+                            } else {
+                                showPopup(data.message || 'Failed to generate certificate.', false);
+                            }
+                        })
+                        .catch(err => {
+                            showPopup(err.message, false);
+                        });
+                });
+            }
+
+
+            document.getElementById('bulkOfferUploadForm')?.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                fetch('/accounts/certificate/offer/bulk-upload/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: formData
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            showPopup(`Successfully generated ${data.created.length} offer certificates.`, true);
+                            this.reset();
+                            hideAllForms();
+                        } else {
+                            showPopup(data.message || 'Bulk upload failed.', false);
+                        }
+                    })
+                    .catch(() => showPopup('Something went wrong!', false));
+            });
+
+            document.getElementById('bulkCompletionUploadForm')?.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                fetch('/accounts/certificate/completion/bulk-upload/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: formData
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            showPopup(`Successfully generated ${data.created.length} completion certificates.`, true);
+                            this.reset();
+                            hideAllForms();
+                        } else {
+                            showPopup(data.message || 'Bulk upload failed.', false);
+                        }
+                    })
+                    .catch(() => showPopup('Something went wrong!', false));
+            });
+
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            handleCertificateSubmit('createOfferForm', '/accounts/certificate/offer/create/', 'Offer Letter');
+            handleCertificateSubmit('createCompletionForm', '/accounts/certificate/completion/create/', 'Completion Certificate');
+            // handleCertificateSubmit('addStudentForm', '/accounts/student/add/', 'Student');
+        });
         // Global variables
         let currentUser = null;
         let currentSection = 'dashboard';
         let isDarkMode = false;
 
         // Initialize the application
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             initializeDashboard();
             addCustomStyles();
         });
@@ -1741,22 +2740,22 @@
         function setupNavigationHandlers() {
             const menuItems = document.querySelectorAll('.menu-item:not(.logout-btn)');
             const contentSections = document.querySelectorAll('.content-section');
-            
+
             menuItems.forEach(item => {
-                item.addEventListener('click', function(e) {
+                item.addEventListener('click', function (e) {
                     e.preventDefault();
-                    
+
                     // Update active menu item
                     menuItems.forEach(i => i.classList.remove('active'));
                     this.classList.add('active');
-                    
+
                     // Show corresponding content
                     const targetSection = this.getAttribute('data-section');
                     contentSections.forEach(section => {
                         section.classList.remove('active');
                     });
                     document.getElementById(targetSection).classList.add('active');
-                    
+
                     // Update page title
                     updatePageTitle(targetSection);
                     currentSection = targetSection;
@@ -1774,7 +2773,7 @@
                 'coordinator-management': ['Coordinator Management', 'Manage program coordinators'],
                 'student-management': ['Student Management', 'Manage student records']
             };
-            
+
             if (titles[section]) {
                 document.getElementById('pageTitle').textContent = titles[section][0];
                 document.getElementById('pageSubtitle').textContent = titles[section][1];
@@ -1785,15 +2784,15 @@
         function setupMobileMenu() {
             const menuToggle = document.getElementById('menuToggle');
             const sidebar = document.getElementById('sidebar');
-            
-            menuToggle.addEventListener('click', function() {
+
+            menuToggle.addEventListener('click', function () {
                 sidebar.classList.toggle('mobile-active');
             });
 
             // Close sidebar when clicking outside
-            document.addEventListener('click', function(e) {
-                if (window.innerWidth <= 768 && 
-                    !sidebar.contains(e.target) && 
+            document.addEventListener('click', function (e) {
+                if (window.innerWidth <= 768 &&
+                    !sidebar.contains(e.target) &&
                     e.target !== menuToggle) {
                     sidebar.classList.remove('mobile-active');
                 }
@@ -1803,11 +2802,11 @@
         // Search functionality
         function setupSearch() {
             const searchInput = document.querySelector('.search-input');
-            
-            searchInput.addEventListener('input', function(e) {
+
+            searchInput.addEventListener('input', function (e) {
                 const searchTerm = e.target.value.toLowerCase();
                 const currentTable = document.querySelector('.content-section.active .data-table tbody');
-                
+
                 if (currentTable) {
                     const rows = currentTable.querySelectorAll('tr');
                     rows.forEach(row => {
@@ -1834,12 +2833,12 @@
             isDarkMode = !isDarkMode;
             const body = document.body;
             const themeIcon = document.querySelector('.theme-toggle i');
-            
+
             if (isDarkMode) {
                 body.classList.add('dark-theme');
-                
-            } 
-            
+
+            }
+
             // Save theme preference
             localStorage.setItem('darkMode', isDarkMode);
         }
@@ -1876,7 +2875,7 @@
                 { name: 'completion_date', label: 'Completion Date', type: 'date', required: true },
                 { name: 'credits', label: 'Credits', type: 'number', required: false }
             ];
-            
+
             showModal(`Add ${type.charAt(0).toUpperCase() + type.slice(1)} Certificate`, fields);
         }
 
@@ -1953,12 +2952,12 @@
                 if (field.type === 'select') {
                     input = document.createElement('select');
                     input.className = 'form-input';
-                    
+
                     const defaultOption = document.createElement('option');
                     defaultOption.value = '';
                     defaultOption.textContent = `Select ${field.label}`;
                     input.appendChild(defaultOption);
-                    
+
                     field.options.forEach(option => {
                         const optionElement = document.createElement('option');
                         optionElement.value = option;
@@ -1995,11 +2994,11 @@
         function submitForm() {
             const form = document.getElementById('dynamicForm');
             const formData = new FormData(form);
-            
+
             // Validate required fields
             const requiredFields = form.querySelectorAll('[required]');
             let isValid = true;
-            
+
             requiredFields.forEach(field => {
                 if (!field.value.trim()) {
                     field.style.borderColor = 'var(--danger-color)';
@@ -2023,10 +3022,10 @@
             // Simulate API call
             setTimeout(() => {
                 console.log('Form data:', Object.fromEntries(formData));
-                
+
                 showAlert('Record saved successfully!', 'success');
                 closeModal();
-                
+
                 // Reset button
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
@@ -2074,20 +3073,20 @@
                 { text: 'Add Certificate', icon: 'certificate', action: () => addCertificate('internship') },
                 { text: 'Export Data', icon: 'file-export', action: () => exportData('all') }
             ];
-            
+
             // Create quick actions menu
             showAlert('Quick actions menu opened', 'info');
         }
 
-        
+
 
         // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', function (e) {
             // Escape key to close modal
             if (e.key === 'Escape') {
                 closeModal();
             }
-            
+
             // Ctrl/Cmd + K for search focus
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
                 e.preventDefault();
@@ -2143,7 +3142,7 @@
         function addTooltips() {
             const buttons = document.querySelectorAll('.btn[title], .fab[title]');
             buttons.forEach(button => {
-                button.addEventListener('mouseenter', function() {
+                button.addEventListener('mouseenter', function () {
                     // Add tooltip functionality here if needed
                 });
             });
@@ -2156,7 +3155,7 @@
         function printSection(sectionId) {
             const section = document.getElementById(sectionId);
             const printWindow = window.open('', '_blank');
-            
+
             printWindow.document.write(`
                 <html>
                     <head>
@@ -2189,7 +3188,7 @@
                     </body>
                 </html>
             `);
-            
+
             printWindow.document.close();
             setTimeout(() => {
                 printWindow.print();
@@ -2212,134 +3211,150 @@
 
         console.log('🚀 Modern Admin Dashboard initialized successfully!');
 
-       
-    
-    setInterval(() => {
-        fetch('/accounts/ping/').catch(() => console.warn("Ping failed"));
-    }, 5 * 60 * 1000);
 
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let cookie of cookies) {
-                cookie = cookie.trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
+
+        setInterval(() => {
+            fetch('/accounts/ping/').catch(() => console.warn("Ping failed"));
+        }, 5 * 60 * 1000);
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let cookie of cookies) {
+                    cookie = cookie.trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
                 }
             }
-        }
-        return cookieValue;
-    }
-
-    function showPopup(message, success = true) {
-        let popup = document.getElementById('popupNotification');
-        if (!popup) {
-            popup = document.createElement('div');
-            popup.id = 'popupNotification';
-            Object.assign(popup.style, {
-                position: 'fixed',
-                top: '20px',
-                right: '20px',
-                zIndex: '9999',
-                padding: '12px 20px',
-                borderRadius: '6px',
-                color: 'white',
-                fontWeight: 'bold',
-                boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
-            });
-            document.body.appendChild(popup);
-        }
-        popup.style.backgroundColor = success ? '#10b981' : '#ef4444';
-        popup.textContent = message;
-        popup.style.display = 'block';
-        setTimeout(() => popup.style.display = 'none', 3000);
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const showCoordinatorForm = document.getElementById('showCoordinatorForm');
-        const showStudentForm = document.getElementById('showStudentForm');
-        const showAdminForm = document.getElementById('showAdminForm');
-        const coordinatorForm = document.getElementById('coordinatorForm');
-        const studentForm = document.getElementById('studentForm');
-        const adminForm = document.getElementById('adminForm');
-
-        function hideAllForms() {
-            if (coordinatorForm) coordinatorForm.style.display = 'none';
-            if (studentForm) studentForm.style.display = 'none';
-            if (adminForm) adminForm.style.display = 'none';
+            return cookieValue;
         }
 
-        showCoordinatorForm?.addEventListener('click', e => {
-            e.preventDefault();
-            hideAllForms();
-            coordinatorForm.style.display = 'block';
-            coordinatorForm.scrollIntoView({ behavior: 'smooth' });
-        });
+        function showPopup(message, success = true) {
+            let popup = document.getElementById('popupNotification');
+            if (!popup) {
+                popup = document.createElement('div');
+                popup.id = 'popupNotification';
+                Object.assign(popup.style, {
+                    position: 'fixed',
+                    top: '20px',
+                    right: '20px',
+                    zIndex: '9999',
+                    padding: '12px 20px',
+                    borderRadius: '6px',
+                    color: 'white',
+                    fontWeight: 'bold',
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+                });
+                document.body.appendChild(popup);
+            }
+            popup.style.backgroundColor = success ? '#10b981' : '#ef4444';
+            popup.textContent = message;
+            popup.style.display = 'block';
+            setTimeout(() => popup.style.display = 'none', 3000);
+        }
 
-        showStudentForm?.addEventListener('click', e => {
-            e.preventDefault();
-            hideAllForms();
-            studentForm.style.display = 'block';
-            studentForm.scrollIntoView({ behavior: 'smooth' });
-        });
+        document.addEventListener('DOMContentLoaded', function () {
+            const showCoordinatorForm = document.getElementById('showCoordinatorForm');
+            const showStudentForm = document.getElementById('showStudentForm');
+            const showAdminForm = document.getElementById('showAdminForm');
+            const coordinatorForm = document.getElementById('coordinatorForm');
+            const studentForm = document.getElementById('studentForm');
+            const adminForm = document.getElementById('adminForm');
 
-        showAdminForm?.addEventListener('click', e => {
-            e.preventDefault();
-            hideAllForms();
-            adminForm.style.display = 'block';
-            adminForm.scrollIntoView({ behavior: 'smooth' });
-        });
+            function hideAllForms() {
+                if (coordinatorForm) coordinatorForm.style.display = 'none';
+                if (studentForm) studentForm.style.display = 'none';
+                if (adminForm) adminForm.style.display = 'none';
+            }
 
-        // AJAX submission handler with better error parsing
-        function handleAjaxFormSubmit(formSelector, formType) {
-            const wrapper = document.querySelector(formSelector);
-            if (!wrapper) return;
-
-            const form = wrapper.querySelector('form');
-            if (!form) return;
-
-            form.addEventListener('submit', function (e) {
+            showCoordinatorForm?.addEventListener('click', e => {
                 e.preventDefault();
-                const formData = new FormData(form);
-                formData.append('form_type', formType);
-
-                fetch(form.action || window.location.href, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': getCookie('csrftoken'),
-                        'X-Requested-With': 'XMLHttpRequest',
-                    },
-                    body: formData
-                })
-                    .then(async res => {
-                        const contentType = res.headers.get("content-type");
-                        if (!res.ok) {
-                            if (contentType && contentType.includes("application/json")) {
-                                const errorData = await res.json();
-                                throw new Error(errorData.message || 'Server returned an error');
-                            } else {
-                                throw new Error('Server error (non-JSON response)');
-                            }
-                        }
-                        return res.json();
-                    })
-                    .then(data => {
-                        showPopup(data.message || 'Success', data.status === 'success');
-                        if (data.status === 'success') form.reset();
-                    })
-                    .catch(error => {
-                        console.error('Submission error:', error);
-                        showPopup(error.message || 'Failed to submit. Please check your input.', false);
-                    });
+                hideAllForms();
+                coordinatorForm.style.display = 'block';
+                coordinatorForm.scrollIntoView({ behavior: 'smooth' });
             });
-        }
 
-        handleAjaxFormSubmit('#coordinatorForm', 'coordinator');
-        handleAjaxFormSubmit('#studentForm', 'student');
-        handleAjaxFormSubmit('#adminForm', 'admin');
-    });
+            showStudentForm?.addEventListener('click', e => {
+                e.preventDefault();
+                hideAllForms();
+                studentForm.style.display = 'block';
+                studentForm.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            showAdminForm?.addEventListener('click', e => {
+                e.preventDefault();
+                hideAllForms();
+                adminForm.style.display = 'block';
+                adminForm.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            // AJAX submission handler with better error parsing
+            function handleAjaxFormSubmit(formSelector, formType) {
+                const wrapper = document.querySelector(formSelector);
+                if (!wrapper) return;
+
+                const form = wrapper.querySelector('form');
+                if (!form) return;
+
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const formData = new FormData(form);
+                    formData.append('form_type', formType);
+
+                    fetch(form.action || window.location.href, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken'),
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        body: formData
+                    })
+                        .then(async res => {
+                            const contentType = res.headers.get("content-type");
+                            if (!res.ok) {
+                                if (contentType && contentType.includes("application/json")) {
+                                    const errorData = await res.json();
+                                    throw new Error(errorData.message || 'Server returned an error');
+                                } else {
+                                    throw new Error('Server error (non-JSON response)');
+                                }
+                            }
+                            return res.json();
+                        })
+                        .then(data => {
+                            showPopup(data.message || 'Success', data.status === 'success');
+                            if (data.status === 'success') form.reset();
+                        })
+                        .catch(error => {
+                            console.error('Submission error:', error);
+                            showPopup(error.message || 'Failed to submit. Please check your input.', false);
+                        });
+                });
+            }
+
+            handleAjaxFormSubmit('#coordinatorForm', 'coordinator');
+            handleAjaxFormSubmit('#studentForm', 'student');
+            handleAjaxFormSubmit('#adminForm', 'admin');
+        });
     </script>
 </body>
+<!-- Success/Error Popup -->
+<div id="popupNotification" style="
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #4BB543;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-weight: bold;
+    z-index: 9999;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+"></div>
+
 </html>

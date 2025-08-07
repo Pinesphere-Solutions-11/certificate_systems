@@ -372,6 +372,8 @@ def admin_dashboard(request):
     }
     return render(request, 'login/admin-dashboard.html', context)
 
+
+
 # =========================
 # 🧑‍🏫 COORDINATOR DASHBOARD
 # ===========================
@@ -580,6 +582,7 @@ from datetime import datetime
 
 @login_required
 @user_passes_test(is_coordinator)
+
 def create_completion_certificate(request):
     if request.method == 'POST':
         data = request.POST
@@ -627,6 +630,116 @@ def create_completion_certificate(request):
         })
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+# Admin certificate creation
+
+@login_required
+@user_passes_test(is_admin)
+def create_offer_letter(request):
+    if request.method == 'POST':
+        data = request.POST
+        signature_file = request.FILES.get('offerSignature')
+
+        # Convert dates
+        try:
+            start_date = datetime.strptime(data.get('offerStartDate'), '%Y-%m-%d').date()
+            end_date = datetime.strptime(data.get('offerEndDate'), '%Y-%m-%d').date()
+            issue_date = datetime.strptime(data.get('offerIssueDate'), '%Y-%m-%d').date()
+        except Exception:
+            return JsonResponse({'status': 'error', 'message': 'Invalid date format'}, status=400)
+        
+        # Create certificate
+        cert = Certificate(
+            certificate_type='offer',
+            title=data.get('offerTitle'),
+            student_name=data.get('offerStudentName'),
+            student_id=data.get('offerRegisterNumber'),
+            degree=data.get('offerDegree'),
+            department=data.get('offerDepartment'),
+            college=data.get('offerCollege'),
+            location=data.get('offerLocation'),
+            course_name=data.get('offerCourseName'),
+            duration=data.get('offerDuration'),
+            start_date=start_date,
+            end_date=end_date,
+            completion_date=issue_date,
+            issue_date=issue_date,  
+            director_name=data.get('offerDirector'),
+            signature=signature_file,
+            created_by=request.user,
+            
+        )
+
+        
+        cert.save()
+        generate_certificate_pdf(cert, 'login/internship_offer.html')
+
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Offer Letter created successfully!',
+            'certificate_number': cert.certificate_number,
+            'credential_id' : cert.credential_id,
+            'student': cert.student_name,
+            'course': cert.course_name,
+            'date': cert.issue_date.strftime('%Y-%m-%d')
+        })
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+# Completion Letter Generation #
+from datetime import datetime
+
+@login_required
+@user_passes_test(is_admin)
+
+def create_completion_certificate(request):
+    if request.method == 'POST':
+        data = request.POST
+        signature_file = request.FILES.get('completionSignature')
+
+        try:
+            start_date = datetime.strptime(data.get('completionStartDate'), '%Y-%m-%d').date()
+            end_date = datetime.strptime(data.get('completionEndDate'), '%Y-%m-%d').date()
+            issue_date = datetime.strptime(data.get('completionIssueDate'), '%Y-%m-%d').date()
+        except (ValueError, TypeError):
+            return JsonResponse({'status': 'error', 'message': 'Invalid or missing date(s)'}, status=400)
+
+        cert = Certificate(
+            certificate_type='completion',
+            title=data.get('completionTitle'),
+            student_name=data.get('completionStudentName'),
+            student_id=data.get('completionRegisterNumber'),
+            degree=data.get('completionDegree'),
+            department=data.get('completionDepartment'),
+            college=data.get('completionCollege'),
+            location=data.get('completionLocation'),
+            course_name=data.get('completionCourseName'),
+            duration=data.get('completionDuration'),
+            start_date=start_date,
+            end_date=end_date,
+            completion_date=issue_date,  
+            issue_date=issue_date,       
+            director_name=data.get('completionDirector'),
+            signature=signature_file,
+            created_by=request.user,
+        )
+        
+
+        cert.save()
+        generate_certificate_pdf(cert, 'login/internship_completion.html')
+
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Completion Certificate created successfully!',
+            'certificate_number': cert.certificate_number,
+            'credential_id' : cert.credential_id,
+            'student': cert.student_name,
+            'course': cert.course_name,
+            'date': cert.issue_date.strftime('%Y-%m-%d')
+        })
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
 
 @csrf_exempt
 @login_required
