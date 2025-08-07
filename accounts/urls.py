@@ -10,7 +10,7 @@ from .views import download_certificate
 from .views import (
     login_view, logout_view, dashboard_redirect,
     admin_dashboard, coordinator_dashboard, student_dashboard,
-    create_offer_letter, create_completion_certificate
+    create_offer_letter, create_completion_certificate,delete_certificate
 )
 
 urlpatterns = [
@@ -32,5 +32,6 @@ urlpatterns = [
     path('dashboard/admin/template-editor/', views.template_editor, name='template_editor'),
     path('admin/template-editor/save/', views.save_template, name='save_template'),
     path('admin/create-template/', views.create_certificate_template, name='create_certificate_template'),
-    
+    path('certificate/<int:cert_id>/delete/', views.delete_certificate, name='delete_certificate'),
+
 ] 

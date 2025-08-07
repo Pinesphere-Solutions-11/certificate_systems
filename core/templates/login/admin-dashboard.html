@@ -1674,20 +1674,27 @@
                                             <td>{{ cert.course_name }}</td>
                                             <td>{{ cert.end_date }}</td>
                                             <td><span class="status-badge status-active">Completed</span></td>
-                                            <td>
+                                          <td>
+                                            {% if cert.generated_pdf %}
                                                 <button class="btn btn-info btn-sm"
-                                                    onclick="previewCertificate('3', 'completion')">
+                                                    onclick="previewCertificate('{{ cert.generated_pdf.url }}')">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
+
                                                 <button class="btn btn-success btn-sm"
-                                                    onclick="downloadCertificate('3', 'completion')">
+                                                    onclick="downloadCertificate('{{ cert.generated_pdf.url }}')">
                                                     <i class="fas fa-download"></i>
                                                 </button>
-                                                <button class="btn btn-danger btn-sm"
-                                                    onclick="deleteCertificate('3', 'completion')">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </td>
+                                            {% else %}
+                                                <span class="text-danger">N/A</span>
+                                            {% endif %}
+
+                                            <button class="btn btn-danger btn-sm"
+                                                onclick="deleteCertificate('{{ cert.id }}')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+
                                         </tr>
                                         {% endfor %}
                                     </tbody>
@@ -2239,7 +2246,7 @@
                 "Mechanical Engineering",
                 "Electrical Engineering",
                 "Civil Engineering",
-                "Electronics and Communication",
+                "Electronics and Communication Engineering",
                 "Electronics and Instrumentation Engineering",
                 "Mechatronics",
                 "Automobile Engineering",
@@ -3036,6 +3043,54 @@
                 submitBtn.disabled = false;
             }, 2000);
         }
+function previewCertificate(pdfUrl) {
+    window.open(pdfUrl, '_blank');
+}
+
+function downloadCertificate(pdfUrl) {
+    const link = document.createElement('a');
+    link.href = pdfUrl;
+    link.download = pdfUrl.split('/').pop(); // auto extract filename
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function deleteCertificate(certId) {
+    if (confirm("Are you sure you want to delete this certificate?")) {
+        fetch(`/accounts/certificate/${certId}/delete/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCSRFToken()
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("Certificate deleted.");
+                location.reload();
+            } else {
+                alert("Failed to delete certificate.");
+            }
+        });
+    }
+}
+
+// Helper to get CSRF token from cookies
+function getCSRFToken() {
+    let cookieValue = null;
+    const name = 'csrftoken';
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (const cookie of cookies) {
+            const trimmed = cookie.trim();
+            if (trimmed.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(trimmed.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
         // Utility functions
         function showAlert(message, type) {

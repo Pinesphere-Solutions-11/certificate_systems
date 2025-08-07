@@ -907,3 +907,17 @@ def get_certificate_title(cert_type):
         return "Offer Certificate"
     else:
         return "Certificate"
+
+
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+
+@login_required
+@user_passes_test(is_admin)
+@csrf_exempt
+def delete_certificate(request, cert_id):
+    if request.method == 'POST':
+        cert = get_object_or_404(Certificate, id=cert_id)
+        cert.delete()
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
