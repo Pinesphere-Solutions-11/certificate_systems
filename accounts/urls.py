@@ -35,5 +35,4 @@ urlpatterns = [
     path('dashboard/admin/template-editor/', views.template_editor, name='template_editor'),
     path('admin/template-editor/save/', views.save_template, name='save_template'),
     path('admin/create-template/', views.create_certificate_template, name='create_certificate_template'),
-    path('admin/management/', views.admin_management_panel, name='admin_management'),
 ] 

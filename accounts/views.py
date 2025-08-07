@@ -234,6 +234,14 @@ from accounts.models import Certificate, Student, Coordinator, AdminUser, User
 def admin_dashboard(request):
     
     certificates = Certificate.objects.all().order_by('-created_at')
+    
+    admins = AdminUser.objects.select_related('user').all()
+    coordinators = Coordinator.objects.select_related('user').all()
+    # certificates = Certificate.objects.all()
+    
+    offer_certificates = Certificate.objects.filter(certificate_type='offer')
+    completion_certificates = Certificate.objects.filter(certificate_type='completion')
+    
 
     # === Filter Parameters from GET ===
     cert_type = request.GET.get('type', '')
@@ -351,6 +359,16 @@ def admin_dashboard(request):
         'coordinator_count': Coordinator.objects.count(),
         'student_count': Student.objects.count(),
         'total_certificates': Certificate.objects.count(),
+        'admins': admins,
+        'coordinators': coordinators,
+        'certificates': certificates,
+        'offer_certificates': offer_certificates,
+        'completion_certificates': completion_certificates,
+        'offer_count' : offer_certificates.count(),
+        'completion_count' : completion_certificates.count(),
+    # 'total_certificates': Certificate.objects.count(),
+        'coordinator_count': Coordinator.objects.count(),
+        'admin_count' : AdminUser.objects.count(),
     }
     return render(request, 'login/admin-dashboard.html', context)
 
@@ -721,29 +739,3 @@ def student_login_view(request):
 
         return render(request, 'student-login.html')
    
-
-@login_required
-@user_passes_test(is_admin)
-def admin_management_panel(request):
-    # Fetch real-time data to populate the admin-management.html
-    admins = AdminUser.objects.select_related('user').all()
-    coordinators = Coordinator.objects.select_related('user').all()
-    certificates = Certificate.objects.all()
-    
-    offer_certificates = Certificate.objects.filter(certificate_type='offer')
-    completion_certificates = Certificate.objects.filter(certificate_type='completion')
-    
-    
-
-    return render(request, 'login/admin-management.html', {
-        'admins': admins,
-        'coordinators': coordinators,
-        'certificates': certificates,
-        'offer_certificates': offer_certificates,
-        'completion_certificates': completion_certificates,
-        'offer_count' : offer_certificates.count(),
-        'completion_count' : completion_certificates.count(),
-        'total_certificates': Certificate.objects.count(),
-        'coordinator_count': Coordinator.objects.count(),
-        'admin_count' : AdminUser.objects.count(),
-    })
