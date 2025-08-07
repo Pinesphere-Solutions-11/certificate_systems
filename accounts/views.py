@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
-from django.http import Http404, HttpResponse, JsonResponse, FileResponse
+from django.http import Http404, HttpResponse, HttpResponseBadRequest, JsonResponse, FileResponse
 from weasyprint import HTML
 from django.core.files.base import File
 import tempfile
@@ -850,3 +850,60 @@ def student_login_view(request):
 
         return render(request, 'student-login.html')
    
+
+@csrf_exempt
+def verification_view(request):
+    if request.method == "POST":
+        credential_id = request.POST.get('credentialId', '').strip()
+
+        if not credential_id or len(credential_id) < 5:
+            return JsonResponse({'error': 'Invalid Credential ID format.'}, status=400)
+
+        try:
+            certificate = Certificate.objects.get(credential_id=credential_id)
+        except Certificate.DoesNotExist:
+            return JsonResponse({'error': 'No certificate found for the provided Credential ID.'}, status=404)
+
+        if not certificate.generated_pdf:
+            return JsonResponse({'error': 'Certificate PDF is missing. Please contact support.'}, status=500)
+
+        data = {
+            'student_name': certificate.student_name,
+            'credential_id': certificate.credential_id,
+            'certificate_type': get_certificate_title(certificate.certificate_type), 
+            'course_name': certificate.course_name,            
+            'preview_url': certificate.generated_pdf.url,
+        }
+        return JsonResponse(data, status=200)
+
+    # ✅ Handle GET requests for direct URL
+    credential_id = request.GET.get('id')
+    certificate_data = None
+
+    if credential_id:
+        try:
+            certificate = Certificate.objects.get(credential_id=credential_id)
+            if certificate.generated_pdf:
+                certificate_data = {
+                    'student_name': certificate.student_name,
+                    'credential_id': certificate.credential_id,
+                    'certificate_type': certificate.certificate_type,
+                    'course_name': certificate.course_name,
+                    'preview_url': certificate.generated_pdf.url,
+                }
+        except Certificate.DoesNotExist:
+            certificate_data = None
+
+    return render(request, 'verification.html', {
+        'certificate_data': certificate_data
+    })
+def get_certificate_title(cert_type):
+    cert_type = cert_type.lower()
+    if cert_type == "completion":
+        return "Certificate of Completion"
+    elif cert_type == "internship":
+        return "Internship Certificate"
+    elif cert_type == "offer":
+        return "Offer Certificate"
+    else:
+        return "Certificate"

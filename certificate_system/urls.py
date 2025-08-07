@@ -17,12 +17,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from certificate_system import settings
-from accounts.views import contact_view 
+from accounts.views import contact_view, verification_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('core.urls')),
     path('accounts/', include('accounts.urls')),
-      path('contact/', contact_view, name='contact'),
+    path('contact/', contact_view, name='contact'),
+    path('verify/', verification_view, name='verify'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

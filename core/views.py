@@ -8,3 +8,6 @@ def about(request):
 
 def contact(request):
     return render(request, 'contact.html')
+
+def verification_view(request):
+    return render(request, 'verification.html')

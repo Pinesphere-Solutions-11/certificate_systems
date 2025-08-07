@@ -1,0 +1,765 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PineSphere | Credential Verification</title>
+  <link rel="icon" type="image/png" href="https://i.ibb.co/r2xvtYsR/logo-removebg-preview.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  <style>
+    :root {
+      --primary-color: #3794D0;
+      --primary-dark: #026aaf;
+      --secondary-color: #f8fafc;
+      --text-color: #1e293b;
+      --light-gray: #e2e8f0;
+      --white: #ffffff;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--secondary-color);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    header {
+      background-color: var(--white);
+      padding: 1rem 0;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+    }
+
+    .logo h1 {
+      color: var(--primary-color);
+      font-weight: 700;
+    }
+
+    .logo span {
+      color: var(--primary-dark);
+    }
+
+    .nav-links ul {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-color);
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .nav-links a:hover,
+    .nav-links .active a {
+      color: var(--primary-color);
+    }
+
+    .login-dropdown {
+      position: relative;
+    }
+
+    .login-dropdown .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 2.5rem;
+      right: 0;
+      background: var(--white);
+      box-shadow: var(--shadow);
+      padding: 0.5rem 0;
+      z-index: 99;
+      border-radius: 5px;
+      min-width: 200px;
+    }
+
+    .login-dropdown.active .dropdown-content {
+      display: block;
+    }
+
+    .login-dropdown .dropdown-content a {
+      display: block;
+      padding: 0.5rem 1rem;
+      white-space: nowrap;
+      color: var(--text-color);
+    }
+
+    .login-dropdown .dropdown-content a:hover {
+      background-color: var(--light-gray);
+      color: var(--primary-color);
+    }
+
+    #mobile-menu {
+      display: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--primary-color);
+    }
+
+    /* Verification Page Styles */
+    .verification-section {
+      padding: 4rem 0;
+      min-height: calc(100vh - 150px);
+    }
+
+    .verification-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .verification-form {
+      background: var(--white);
+      padding: 2.5rem;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+    }
+
+    .verification-form h2 {
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--text-color);
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 1px solid var(--light-gray);
+      border-radius: 5px;
+      font-family: 'Poppins', sans-serif;
+      transition: var(--transition);
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(55, 148, 208, 0.2);
+    }
+
+    .verify-btn {
+      width: 100%;
+      padding: 1rem;
+      background-color: var(--primary-color);
+      color: var(--white);
+      border: none;
+      border-radius: 5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-top: 1rem;
+    }
+
+    .verify-btn:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .certificate-preview {
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .certificate-placeholder {
+      width: 100%;
+      height: 300px;
+      background-color: var(--light-gray);
+      border: 2px dashed var(--primary-color);
+      border-radius: 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      color: var(--primary-color);
+      font-weight: 500;
+    }
+
+    .certificate-preview h3 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+    }
+
+    .certificate-preview p {
+      color: var(--text-color);
+      opacity: 0.8;
+    }
+
+    .pdf-preview-container {
+      width: 100%;
+      height: 400px;
+      border: 1px solid var(--light-gray);
+      border-radius: 5px;
+      overflow: auto;
+      margin-bottom: 1.5rem;
+      display: none;
+    }
+    
+    .pdf-preview-container canvas {
+      width: 100%;
+      height: auto;
+    }
+
+    .certificate-info {
+      width: 100%;
+      margin-top: 1.5rem;
+      text-align: left;
+      padding: 1rem;
+      background-color: var(--light-gray);
+      border-radius: 5px;
+    }
+
+    .certificate-info p {
+      margin-bottom: 0.5rem;
+      color: var(--text-color);
+    }
+
+    .copy-btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 0.25rem 0.5rem;
+      border-radius: 3px;
+      cursor: pointer;
+      margin-left: 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .copy-btn:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .download-btn {
+      width: 100%;
+      padding: 0.8rem;
+      background-color: #6c757d;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: 600;
+      cursor: not-allowed;
+      margin-top: 1.5rem;
+      transition: var(--transition);
+      opacity: 0.7;
+    }
+
+    .download-btn.enabled {
+      background-color: var(--primary-color);
+      cursor: pointer;
+      opacity: 1;
+    }
+
+    .download-btn.enabled:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Footer Styles */
+    footer {
+      background-color: #000000;
+      color: #ffffff;
+      padding: 40px 0;
+      margin-top: auto;
+    }
+
+    footer .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    footer p {
+      font-size: 16px;
+      font-weight: 400;
+      color: #ffffff;
+      margin: 0;
+      opacity: 0.9;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .social-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      background-color: transparent;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      color: #ffffff;
+      font-size: 20px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .social-icon.twitter {
+      background-color: #000000;
+      border-color: #ffffff88;
+      color: #ffffff;
+    }
+
+    .social-icon.twitter i {
+      font-weight: 700;
+      font-size: 20px;
+      font-family: sans-serif;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .social-icon:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .social-icon.facebook:hover {
+      background-color: #1877f2;
+      border-color: #1877f2;
+      color: #ffffff;
+    }
+
+    .social-icon.twitter:hover {
+      background-color: #ffffff;
+      border-color: #000000;
+      color: #000000;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .social-icon.linkedin:hover {
+      background-color: #0269a0;
+      border-color: #046091;
+      color: #ffffff;
+    }
+
+    .social-icon.instagram:hover {
+      background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      border-color: #bc1888;
+      color: #ffffff;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-links ul {
+        flex-direction: column;
+        background: var(--white);
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 100%;
+        display: none;
+        padding: 1rem;
+      }
+
+      .nav-links.active ul {
+        display: flex;
+      }
+
+      #mobile-menu {
+        display: block;
+      }
+
+      .verification-container {
+        grid-template-columns: 1fr;
+      }
+
+      .certificate-preview {
+        order: -1;
+      }
+      
+      .pdf-preview-container {
+        height: 300px;
+      }
+    }
+
+    .logo img {
+      display: inline-block;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <div class="logo">
+        <a href="{% url 'index' %}" style="display: flex; align-items: center;">
+          <img src="https://i.ibb.co/PZqtNG29/logo.png" alt="Logo" style="height: 40px;">
+          <img src="{% static 'images/company name.png' %}" alt="PineSphere" style="height: 50px;">
+        </a>
+      </div>
+
+      <div id="mobile-menu">
+        <i class="fas fa-bars"></i>
+      </div>
+
+      <nav class="nav-links">
+        <ul>
+          <li><a href="{% url 'index' %}">Home</a></li>
+          <li><a href="{% url 'about' %}">About</a></li>
+          <li><a href="{% url 'contact' %}">Contact</a></li>
+          <li class="active"><a href="{% url 'verify' %}">Verify Certificate</a></li>
+          <li class="login-dropdown">
+            <a href="#"><i style="font-size: 1.8rem;" class="fas fa-user-circle"></i></a>
+            <div class="dropdown-content">
+              <a href="{% url 'login' role='admin' %}"><i class="fas fa-user-shield"></i> Admin Login</a>
+              <a href="{% url 'login' role='coordinator' %}"><i class="fas fa-user-tie"></i> Coordinator Login</a>
+              <a href="{% url 'login' role='student' %}"><i class="fas fa-user-graduate"></i> Student Login</a>
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="verification-section">
+    <div class="container">
+      <div class="verification-container">
+        <div class="verification-form">
+          <h2>Verify Your Credential</h2>
+          <form id="verificationForm">
+            <div class="form-group">
+              <label for="credentialId">Credential ID</label>
+              <input type="text" id="credentialId" name="credentialId" placeholder="Enter your credential ID" required
+                {% if certificate_data %}value="{{ certificate_data.credential_id }}"{% endif %}>
+            </div>
+            <button type="submit" class="verify-btn">Verify Now</button>
+          </form>
+        </div>
+
+        <div class="certificate-preview">
+          {% if certificate_data %}
+            <div class="pdf-preview-container" id="pdfPreviewContainer"></div>
+            <div class="certificate-info" id="certificateInfo" style="display: block;">
+              <h3 id="certificateTypeDisplay">{{ certificate_data.certificate_type }} certificate</h3>
+              <p>This certificate verifies that <strong id="studentNameDisplay">{{ certificate_data.student_name }}</strong> successfully completed the <strong id="courseNameDisplay">{{ certificate_data.course_name }}</strong> course.</p>
+              <p>
+                <strong>Credential ID:</strong> 
+                <span id="credentialIdDisplay">{{ certificate_data.credential_id }}</span>
+                <button class="copy-btn" onclick="copyToClipboard('credentialIdDisplay')">Copy</button>
+              </p>
+              <p>
+                <strong>Credential URL:</strong> 
+                <span id="credentialUrlDisplay">{{ request.build_absolute_uri }}</span>
+                <button class="copy-btn" onclick="copyToClipboard('credentialUrlDisplay')">Copy</button>
+              </p>
+            </div>
+            <button class="download-btn enabled" id="downloadBtn">
+              <i class="fas fa-download"></i> Download Certificate
+            </button>
+          {% else %}
+            <div class="certificate-placeholder" id="certificatePlaceholder">
+              <i class="fas fa-certificate" style="font-size: 3rem; margin-right: 1rem;"></i>
+              <span>Certificate preview will appear here</span>
+            </div>
+            <div class="pdf-preview-container" id="pdfPreviewContainer"></div>
+            <div class="certificate-info" id="certificateInfo" style="display: none;">
+              <h3 id="certificateTypeDisplay">[Certificate Type] certificate</h3>
+              <p>This certificate verifies that <strong id="studentNameDisplay">[Student Name]</strong> successfully completed the <strong id="courseNameDisplay">[Course Name]</strong> course.</p>
+              <p>
+                <strong>Credential ID:</strong> 
+                <span id="credentialIdDisplay"></span>
+                <button class="copy-btn" onclick="copyToClipboard('credentialIdDisplay')">Copy</button>
+              </p>
+              <p>
+                <strong>Credential URL:</strong> 
+                <span id="credentialUrlDisplay"></span>
+                <button class="copy-btn" onclick="copyToClipboard('credentialUrlDisplay')">Copy</button>
+              </p>
+            </div>
+            <button class="download-btn" id="downloadBtn" disabled>
+              <i class="fas fa-download"></i> Download Certificate
+            </button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 Pinephere Solutions Private Limited</p>
+      <div class="social-links">
+        <a href="https://www.facebook.com/profile.php?id=100094365712042&mibextid=ZbWKwL" target="_blank"
+          rel="noopener noreferrer" class="social-icon facebook">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="https://twitter.com/Pinesphere10941" target="_blank" rel="noopener noreferrer"
+          class="social-icon twitter">
+          <span style="font-size: 22px;  font-family: 'Segoe UI', sans-serif;">𝕏</span>
+        </a>
+        <a href="https://www.linkedin.com/company/pinespheresolutions/posts/?feedView=all" target="_blank"
+          rel="noopener noreferrer" class="social-icon linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+        <a href="https://www.instagram.com/pinesphere_official?igsh=MWd5eWVpNzIyN2hudg==" target="_blank"
+          rel="noopener noreferrer" class="social-icon instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- PDF.js library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+  <script>
+    // Set PDF.js worker path
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const mobileMenu = document.getElementById('mobile-menu');
+      const navLinks = document.querySelector('.nav-links');
+      const loginDropdown = document.querySelector('.login-dropdown');
+      const dropdownToggle = loginDropdown.querySelector('a');
+      const verificationForm = document.getElementById('verificationForm');
+      const certificatePlaceholder = document.getElementById('certificatePlaceholder');
+      const pdfPreviewContainer = document.getElementById('pdfPreviewContainer');
+      const certificateInfo = document.getElementById('certificateInfo');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const credentialIdInput = document.getElementById('credentialId');
+
+      mobileMenu.addEventListener('click', function () {
+        navLinks.classList.toggle('active');
+        this.querySelector('i').classList.toggle('fa-bars');
+        this.querySelector('i').classList.toggle('fa-times');
+      });
+
+      dropdownToggle.addEventListener('click', function (e) {
+        e.preventDefault();
+        loginDropdown.classList.toggle('active');
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!loginDropdown.contains(e.target)) {
+          loginDropdown.classList.remove('active');
+        }
+      });
+
+      verificationForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const credentialId = credentialIdInput.value.trim();
+
+        if (!credentialId) {
+          alert('Please enter a valid Credential ID.');
+          return;
+        }
+
+        verifyCredential(credentialId);
+      });
+
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
+      function renderPDF(url) {
+        pdfPreviewContainer.innerHTML = ''; // Clear previous content
+        
+        // Loading PDF document
+        pdfjsLib.getDocument(url).promise.then(function(pdf) {
+          // Fetch the first page
+          pdf.getPage(1).then(function(page) {
+            const scale = 1.5;
+            const viewport = page.getViewport({ scale: scale });
+
+            // Prepare canvas
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            // Render PDF page into canvas context
+            const renderContext = {
+              canvasContext: context,
+              viewport: viewport
+            };
+
+            pdfPreviewContainer.appendChild(canvas);
+            page.render(renderContext);
+          });
+        }).catch(function(error) {
+          console.error('Error rendering PDF:', error);
+          pdfPreviewContainer.innerHTML = '<p>Error loading PDF preview</p>';
+        });
+      }
+
+      function verifyCredential(credentialId) {
+        fetch('{% url "verify" %}', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': getCookie('csrftoken')
+          },
+          body: `credentialId=${encodeURIComponent(credentialId)}`
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then(data => {
+            if (data.error) {
+              alert(data.error);
+              return;
+            }
+
+            // Hide placeholder and show certificate
+            if (certificatePlaceholder) {
+              certificatePlaceholder.style.display = 'none';
+            }
+            
+            // Render PDF preview
+            pdfPreviewContainer.style.display = 'block';
+            renderPDF(data.preview_url);
+            
+            // Show certificate info
+            certificateInfo.style.display = 'block';
+            
+            // Update certificate info
+            document.getElementById('studentNameDisplay').textContent = data.student_name;
+            document.getElementById('certificateTypeDisplay').textContent = data.certificate_type;
+            document.getElementById('courseNameDisplay').textContent = data.course_name;
+            document.getElementById('credentialIdDisplay').textContent = data.credential_id;
+            document.getElementById('credentialUrlDisplay').textContent = window.location.origin + '{% url "verify" %}?id=' + data.credential_id;
+
+            // Enable download button
+            downloadBtn.disabled = false;
+            downloadBtn.classList.add('enabled');
+            downloadBtn.onclick = function() {
+              window.open(data.preview_url, '_blank');
+            };
+
+            // Update URL without reloading
+            history.pushState(null, '', '{% url "verify" %}?id=' + data.credential_id);
+
+            // Scroll to certificate preview on mobile
+            if (window.innerWidth <= 768) {
+              pdfPreviewContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+          })
+          .catch(error => {
+            alert('An error occurred during verification. Please try again.');
+            console.error('Error:', error);
+          });
+      }
+
+      function getQueryParam(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+      }
+
+      // Check for initial credential ID in URL
+      const initialCredentialId = getQueryParam('id');
+      if (initialCredentialId && !credentialIdInput.value) {
+        credentialIdInput.value = initialCredentialId;
+        verifyCredential(initialCredentialId);
+      }
+      
+      // If certificate data is available on page load (from server-side rendering)
+      {% if certificate_data %}
+        certificatePlaceholder.style.display = 'none';
+        pdfPreviewContainer.style.display = 'block';
+        renderPDF('{{ certificate_data.preview_url }}');
+        downloadBtn.disabled = false;
+        downloadBtn.classList.add('enabled');
+        downloadBtn.onclick = function() {
+          window.open('{{ certificate_data.preview_url }}', '_blank');
+        };
+      {% endif %}
+    });
+
+    function copyToClipboard(elementId) {
+      const element = document.getElementById(elementId);
+      const text = element.textContent;
+
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = element.textContent;
+        element.textContent = 'Copied!';
+        setTimeout(() => {
+          element.textContent = originalText;
+        }, 2000);
+      }).catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
+    }
+  </script>
+</body>
+
+</html>

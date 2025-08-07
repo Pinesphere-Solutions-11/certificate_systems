@@ -2,7 +2,7 @@ from django import views
 from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import path
-from .views import add_student, student_login_view
+from .views import add_student, student_login_view, verification_view
 from .views import contact_view
 from . import views
 from .views import download_certificate
@@ -26,6 +26,7 @@ urlpatterns = [
     path('certificate/offer/create/', create_offer_letter, name='create_offer_letter'),
     path('certificate/completion/create/', create_completion_certificate, name='create_completion_certificate'),
     path('contact/', contact_view, name='contact'),
+    path('verify/', verification_view, name='verify'),
     path('certificate/download/<int:cert_id>/', download_certificate, name='download_certificate'),
     path('accounts/ping/', views.ping_session, name='ping_session'),
     path('dashboard/admin/template-editor/', views.template_editor, name='template_editor'),
