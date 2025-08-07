@@ -372,8 +372,6 @@ def admin_dashboard(request):
     }
     return render(request, 'login/admin-dashboard.html', context)
 
-
-
 # =========================
 # 🧑‍🏫 COORDINATOR DASHBOARD
 # ===========================

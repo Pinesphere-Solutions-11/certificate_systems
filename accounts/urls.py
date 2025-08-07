@@ -13,9 +13,6 @@ from .views import (
     create_offer_letter, create_completion_certificate
 )
 
-LOGIN_URL = '/accounts/login/coordinator/'
-
-
 urlpatterns = [
     path('login/<str:role>/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
@@ -28,7 +25,6 @@ urlpatterns = [
     path('certificate/completion/bulk-upload/', views.bulk_completion_upload, name='bulk_completion_upload'),
     path('certificate/offer/create/', create_offer_letter, name='create_offer_letter'),
     path('certificate/completion/create/', create_completion_certificate, name='create_completion_certificate'),
-    path('accounts/login/', lambda request: redirect('login', role='coordinator')),
     path('contact/', contact_view, name='contact'),
     path('certificate/download/<int:cert_id>/', download_certificate, name='download_certificate'),
     path('accounts/ping/', views.ping_session, name='ping_session'),
