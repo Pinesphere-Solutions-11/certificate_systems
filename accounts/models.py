@@ -31,7 +31,7 @@ class Coordinator(models.Model):
     email = models.EmailField(unique=True)
     designation = models.CharField(max_length=100)
     employment_id = models.CharField(max_length=50, unique=True, default="TEMP123")  # Add default here
-    phone = models.CharField(max_length=15, blank=True, null=True)
+    phone = models.CharField(max_length=10, blank=True, null=True)
 
     def __str__(self):
         return self.user.username
@@ -52,7 +52,7 @@ class AdminUser(models.Model):
     email = models.EmailField(unique=True, blank=True, null=True)
     designation = models.CharField(max_length=100)
     employment_id = models.CharField(max_length=50, unique=True, default="PS001") 
-    phone = models.CharField(max_length=15, blank=True, null=True)
+    phone = models.CharField(max_length=10, blank=True, null=True)
 
 
     def __str__(self):

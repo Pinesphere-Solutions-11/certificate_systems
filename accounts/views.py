@@ -273,7 +273,7 @@ def admin_dashboard(request):
             if not all([full_name, email, designation, employment_id]):
                 return JsonResponse({'status': 'error', 'message': 'All fields except phone are required.'}, status=400)
 
-            if User.objects.filter(username=email).exists():
+            if User.objects.filter(username=email):
                 return JsonResponse({'status': 'error', 'message': 'Email already exists.'}, status=400)
 
             # Create the user account
@@ -320,7 +320,7 @@ def admin_dashboard(request):
             if not all([full_name, email, employment_id]):
                 return JsonResponse({'status': 'error', 'message': 'Full name, email, and employment ID are required.'}, status=400)
 
-            if User.objects.filter(username=email).exists():
+            if User.objects.filter(username=email):
                 return JsonResponse({'status': 'error', 'message': 'Email already exists.'}, status=400)
 
             # Create Django User for login
@@ -738,6 +738,83 @@ def create_completion_certificate(request):
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
+@csrf_exempt
+@login_required
+@user_passes_test(is_admin)
+def bulk_offer_upload(request):
+    if request.method == 'POST' and request.FILES.get('csvFile'):
+        csv_file = request.FILES['csvFile']
+        decoded = csv_file.read().decode('utf-8').splitlines()
+        reader = csv.DictReader(decoded)
+        created = []
+
+        for row in reader:
+            cert = Certificate.objects.create(
+                certificate_type='offer',
+                title=row['Title'],
+                student_name=row['Student Name'],
+                student_id=row['Student ID'],
+                department=row['Department'],
+                degree=row['Degree'],
+                college=row['College'],
+                location=row['Location'],
+                course_name=row['Course Name'],
+                duration=row['Duration'],
+                start_date=datetime.strptime(row['Start Date'], '%Y-%m-%d'),
+                end_date=datetime.strptime(row['End Date'], '%Y-%m-%d'),
+                completion_date=datetime.strptime(row['Issue Date'], '%Y-%m-%d'),
+                issue_date=datetime.strptime(row['Issue Date'], '%Y-%m-%d'),
+                director_name=row['Director Name'],
+                created_by=request.user
+            )
+
+            
+
+            generate_certificate_pdf(cert, 'login/internship_offer.html')
+            created.append(cert.pk)
+
+        return JsonResponse({'status': 'success', 'created': created})
+    return JsonResponse({'status': 'error', 'message': 'CSV not found'}, status=400)
+
+
+@csrf_exempt
+@login_required
+@user_passes_test(is_admin)
+def bulk_completion_upload(request):
+    if request.method == 'POST' and request.FILES.get('csvFile'):
+        csv_file = request.FILES['csvFile']
+        decoded = csv_file.read().decode('utf-8').splitlines()
+        reader = csv.DictReader(decoded)
+        created = []
+
+        for row in reader:
+            cert = Certificate.objects.create(
+                certificate_type='completion',
+                title=row['Title'],
+                student_name=row['Student Name'],
+                student_id=row['Student ID'],
+                department=row['Department'],
+                degree=row['Degree'],
+                college=row['College'],
+                location=row['Location'],
+                course_name=row['Course Name'],
+                duration=row['Duration'],
+                start_date=datetime.strptime(row['Start Date'], '%Y-%m-%d'),
+                end_date=datetime.strptime(row['End Date'], '%Y-%m-%d'),
+                completion_date=datetime.strptime(row['Issue Date'], '%Y-%m-%d'),
+                issue_date=datetime.strptime(row['Issue Date'], '%Y-%m-%d'),
+                director_name=row['Director Name'],
+                created_by=request.user
+            )
+
+            
+
+            generate_certificate_pdf(cert, 'login/internship_completion.html')
+            created.append(cert.pk)
+
+        return JsonResponse({'status': 'success', 'created': created})
+    return JsonResponse({'status': 'error', 'message': 'CSV not found'}, status=400)
+
 
 @csrf_exempt
 @login_required
@@ -853,6 +930,7 @@ def student_login_view(request):
 
 @csrf_exempt
 def verification_view(request):
+    
     if request.method == "POST":
         credential_id = request.POST.get('credentialId', '').strip()
 
@@ -867,11 +945,13 @@ def verification_view(request):
         if not certificate.generated_pdf:
             return JsonResponse({'error': 'Certificate PDF is missing. Please contact support.'}, status=500)
 
+        
         data = {
             'student_name': certificate.student_name,
             'credential_id': certificate.credential_id,
             'certificate_type': get_certificate_title(certificate.certificate_type), 
-            'course_name': certificate.course_name,            
+            'course_name': certificate.course_name,     
+            'issue_date': certificate.issue_date,       
             'preview_url': certificate.generated_pdf.url,
         }
         return JsonResponse(data, status=200)
@@ -889,6 +969,7 @@ def verification_view(request):
                     'credential_id': certificate.credential_id,
                     'certificate_type': certificate.certificate_type,
                     'course_name': certificate.course_name,
+                    'issue_date': certificate.issue_date,
                     'preview_url': certificate.generated_pdf.url,
                 }
         except Certificate.DoesNotExist:
@@ -900,11 +981,11 @@ def verification_view(request):
 def get_certificate_title(cert_type):
     cert_type = cert_type.lower()
     if cert_type == "completion":
-        return "Certificate of Completion"
+        return "Completion Certificate"
     elif cert_type == "internship":
         return "Internship Certificate"
     elif cert_type == "offer":
-        return "Offer Certificate"
+        return "Offer Letter"
     else:
         return "Certificate"
 
