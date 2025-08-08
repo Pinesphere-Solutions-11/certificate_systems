@@ -1,37 +1,76 @@
-from django import views
-from django.conf import settings
-from django.shortcuts import redirect
 from django.urls import path
-from .views import add_student, student_login_view, verification_view
-from .views import contact_view
+from django.shortcuts import redirect
+from django.conf import settings
 from . import views
-from .views import download_certificate
-
 from .views import (
+    add_student, student_login_view, verification_view, contact_view, download_certificate,
     login_view, logout_view, dashboard_redirect,
     admin_dashboard, coordinator_dashboard, student_dashboard,
-    create_offer_letter, create_completion_certificate,delete_certificate
+    create_offer_letter, create_completion_certificate, delete_certificate
 )
 
 urlpatterns = [
-    path('login/<str:role>/', login_view, name='login'),
-    path('logout/', logout_view, name='logout'),
-    path('dashboard/', dashboard_redirect, name='dashboard_redirect'),
-    path('dashboard/admin/', admin_dashboard, name='admin_dashboard'),
-    path('dashboard/coordinator/', coordinator_dashboard, name='coordinator_dashboard'),
-    path('dashboard/student/', student_dashboard, name='student_dashboard'),
-    path('student/add/', add_student, name='add_student'),
-    path('certificate/offer/bulk-upload/', views.bulk_offer_upload, name='bulk_offer_upload'),
-    path('certificate/completion/bulk-upload/', views.bulk_completion_upload, name='bulk_completion_upload'),
-    path('certificate/offer/create/', create_offer_letter, name='create_offer_letter'),
-    path('certificate/completion/create/', create_completion_certificate, name='create_completion_certificate'),
-    path('contact/', contact_view, name='contact'),
-    path('verify/', verification_view, name='verify'),
-    path('certificate/download/<int:cert_id>/', download_certificate, name='download_certificate'),
-    path('accounts/ping/', views.ping_session, name='ping_session'),
-    path('dashboard/admin/template-editor/', views.template_editor, name='template_editor'),
-    path('admin/template-editor/save/', views.save_template, name='save_template'),
-    path('admin/create-template/', views.create_certificate_template, name='create_certificate_template'),
-    path('certificate/<int:cert_id>/delete/', views.delete_certificate, name='delete_certificate'),
 
-] 
+    # ======================
+    # 🔐 Authentication Routes
+    # ======================
+    path('login/<str:role>/', login_view, name='login'),                     # Role-based login for admin/coordinator/student
+    path('logout/', logout_view, name='logout'),                             # Logout and clear session
+    path('dashboard/', dashboard_redirect, name='dashboard_redirect'),      # Redirect to appropriate dashboard based on role
+
+    # ======================
+    # 📊 Dashboards
+    # ======================
+    path('dashboard/admin/', admin_dashboard, name='admin_dashboard'),       # Admin dashboard view
+    path('dashboard/coordinator/', coordinator_dashboard, name='coordinator_dashboard'),  # Coordinator dashboard view
+    path('dashboard/student/', student_dashboard, name='student_dashboard'), # Student dashboard view
+
+    # ======================
+    # 👨‍🎓 Student Management
+    # ======================
+    path('student/add/', add_student, name='add_student'),                   # Coordinator adds a student
+
+    # ======================
+    # 📥 Bulk Certificate Uploads (CSV)
+    # ======================
+    path('certificate/offer/bulk-upload/', views.bulk_offer_upload, name='bulk_offer_upload'),         # Bulk upload offer letters
+    path('certificate/completion/bulk-upload/', views.bulk_completion_upload, name='bulk_completion_upload'), # Bulk upload completion certs
+
+    # ======================
+    # 📝 Manual Certificate Creation
+    # ======================
+    path('certificate/offer/create/', create_offer_letter, name='create_offer_letter'),                 # Create offer letter manually
+    path('certificate/completion/create/', create_completion_certificate, name='create_completion_certificate'), # Create completion cert manually
+
+    # ======================
+    # 📩 Contact Form
+    # ======================
+    path('contact/', contact_view, name='contact'),                          # Contact form (email + DB store)
+
+    # ======================
+    # ✅ Certificate Verification
+    # ======================
+    path('verify/', verification_view, name='verify'),                       # Credential verification page
+
+    # ======================
+    # 📄 Certificate Download
+    # ======================
+    path('certificate/download/<int:cert_id>/', download_certificate, name='download_certificate'),  # Student downloads certificate
+
+    # ======================
+    # 🔄 Session Ping (for timeout handling)
+    # ======================
+    path('accounts/ping/', views.ping_session, name='ping_session'),        # AJAX ping to keep session alive
+
+    # ======================
+    # 🎨 Certificate Template Management (Admin Only)
+    # ======================
+    path('dashboard/admin/template-editor/', views.template_editor, name='template_editor'),       # Template editor UI
+    path('admin/template-editor/save/', views.save_template, name='save_template'),                # Save template via POST
+    path('admin/create-template/', views.create_certificate_template, name='create_certificate_template'),  # Admin creates template
+
+    # ======================
+    # 🗑️ Certificate Deletion (Admin only)
+    # ======================
+    path('certificate/<int:cert_id>/delete/', views.delete_certificate, name='delete_certificate'),  # Delete certificate by ID
+]

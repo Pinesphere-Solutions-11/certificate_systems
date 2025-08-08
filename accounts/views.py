@@ -29,14 +29,17 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import cache_control
 from django.views.decorators.cache import cache_control, never_cache
 
+# Function for admin only login
 def is_admin(user):
     return user.is_authenticated and user.role == 'admin'
 
+ 
 @login_required
 @user_passes_test(is_admin)
 def template_editor(request):
     return render(request, 'admin/create_certificate_template.html')
 
+# Save modified template
 @login_required
 @user_passes_test(is_admin)
 def save_template(request):
@@ -58,6 +61,7 @@ def save_template(request):
         return JsonResponse({'status': 'success', 'message': 'Template saved successfully'})
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
 
 @user_passes_test(is_admin, login_url='login')
 def create_certificate_template(request):
@@ -515,7 +519,7 @@ def add_student(request):
             department=department
         )
 
-        return JsonResponse({'status': 'success', 'message': 'Student added successfully!'})
+        return JsonResponse({'status': 'success', 'message': 'Student added successfully!'}, status=200)
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
@@ -571,7 +575,7 @@ def create_offer_letter(request):
             'student': cert.student_name,
             'course': cert.course_name,
             'date': cert.issue_date.strftime('%Y-%m-%d')
-        })
+        }, status=200)
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
@@ -625,7 +629,7 @@ def create_completion_certificate(request):
             'student': cert.student_name,
             'course': cert.course_name,
             'date': cert.issue_date.strftime('%Y-%m-%d')
-        })
+        } , status=200)
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
@@ -680,7 +684,7 @@ def create_offer_letter(request):
             'student': cert.student_name,
             'course': cert.course_name,
             'date': cert.issue_date.strftime('%Y-%m-%d')
-        })
+        }, status=200)
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
@@ -734,7 +738,7 @@ def create_completion_certificate(request):
             'student': cert.student_name,
             'course': cert.course_name,
             'date': cert.issue_date.strftime('%Y-%m-%d')
-        })
+        }, status=200)
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
@@ -773,7 +777,7 @@ def bulk_offer_upload(request):
             generate_certificate_pdf(cert, 'login/internship_offer.html')
             created.append(cert.pk)
 
-        return JsonResponse({'status': 'success', 'created': created})
+        return JsonResponse({'status': 'success', 'created': created}, status=200)
     return JsonResponse({'status': 'error', 'message': 'CSV not found'}, status=400)
 
 
@@ -812,7 +816,7 @@ def bulk_completion_upload(request):
             generate_certificate_pdf(cert, 'login/internship_completion.html')
             created.append(cert.pk)
 
-        return JsonResponse({'status': 'success', 'created': created})
+        return JsonResponse({'status': 'success', 'created': created}, status=200)
     return JsonResponse({'status': 'error', 'message': 'CSV not found'}, status=400)
 
 
@@ -851,7 +855,7 @@ def bulk_offer_upload(request):
             generate_certificate_pdf(cert, 'login/internship_offer.html')
             created.append(cert.pk)
 
-        return JsonResponse({'status': 'success', 'created': created})
+        return JsonResponse({'status': 'success', 'created': created}, status=200)
     return JsonResponse({'status': 'error', 'message': 'CSV not found'}, status=400)
 
 
@@ -890,7 +894,7 @@ def bulk_completion_upload(request):
             generate_certificate_pdf(cert, 'login/internship_completion.html')
             created.append(cert.pk)
 
-        return JsonResponse({'status': 'success', 'created': created})
+        return JsonResponse({'status': 'success', 'created': created}, status=200)
     return JsonResponse({'status': 'error', 'message': 'CSV not found'}, status=400)
 
 
@@ -1000,5 +1004,5 @@ def delete_certificate(request, cert_id):
     if request.method == 'POST':
         cert = get_object_or_404(Certificate, id=cert_id)
         cert.delete()
-        return JsonResponse({'status': 'success'})
+        return JsonResponse({'status': 'success'}, status=200)
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
