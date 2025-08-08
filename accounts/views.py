@@ -1006,3 +1006,26 @@ def delete_certificate(request, cert_id):
         cert.delete()
         return JsonResponse({'status': 'success'}, status=200)
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+@login_required
+@user_passes_test(is_admin)
+def preview_offer_certificate(request, pk):
+    cert = get_object_or_404(Certificate, pk=pk, certificate_type='offer')
+    return FileResponse(cert.generated_pdf, content_type='application/pdf')
+
+@login_required
+@user_passes_test(is_admin)
+def download_offer_certificate(request, pk):
+    cert = get_object_or_404(Certificate, pk=pk, certificate_type='offer')
+    response = FileResponse(cert.generated_pdf, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{cert.student_name}_offer_certificate.pdf"'
+    return response
+
+@login_required
+@user_passes_test(is_admin)
+def delete_offer_certificate(request, pk):
+    if request.method == 'POST':
+        cert = get_object_or_404(Certificate, pk=pk, certificate_type='offer')
+        cert.delete()
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error'})

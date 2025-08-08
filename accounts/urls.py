@@ -6,7 +6,7 @@ from .views import (
     add_student, student_login_view, verification_view, contact_view, download_certificate,
     login_view, logout_view, dashboard_redirect,
     admin_dashboard, coordinator_dashboard, student_dashboard,
-    create_offer_letter, create_completion_certificate, delete_certificate
+    create_offer_letter, create_completion_certificate, delete_certificate,preview_offer_certificate,delete_offer_certificate,download_offer_certificate
 )
 
 urlpatterns = [
@@ -73,4 +73,7 @@ urlpatterns = [
     # 🗑️ Certificate Deletion (Admin only)
     # ======================
     path('certificate/<int:cert_id>/delete/', views.delete_certificate, name='delete_certificate'),  # Delete certificate by ID
+    path('certificates/offer/<int:pk>/preview/', views.preview_offer_certificate, name='preview_offer_certificate'),
+    path('certificates/offer/<int:pk>/download/', views.download_offer_certificate, name='download_offer_certificate'),
+    path('certificates/offer/<int:pk>/delete/', views.delete_offer_certificate, name='delete_offer_certificate'),
 ]
