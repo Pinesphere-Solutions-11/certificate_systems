@@ -1900,16 +1900,20 @@
                                             <td>{{ admin.designation }}</td>
                                             <td><span class="status-badge status-active">Active</span></td>
                                             <td>
-                                                
-                                                <button class="btn btn-warning btn-sm"
-                                                    onclick="editUser('2', 'coordinator')">
+                                                <!-- Edit -->
+                                                <a href="{% url 'edit_admin' admin.id %}" class="btn btn-warning btn-sm">
                                                     <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-danger btn-sm"
-                                                    onclick="deleteUser('2', 'coordinator')">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
+                                                </a>
+
+                                                <!-- Delete -->
+                                                <form action="{% url 'delete_admin' admin.id %}" method="post" style="display:inline;">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this admin?');">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
                                             </td>
+
                                         </tr>
                                         {% empty %}
                                         <tr>
@@ -1995,15 +1999,16 @@
                                             <td>{{ coordinator.designation }}</td>
                                             <td>{{ coordinator.phone }}</td>
                                             <td><span class="status-badge status-active">Active</span></td>
-                                            <td>
-                                                <button class="btn btn-warning btn-sm"
-                                                    onclick="editUser('1', 'coordinator')">
+
+                                                <td>
+                                                <a href="{% url 'edit_coordinator' coordinator.id %}" class="btn btn-warning btn-sm">
                                                     <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-danger btn-sm"
-                                                    onclick="deleteUser('1', 'coordinator')">
+                                                </a>
+                                                <a href="{% url 'delete_coordinator' coordinator.id %}" 
+                                                class="btn btn-danger btn-sm" 
+                                                onclick="return confirm('Are you sure you want to delete this coordinator?');">
                                                     <i class="fas fa-trash"></i>
-                                                </button>
+                                                </a>
                                             </td>
                                         </tr>
                                         {% empty %}
@@ -2094,15 +2099,15 @@
                                             <td>{{ cert.issue_date }}</td>
                                             <td><span class="status-badge status-active">Active</span></td>
                                             <td>
+                                                
+                                          <a href="{% url 'delete_certificate' cert.id %}"
+                                        class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Are you sure you want to delete this student’s certificate?');">
+                                        <i class="fas fa-trash"></i>
+                                        </a>
 
-                                                <button class="btn btn-warning btn-sm"
-                                                    onclick="editUser('1', 'student')">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-danger btn-sm"
-                                                    onclick="deleteUser('1', 'student')">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
+                                    </td>
+
                                         </tr>
                                         {% empty %}
                                         <tr>

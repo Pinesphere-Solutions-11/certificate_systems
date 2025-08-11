@@ -79,4 +79,22 @@ urlpatterns = [
     path('certificates/offer/<int:pk>/preview/', views.preview_offer_certificate, name='preview_offer_certificate'),
     path('certificates/offer/<int:pk>/download/', views.download_offer_certificate, name='download_offer_certificate'),
     path('certificates/offer/<int:pk>/delete/', views.delete_offer_certificate, name='delete_offer_certificate'),
+
+    # ======================
+    # 🗑️ Admin Edit & Deletion (Admin only)
+    # ======================
+    path('admins/<int:admin_id>/edit/', views.edit_admin, name='edit_admin'),
+    path('admins/<int:admin_id>/delete/', views.delete_admin, name='delete_admin'),
+
+    # ======================
+    # 🗑️ Coordiator Edit & Deletion (Admin only)
+    # ======================
+    path('coordinator/edit/<int:pk>/', views.edit_coordinator, name='edit_coordinator'),
+    path('coordinator/delete/<int:pk>/', views.delete_coordinator, name='delete_coordinator'),
+
+    # ======================
+    # 🗑️ Student Deletion (Admin only)
+    # ======================
+    path('certificate/delete/<int:pk>/', delete_certificate, name='delete_certificate'),
+
 ]

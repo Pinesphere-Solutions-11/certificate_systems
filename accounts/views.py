@@ -267,10 +267,10 @@ def admin_dashboard(request):
             employment_id = request.POST.get('employment_id')
             phone = request.POST.get('phone', '')
 
-            if not all([full_name, email, designation, employment_id]):
-                return JsonResponse({'status': 'error', 'message': 'All fields except phone are required.'}, status=400)
+            if not all([full_name, email, employment_id]):
+                return JsonResponse({'status': 'error', 'message': 'All fields except  designation and phone are required.'}, status=400)
 
-            if User.objects.filter(username=email):
+            if User.objects.filter(username=email).exists():
                 return JsonResponse({'status': 'error', 'message': 'Email already exists.'}, status=400)
 
             # Create the user account
@@ -278,7 +278,7 @@ def admin_dashboard(request):
                 username=email,
                 email=email,
                 password=employment_id,
-                role='coordinator' 
+                role='coordinator'
             )
 
             # Create the Coordinator profile
@@ -293,6 +293,7 @@ def admin_dashboard(request):
 
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'status': 'success', 'message': 'Coordinator added successfully!'})
+            
             messages.success(request, 'Coordinator added successfully!')
             return redirect('admin_dashboard')
 
@@ -338,7 +339,7 @@ def admin_dashboard(request):
                 phone=phone
             )
 
-            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'status': 'success', 'message': 'Admin added successfully!'})
             
             messages.success(request, 'Admin added successfully!')
@@ -987,6 +988,10 @@ def get_certificate_title(cert_type):
         return "Certificate"
 
 
+    # ======================
+    # 🗑️ Certificate Deletion (Admin only)
+    # ======================
+
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
@@ -1022,3 +1027,124 @@ def delete_offer_certificate(request, pk):
         cert.delete()
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'error'})
+
+    # ======================
+    # 🗑️ Admin Edit & Deletion (Admin only)
+    # ======================
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from django.views.decorators.http import require_POST
+from .models import AdminUser
+from .forms import AdminUserForm
+
+
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
+def edit_admin(request, admin_id):
+    admin = get_object_or_404(AdminUser, id=admin_id)
+    if request.method == 'POST':
+        old_employment_id = admin.employment_id
+
+        # Update AdminUser table
+        admin.full_name = request.POST.get('full_name')
+        admin.email = request.POST.get('email')
+        admin.designation = request.POST.get('designation')
+        admin.employment_id = request.POST.get('employment_id')
+        admin.phone = request.POST.get('phone')
+        admin.save()
+
+        # Update the related auth User table
+        try:
+            user = User.objects.get(username=admin.email)
+            user.email = admin.email
+
+            if admin.employment_id != old_employment_id:
+                user.set_password(admin.employment_id)  # New password = new employment ID
+                user.save(update_fields=['password', 'email'])  # Ensure changes are saved
+
+        except User.DoesNotExist:
+            pass
+
+        messages.success(request, "Admin details updated successfully.")
+        return redirect('admin_dashboard')
+
+    return render(request, 'login/edit-admin.html', {'admin': admin})
+
+
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
+def delete_admin(request, admin_id):
+    admin = get_object_or_404(AdminUser, id=admin_id)
+    try:
+        # Delete related User first
+        user = User.objects.get(username=admin.email)
+        user.delete()
+    except User.DoesNotExist:
+        pass
+
+    # Delete the AdminUser profile
+    admin.delete()
+
+    messages.success(request, "Admin deleted successfully.")
+    return redirect('admin_dashboard')
+
+
+    # ======================
+    # 🗑️ Coordiator Edit & Deletion (Admin only)
+    # ======================
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from django.contrib.auth import get_user_model
+from .models import Coordinator
+
+User = get_user_model()
+
+def edit_coordinator(request, pk):
+    coordinator = get_object_or_404(Coordinator, pk=pk)
+
+    if request.method == 'POST':
+        coordinator.full_name = request.POST.get('full_name')
+        coordinator.email = request.POST.get('email')
+        coordinator.designation = request.POST.get('designation')
+        coordinator.employment_id = request.POST.get('employment_id')
+        coordinator.phone = request.POST.get('phone', '')
+
+        # Update linked user login details
+        user = coordinator.user
+        user.username = coordinator.email
+        user.email = coordinator.email
+        user.set_password(coordinator.employment_id)  # reset password to new emp_id
+        user.save()
+
+        coordinator.save()
+        messages.success(request, "Coordinator updated successfully!")
+        return redirect('admin_dashboard')
+
+    return render(request, 'login/edit_coordinator.html', {'coordinator': coordinator})
+
+
+def delete_coordinator(request, pk):
+    coordinator = get_object_or_404(Coordinator, pk=pk)
+    user = coordinator.user  # linked auth user
+
+    coordinator.delete()  # remove coordinator profile
+    user.delete()         # remove login access
+
+    messages.success(request, "Coordinator deleted successfully!")
+    return redirect('admin_dashboard')
+
+   # ======================
+    # 🗑️ Student Deletion (Admin only)
+    # ======================
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+
+def delete_certificate(request, pk):
+    cert = get_object_or_404(Certificate, pk=pk)
+    cert.delete()
+    messages.success(request, "Certificate deleted successfully.")
+    return redirect('admin_dashboard')
