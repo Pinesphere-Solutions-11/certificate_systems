@@ -518,28 +518,30 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      const mobileMenu = document.getElementById('mobile-menu');
-      const nav = document.querySelector('nav');
-      const loginDropdown = document.querySelector('.login-dropdown');
-      const dropdownToggle = loginDropdown.querySelector('a');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const nav = document.querySelector('nav');
+  const loginDropdown = document.querySelector('.login-dropdown');
+  const dropdownToggle = loginDropdown.querySelector('a');
 
-      mobileMenu.addEventListener('click', function () {
-        nav.classList.toggle('active');
-        this.querySelector('i').classList.toggle('fa-bars');
-        this.querySelector('i').classList.toggle('fa-times');
-      });
+  mobileMenu.addEventListener('click', function () {
+    nav.classList.toggle('active');
+    this.querySelector('i').classList.toggle('fa-bars');
+    this.querySelector('i').classList.toggle('fa-times');
+  });
 
-      dropdownToggle.addEventListener('click', function (e) {
-        e.preventDefault();
-        loginDropdown.classList.toggle('active');
-      });
+  // Toggle dropdown on click only
+  dropdownToggle.addEventListener('click', function (e) {
+    e.preventDefault();
+    loginDropdown.classList.toggle('active');
+  });
 
-      document.addEventListener('click', function (e) {
-        if (!loginDropdown.contains(e.target)) {
-          loginDropdown.classList.remove('active');
-        }
-      });
-    });
+  // Close dropdown when clicking anywhere else
+  document.addEventListener('click', function (e) {
+    if (!loginDropdown.contains(e.target)) {
+      loginDropdown.classList.remove('active');
+    }
+  });
+});
   </script>
 </body>
 

@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Enhanced Certificate Template Editor</title>
+  <style>
+    :root {
+      --primary-color: #3794D0;
+      --primary-dark: #026aaf;
+      --background: #f1f5f9;
+      --card-bg: #fff;
+      --border-color: #e2e8f0;
+      --text-dark: #1e293b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--background);
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .editor-container {
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 320px;
+      background: var(--card-bg);
+      border-right: 1px solid var(--border-color);
+      padding: 1.5rem;
+      overflow-y: auto;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .canvas-area {
+      flex: 1;
+      background: #e5e7eb;
+      position: relative;
+      overflow: auto;
+      padding: 20px;
+    }
+
+    .canvas-container {
+      position: relative;
+      display: inline-block;
+      min-width: 100%;
+      min-height: 100%;
+    }
+
+    .canvas {
+      position: relative;
+      width: 794px;
+      height: 1123px;
+      background: white;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      border-radius: 8px;
+      overflow: hidden;
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      margin: 0 auto;
+    }
+
+    .zoom-controls {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: white;
+      border-radius: 8px;
+      padding: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .zoom-btn {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--border-color);
+      background: white;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .zoom-btn:hover {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .zoom-level {
+      font-size: 12px;
+      color: var(--text-dark);
+      min-width: 40px;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-dark);
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 0.95rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+    }
+
+    .canvas-settings {
+      margin-bottom: 1.5rem;
+      background: #f8fafc;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .canvas-size-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .canvas-size-controls input {
+      padding: 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .preset-sizes {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .preset-btn {
+      padding: 0.25rem 0.5rem;
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.7rem;
+    }
+
+    .preset-btn:hover {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .placeholder-section {
+      margin-bottom: 1.5rem;
+      background: #f8fafc;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .placeholder-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .placeholder-btn {
+      padding: 0.5rem;
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      color: #475569;
+      transition: all 0.2s ease;
+      text-align: center;
+      word-break: break-all;
+      line-height: 1.2;
+    }
+
+    .placeholder-btn:hover {
+      background: #f1f5f9;
+      border-color: var(--primary-color);
+      transform: translateY(-1px);
+    }
+
+    .text-element {
+      position: absolute;
+      cursor: move;
+      border: 2px dashed transparent;
+      padding: 8px;
+      min-width: 100px;
+      min-height: 30px;
+      background: rgba(255, 255, 255, 0.1);
+      transition: all 0.2s ease;
+      outline: none;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .text-element:hover {
+      border-color: var(--primary-color);
+      background: rgba(55, 148, 208, 0.05);
+    }
+
+    .text-element.selected {
+      border-color: var(--primary-color);
+      border-style: solid;
+      background: rgba(55, 148, 208, 0.1);
+    }
+
+    .text-element.editing {
+      cursor: text;
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .resize-handle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: var(--primary-color);
+      border: 2px solid white;
+      border-radius: 50%;
+    }
+
+    .resize-handle.nw { top: -4px; left: -4px; cursor: nw-resize; }
+    .resize-handle.ne { top: -4px; right: -4px; cursor: ne-resize; }
+    .resize-handle.sw { bottom: -4px; left: -4px; cursor: sw-resize; }
+    .resize-handle.se { bottom: -4px; right: -4px; cursor: se-resize; }
+
+    .toolbar {
+      display: none;
+      position: fixed;
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 1001;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      max-width: 400px;
+    }
+
+    .toolbar.show {
+      display: flex;
+      align-items: center;
+    }
+
+    .toolbar button {
+      padding: 0.25rem 0.5rem;
+      border: 1px solid var(--border-color);
+      background: white;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    .toolbar button:hover {
+      background: #f8fafc;
+    }
+
+    .toolbar button.active {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .toolbar input, .toolbar select {
+      padding: 0.25rem;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 0.8rem;
+      width: auto;
+    }
+
+    .toolbar-group {
+      display: flex;
+      gap: 0.25rem;
+      align-items: center;
+      padding: 0.25rem;
+      background: #f8fafc;
+      border-radius: 4px;
+      margin: 0.125rem;
+    }
+
+    .add-text-btn {
+      background: var(--primary-color);
+      color: white;
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+
+    .add-text-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    .layer-controls {
+      margin-bottom: 1rem;
+      background: #f8fafc;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .layer-btn {
+      padding: 0.5rem;
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      margin: 0 0.25rem;
+    }
+
+    .layer-btn:hover {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .save-btn {
+      background: #059669;
+      color: white;
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      width: 100%;
+      margin-top: 1rem;
+    }
+
+    .save-btn:hover {
+      background: #047857;
+    }
+
+    .preview-section {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .preview-link {
+      color: var(--primary-color);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      margin-top: 0.5rem;
+      display: inline-block;
+    }
+
+    .section-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 0.75rem;
+    }
+
+    #backgroundUpload {
+      margin-bottom: 0.5rem;
+    }
+
+    .background-preview {
+      width: 100%;
+      height: 120px;
+      border: 2px dashed var(--border-color);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: #64748b;
+      font-size: 0.8rem;
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+
+    .delete-btn {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 20px;
+      height: 20px;
+      background: #dc2626;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 12px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .text-element.selected .delete-btn {
+      display: flex;
+    }
+
+    .background-fit-controls {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .fit-btn {
+      padding: 0.25rem 0.5rem;
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.7rem;
+    }
+
+    .fit-btn:hover {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .fit-btn.active {
+      background: var(--primary-color);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="editor-container">
+    <div class="sidebar">
+      <h2 style="margin-top: 0; color: var(--text-dark);">Certificate Editor</h2>
+      
+      <div class="form-group">
+        <label for="certificate_type">Certificate Type</label>
+        <select id="certificate_type">
+          <option value="offer">Internship Offer</option>
+          <option value="completion">Internship Completion</option>
+        </select>
+        <a href="#" class="preview-link" id="previewLink">Preview Default Template</a>
+      </div>
+
+      <div class="canvas-settings">
+        <div class="section-title">Canvas Settings</div>
+        <div class="canvas-size-controls">
+          <input type="number" id="canvasWidth" placeholder="Width (px)" value="794">
+          <input type="number" id="canvasHeight" placeholder="Height (px)" value="1123">
+        </div>
+        <div class="preset-sizes">
+          <button class="preset-btn" onclick="setCanvasSize(794, 1123)">A4</button>
+          <button class="preset-btn" onclick="setCanvasSize(1056, 816)">Letter</button>
+          <button class="preset-btn" onclick="setCanvasSize(1200, 800)">Custom</button>
+        </div>
+        <button onclick="applyCanvasSize()" style="width: 100%; margin-top: 0.5rem; padding: 0.5rem; background: var(--primary-color); color: white; border: none; border-radius: 4px; cursor: pointer;">Apply Size</button>
+      </div>
+
+      <div class="form-group">
+        <label for="backgroundUpload">Background Image</label>
+        <input type="file" id="backgroundUpload" accept="image/*">
+        <div class="background-preview" id="backgroundPreview">
+          Click above to upload background image
+        </div>
+        <div class="background-fit-controls">
+          <button class="fit-btn" onclick="setBackgroundFit('contain')" id="containBtn">Contain</button>
+          <button class="fit-btn active" onclick="setBackgroundFit('cover')" id="coverBtn">Cover</button>
+          <button class="fit-btn" onclick="setBackgroundFit('fill')" id="fillBtn">Fill</button>
+          <button class="fit-btn" onclick="setBackgroundFit('none')" id="noneBtn">Original</button>
+        </div>
+      </div>
+
+      <button class="add-text-btn" onclick="addTextElement()">+ Add Text Element</button>
+
+      <div class="layer-controls">
+        <div class="section-title">Layer Controls</div>
+        <button class="layer-btn" onclick="moveToFront()">Bring to Front</button>
+        <button class="layer-btn" onclick="moveToBack()">Send to Back</button>
+        <button class="layer-btn" onclick="duplicateElement()">Duplicate</button>
+      </div>
+
+      <div class="placeholder-section">
+        <div class="section-title">Available Placeholder Tags</div>
+        <div class="placeholder-grid" id="placeholderGrid">
+          <!-- Placeholders will be generated here -->
+        </div>
+      </div>
+
+      <div class="preview-section">
+        <div class="section-title">Actions</div>
+        <button class="save-btn" onclick="saveTemplate()">Save Template</button>
+      </div>
+    </div>
+
+    <div class="canvas-area" id="canvasArea">
+      <div class="canvas-container">
+        <div class="canvas" id="canvas">
+          <!-- Text elements will be added here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Zoom controls -->
+  <div class="zoom-controls">
+    <button class="zoom-btn" onclick="zoomOut()">−</button>
+    <div class="zoom-level" id="zoomLevel">100%</div>
+    <button class="zoom-btn" onclick="zoomIn()">+</button>
+    <button class="zoom-btn" onclick="resetZoom()" title="Reset Zoom">⌂</button>
+  </div>
+
+  <!-- Enhanced formatting toolbar -->
+  <div class="toolbar" id="toolbar">
+    <div class="toolbar-group">
+      <button onclick="toggleBold()" id="boldBtn">B</button>
+      <button onclick="toggleItalic()" id="italicBtn">I</button>
+      <button onclick="toggleUnderline()" id="underlineBtn">U</button>
+    </div>
+    <div class="toolbar-group">
+      <select id="fontFamily" onchange="changeFontFamily()">
+        <option value="Arial">Arial</option>
+        <option value="Times New Roman">Times New Roman</option>
+        <option value="Georgia">Georgia</option>
+        <option value="Helvetica">Helvetica</option>
+        <option value="Courier New">Courier New</option>
+        <option value="Impact">Impact</option>
+        <option value="Comic Sans MS">Comic Sans</option>
+      </select>
+    </div>
+    <div class="toolbar-group">
+      <input type="number" id="fontSize" value="16" min="8" max="72" onchange="changeFontSize()">
+      <span style="font-size: 0.7rem;">px</span>
+    </div>
+    <div class="toolbar-group">
+      <input type="color" id="textColor" value="#000000" onchange="changeTextColor()">
+      <input type="range" id="opacity" min="0" max="100" value="100" onchange="changeOpacity()">
+    </div>
+    <div class="toolbar-group">
+      <select id="textAlign" onchange="changeTextAlign()">
+        <option value="left">Left</option>
+        <option value="center">Center</option>
+        <option value="right">Right</option>
+        <option value="justify">Justify</option>
+      </select>
+    </div>
+  </div>
+
+  <script>
+    let selectedElement = null;
+    let dragElement = null;
+    let dragOffset = { x: 0, y: 0 };
+    let resizeHandle = null;
+    let elementCounter = 0;
+    let zoomLevel = 1;
+    let currentBackgroundFit = 'cover';
+
+    const tagList = [
+      '\x7B\x7B title \x7D\x7D', '\x7B\x7B student_name \x7D\x7D', '\x7B\x7B student_id \x7D\x7D', '\x7B\x7B course_name \x7D\x7D',
+      '\x7B\x7B degree \x7D\x7D', '\x7B\x7B department \x7D\x7D', '\x7B\x7B college \x7D\x7D', '\x7B\x7B location \x7D\x7D',
+      '\x7B\x7B start_date \x7D\x7D', '\x7B\x7B end_date \x7D\x7D', '\x7B\x7B duration \x7D\x7D', '\x7B\x7B completion_date \x7D\x7D', 
+      '\x7B\x7B issue_date \x7D\x7D'
+    ];
+
+    // Initialize placeholder buttons
+    function initPlaceholders() {
+      const grid = document.getElementById('placeholderGrid');
+      tagList.forEach(tag => {
+        const btn = document.createElement('div');
+        btn.className = 'placeholder-btn';  
+        btn.textContent = tag;
+        btn.title = `Click to insert ${tag}`;
+        btn.onclick = () => insertPlaceholder(tag);
+        grid.appendChild(btn);
+      });
+    }
+
+    // Canvas size management
+    function setCanvasSize(width, height) {
+      document.getElementById('canvasWidth').value = width;
+      document.getElementById('canvasHeight').value = height;
+    }
+
+    function applyCanvasSize() {
+      const width = document.getElementById('canvasWidth').value;
+      const height = document.getElementById('canvasHeight').value;
+      const canvas = document.getElementById('canvas');
+      
+      if (width && height) {
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+      }
+    }
+
+    // Background image fit controls
+    function setBackgroundFit(fitType) {
+      const canvas = document.getElementById('canvas');
+      currentBackgroundFit = fitType;
+      
+      // Remove active class from all buttons
+      document.querySelectorAll('.fit-btn').forEach(btn => btn.classList.remove('active'));
+      
+      // Add active class to clicked button
+      const activeBtn = {
+        'contain': 'containBtn',
+        'cover': 'coverBtn', 
+        'fill': 'fillBtn',
+        'none': 'noneBtn'
+      };
+      document.getElementById(activeBtn[fitType]).classList.add('active');
+      
+      // Apply background fit
+      switch(fitType) {
+        case 'contain':
+          canvas.style.backgroundSize = 'contain';
+          break;
+        case 'cover':
+          canvas.style.backgroundSize = 'cover';
+          break;
+        case 'fill':
+          canvas.style.backgroundSize = '100% 100%';
+          break;
+        case 'none':
+          canvas.style.backgroundSize = 'auto';
+          break;
+      }
+    }
+
+    // Zoom functionality
+    function zoomIn() {
+      if (zoomLevel < 3) {
+        zoomLevel += 0.25;
+        applyZoom();
+      }
+    }
+
+    function zoomOut() {
+      if (zoomLevel > 0.25) {
+        zoomLevel -= 0.25;
+        applyZoom();
+      }
+    }
+
+    function resetZoom() {
+      zoomLevel = 1;
+      applyZoom();
+    }
+
+    function applyZoom() {
+      const canvas = document.getElementById('canvas');
+      canvas.style.transform = `scale(${zoomLevel})`;
+      canvas.style.transformOrigin = 'top left';
+      
+      // Update zoom level display
+      document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
+      
+      // Adjust canvas container size to accommodate scaling
+      const container = canvas.parentElement;
+      container.style.width = (canvas.offsetWidth * zoomLevel) + 'px';
+      container.style.height = (canvas.offsetHeight * zoomLevel) + 'px';
+    }
+
+    // Layer management
+    function moveToFront() {
+      if (selectedElement) {
+        selectedElement.style.zIndex = (parseInt(selectedElement.style.zIndex || 1) + 100);
+      }
+    }
+
+    function moveToBack() {
+      if (selectedElement) {
+        selectedElement.style.zIndex = Math.max(1, parseInt(selectedElement.style.zIndex || 1) - 100);
+      }
+    }
+
+    function duplicateElement() {
+      if (selectedElement) {
+        const clone = selectedElement.cloneNode(true);
+        clone.id = 'text-' + (++elementCounter);
+        
+        // Offset the duplicate slightly
+        const left = parseInt(selectedElement.style.left) + 20;
+        const top = parseInt(selectedElement.style.top) + 20;
+        clone.style.left = left + 'px';
+        clone.style.top = top + 'px';
+        
+        // Re-attach event listeners
+        attachElementEvents(clone);
+        
+        document.getElementById('canvas').appendChild(clone);
+        selectElement(clone);
+      }
+    }
+
+    // Insert placeholder into selected text element
+    function insertPlaceholder(tag) {
+      if (selectedElement) {
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0 && selectedElement.contains(selection.focusNode)) {
+          const range = selection.getRangeAt(0);
+          range.deleteContents();
+          range.insertNode(document.createTextNode(tag));
+          range.collapse();
+        } else {
+          selectedElement.innerHTML += tag;
+        }
+      } else {
+        const element = createTextElement(tag, 100, 100);
+        selectElement(element);
+      }
+    }
+
+    // Attach event listeners to element
+    function attachElementEvents(element) {
+      element.onmousedown = (e) => startDrag(e, element);
+      element.onclick = (e) => {
+        e.stopPropagation();
+        selectElement(element);
+      };
+      element.ondblclick = (e) => {
+        e.stopPropagation();
+        enterEditMode(element);
+      };
+      element.oninput = () => updateToolbar();
+      
+      // Delete button
+      const deleteBtn = element.querySelector('.delete-btn');
+      if (deleteBtn) {
+        deleteBtn.onclick = () => deleteElement(element);
+      }
+      
+      // Resize handles
+      element.querySelectorAll('.resize-handle').forEach(handle => {
+        const pos = handle.className.split(' ')[1];
+        handle.onmousedown = (e) => startResize(e, element, pos);
+      });
+    }
+
+    // Create new text element
+    function createTextElement(text = "Click to edit text", x = 100, y = 100) {
+      const canvas = document.getElementById('canvas');
+      const element = document.createElement('div');
+      element.className = 'text-element';
+      element.contentEditable = true;
+      element.innerHTML = text;
+      element.id = 'text-' + (++elementCounter);
+      
+      element.style.left = x + 'px';
+      element.style.top = y + 'px';
+      element.style.fontSize = '16px';
+      element.style.fontFamily = 'Arial';
+      element.style.color = '#000000';
+      element.style.zIndex = '1';
+
+      // Add delete button
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'delete-btn';
+      deleteBtn.innerHTML = '×';
+      element.appendChild(deleteBtn);
+
+      // Add resize handles
+      ['nw', 'ne', 'sw', 'se'].forEach(pos => {
+        const handle = document.createElement('div');
+        handle.className = `resize-handle ${pos}`;
+        element.appendChild(handle);
+      });
+
+      // Attach event listeners
+      attachElementEvents(element);
+
+      canvas.appendChild(element);
+      return element;
+    }
+
+    // Add text element button handler
+    function addTextElement() {
+      const element = createTextElement();
+      selectElement(element);
+    }
+
+    // Select element
+    function selectElement(element) {
+      if (selectedElement) {
+        selectedElement.classList.remove('selected');
+        selectedElement.classList.remove('editing');
+      }
+      
+      selectedElement = element;
+      element.classList.add('selected');
+      updateToolbar();
+      showToolbar();
+    }
+
+    // Enter edit mode
+    function enterEditMode(element) {
+      element.classList.add('editing');
+      element.focus();
+      
+      // Select all text content, excluding buttons and handles
+      const range = document.createRange();
+      const textNodes = [];
+      
+      function getTextNodes(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          textNodes.push(node);
+        } else if (node.nodeType === Node.ELEMENT_NODE && 
+                  !node.classList.contains('delete-btn') && 
+                  !node.classList.contains('resize-handle')) {
+          for (let child of node.childNodes) {
+            getTextNodes(child);
+          }
+        }
+      }
+      
+      getTextNodes(element);
+      
+      if (textNodes.length > 0) {
+        range.setStartBefore(textNodes[0]);
+        range.setEndAfter(textNodes[textNodes.length - 1]);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    }
+
+    // Delete element
+    function deleteElement(element) {
+      if (selectedElement === element) {
+        hideToolbar();
+        selectedElement = null;
+      }
+      element.remove();
+    }
+
+    // Drag functionality
+    function startDrag(e, element) {
+      if (e.target.classList.contains('resize-handle') || e.target.classList.contains('delete-btn')) {
+        return;
+      }
+      
+      dragElement = element;
+      const rect = element.getBoundingClientRect();
+      const canvasRect = document.getElementById('canvas').getBoundingClientRect();
+      
+      dragOffset.x = e.clientX - rect.left;
+      dragOffset.y = e.clientY - rect.top;
+      
+      e.preventDefault();
+    }
+
+    // Resize functionality
+    function startResize(e, element, handle) {
+      resizeHandle = { element, handle, startX: e.clientX, startY: e.clientY };
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    // Mouse move handler
+    document.onmousemove = (e) => {
+      if (dragElement) {
+        const canvasRect = document.getElementById('canvas').getBoundingClientRect();
+        const newX = (e.clientX - canvasRect.left) / zoomLevel - dragOffset.x / zoomLevel;
+        const newY = (e.clientY - canvasRect.top) / zoomLevel - dragOffset.y / zoomLevel;
+        
+        dragElement.style.left = Math.max(0, Math.min(newX, canvasRect.width / zoomLevel - dragElement.offsetWidth)) + 'px';
+        dragElement.style.top = Math.max(0, Math.min(newY, canvasRect.height / zoomLevel - dragElement.offsetHeight)) + 'px';
+      }
+      
+      if (resizeHandle) {
+        const { element, handle, startX, startY } = resizeHandle;
+        const deltaX = (e.clientX - startX) / zoomLevel;
+        const deltaY = (e.clientY - startY) / zoomLevel;
+        
+        const rect = element.getBoundingClientRect();
+        const canvasRect = document.getElementById('canvas').getBoundingClientRect();
+        
+        let newWidth = element.offsetWidth;
+        let newHeight = element.offsetHeight;
+        let newLeft = parseInt(element.style.left);
+        let newTop = parseInt(element.style.top);
+        
+        if (handle.includes('e')) newWidth += deltaX;
+        if (handle.includes('w')) {
+          newWidth -= deltaX;
+          newLeft += deltaX;
+        }
+        if (handle.includes('s')) newHeight += deltaY;
+        if (handle.includes('n')) {
+          newHeight -= deltaY;
+          newTop += deltaY;
+        }
+        
+        if (newWidth > 50 && newHeight > 20) {
+          element.style.width = newWidth + 'px';
+          element.style.height = newHeight + 'px';
+          element.style.left = Math.max(0, newLeft) + 'px';
+          element.style.top = Math.max(0, newTop) + 'px';
+        }
+        
+        resizeHandle.startX = e.clientX;
+        resizeHandle.startY = e.clientY;
+      }
+    };
+
+    // Mouse up handler
+    document.onmouseup = () => {
+      dragElement = null;
+      resizeHandle = null;
+    };
+
+    // Canvas click handler
+    document.getElementById('canvas').onclick = (e) => {
+      if (e.target === e.currentTarget) {
+        if (selectedElement) {
+          selectedElement.classList.remove('selected');
+          selectedElement.classList.remove('editing');
+          selectedElement = null;
+          hideToolbar();
+        }
+      }
+    };
+
+    // Toolbar functions
+    function showToolbar() {
+      if (!selectedElement) return;
+      
+      const toolbar = document.getElementById('toolbar');
+      const rect = selectedElement.getBoundingClientRect();
+      const canvasArea = document.getElementById('canvasArea');
+      const canvasAreaRect = canvasArea.getBoundingClientRect();
+      
+      // Get toolbar dimensions (approximate)
+      const toolbarWidth = 400;
+      const toolbarHeight = 60;
+      
+      // Center toolbar horizontally relative to the text element
+      let left = rect.left + (rect.width / 2) - (toolbarWidth / 2);
+      let top = rect.top - toolbarHeight - 10; // Position above by default
+      
+      // Check if toolbar fits above the element
+      if (top < canvasAreaRect.top) {
+        // If not enough space above, position below
+        top = rect.bottom + 10;
+      }
+      
+      // Check if toolbar fits below the element
+      if (top + toolbarHeight > canvasAreaRect.bottom) {
+        // If not enough space below, position above (even if it goes outside)
+        top = rect.top - toolbarHeight - 10;
+      }
+      
+      // Keep toolbar horizontally within canvas area bounds
+      if (left < canvasAreaRect.left) {
+        left = canvasAreaRect.left + 10;
+      }
+      if (left + toolbarWidth > canvasAreaRect.right) {
+        left = canvasAreaRect.right - toolbarWidth - 10;
+      }
+      
+      // Ensure toolbar doesn't go completely outside viewport
+      if (top < 0) {
+        top = 10;
+      }
+      
+      toolbar.style.left = left + 'px';
+      toolbar.style.top = top + 'px';
+      toolbar.classList.add('show');
+    }
+
+    function hideToolbar() {
+      document.getElementById('toolbar').classList.remove('show');
+    }
+
+    function updateToolbar() {
+      if (!selectedElement) return;
+      
+      const style = window.getComputedStyle(selectedElement);
+      
+      // Update toolbar controls
+      document.getElementById('fontFamily').value = style.fontFamily.replace(/"/g, '').split(',')[0];
+      document.getElementById('fontSize').value = parseInt(style.fontSize);
+      document.getElementById('textColor').value = rgbToHex(style.color);
+      document.getElementById('textAlign').value = style.textAlign;
+      
+      // Update opacity slider
+      const opacity = style.opacity ? Math.round(parseFloat(style.opacity) * 100) : 100;
+      document.getElementById('opacity').value = opacity;
+      
+      // Update button states
+      document.getElementById('boldBtn').classList.toggle('active', style.fontWeight === 'bold' || parseInt(style.fontWeight) >= 700);
+      document.getElementById('italicBtn').classList.toggle('active', style.fontStyle === 'italic');
+      document.getElementById('underlineBtn').classList.toggle('active', style.textDecoration.includes('underline'));
+    }
+
+    function toggleBold() {
+      document.execCommand('bold');
+      updateToolbar();
+    }
+
+    function toggleItalic() {
+      document.execCommand('italic');
+      updateToolbar();
+    }
+
+    function toggleUnderline() {
+      document.execCommand('underline');
+      updateToolbar();
+    }
+
+    function changeFontFamily() {
+      if (selectedElement) {
+        selectedElement.style.fontFamily = document.getElementById('fontFamily').value;
+      }
+    }
+
+    function changeFontSize() {
+      if (selectedElement) {
+        selectedElement.style.fontSize = document.getElementById('fontSize').value + 'px';
+      }
+    }
+
+    function changeTextColor() {
+      if (selectedElement) {
+        selectedElement.style.color = document.getElementById('textColor').value;
+      }
+    }
+
+    function changeTextAlign() {
+      if (selectedElement) {
+        selectedElement.style.textAlign = document.getElementById('textAlign').value;
+      }
+    }
+
+    function changeOpacity() {
+      if (selectedElement) {
+        const opacity = document.getElementById('opacity').value / 100;
+        selectedElement.style.opacity = opacity;
+      }
+    }
+
+    // Background image upload with enhanced features
+    document.getElementById('backgroundUpload').onchange = function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const canvas = document.getElementById('canvas');
+          const preview = document.getElementById('backgroundPreview');
+          
+          canvas.style.backgroundImage = `url(${e.target.result})`;
+          preview.style.backgroundImage = `url(${e.target.result})`;
+          preview.textContent = '';
+          
+          // Apply current background fit setting
+          setBackgroundFit(currentBackgroundFit);
+          
+          // Get image dimensions for canvas sizing suggestions
+          const img = new Image();
+          img.onload = function() {
+            // Suggest canvas size based on image dimensions
+            if (img.width && img.height) {
+              const aspectRatio = img.width / img.height;
+              let suggestedWidth, suggestedHeight;
+              
+              if (aspectRatio > 1) {
+                // Landscape
+                suggestedWidth = Math.min(1200, img.width);
+                suggestedHeight = Math.round(suggestedWidth / aspectRatio);
+              } else {
+                // Portrait
+                suggestedHeight = Math.min(1400, img.height);
+                suggestedWidth = Math.round(suggestedHeight * aspectRatio);
+              }
+              
+              // Update input fields with suggestions
+              document.getElementById('canvasWidth').placeholder = `Suggested: ${suggestedWidth}px`;
+              document.getElementById('canvasHeight').placeholder = `Suggested: ${suggestedHeight}px`;
+            }
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+      if (selectedElement) {
+        // Delete key
+        if (e.key === 'Delete' && !selectedElement.classList.contains('editing')) {
+          deleteElement(selectedElement);
+          e.preventDefault();
+        }
+        
+        // Copy (Ctrl+C)
+        if (e.ctrlKey && e.key === 'c') {
+          // Store element data for copying
+          window.clipboardElement = {
+            content: selectedElement.innerHTML.replace(/<button[^>]*>.*?<\/button>/g, '').replace(/<div class="resize-handle[^>]*><\/div>/g, ''),
+            style: {
+              fontSize: selectedElement.style.fontSize,
+              fontFamily: selectedElement.style.fontFamily,
+              color: selectedElement.style.color,
+              textAlign: selectedElement.style.textAlign,
+              fontWeight: selectedElement.style.fontWeight,
+              fontStyle: selectedElement.style.fontStyle,
+              textDecoration: selectedElement.style.textDecoration,
+              opacity: selectedElement.style.opacity
+            }
+          };
+          e.preventDefault();
+        }
+        
+        // Paste (Ctrl+V)
+        if (e.ctrlKey && e.key === 'v' && window.clipboardElement) {
+          const newElement = createTextElement(window.clipboardElement.content, 120, 120);
+          Object.assign(newElement.style, window.clipboardElement.style);
+          selectElement(newElement);
+          e.preventDefault();
+        }
+        
+        // Arrow keys for fine positioning
+        if (!selectedElement.classList.contains('editing')) {
+          const step = e.shiftKey ? 10 : 1;
+          let moved = false;
+          
+          switch(e.key) {
+            case 'ArrowUp':
+              selectedElement.style.top = Math.max(0, parseInt(selectedElement.style.top) - step) + 'px';
+              moved = true;
+              break;
+            case 'ArrowDown':
+              selectedElement.style.top = (parseInt(selectedElement.style.top) + step) + 'px';
+              moved = true;
+              break;
+            case 'ArrowLeft':
+              selectedElement.style.left = Math.max(0, parseInt(selectedElement.style.left) - step) + 'px';
+              moved = true;
+              break;
+            case 'ArrowRight':
+              selectedElement.style.left = (parseInt(selectedElement.style.left) + step) + 'px';
+              moved = true;
+              break;
+          }
+          
+          if (moved) {
+            e.preventDefault();
+          }
+        }
+      }
+      
+      // Global shortcuts
+      if (e.ctrlKey && e.key === 's') {
+        saveTemplate();
+        e.preventDefault();
+      }
+    });
+
+    // Auto-save functionality (optional)
+    let autoSaveTimer;
+    function scheduleAutoSave() {
+      clearTimeout(autoSaveTimer);
+      autoSaveTimer = setTimeout(() => {
+        // Auto-save logic here
+        console.log('Auto-saving template...');
+      }, 5000);
+    }
+
+    // Save template with enhanced data
+    function saveTemplate() {
+      const canvas = document.getElementById('canvas');
+      const elements = canvas.querySelectorAll('.text-element');
+      
+      const templateData = {
+        certificateType: document.getElementById('certificate_type').value,
+        canvasWidth: canvas.style.width || '794px',
+        canvasHeight: canvas.style.height || '1123px',
+        backgroundImage: canvas.style.backgroundImage,
+        backgroundFit: currentBackgroundFit,
+        elements: Array.from(elements).map((el, index) => ({
+          id: el.id,
+          index: index,
+          content: el.innerHTML.replace(/<button[^>]*>.*?<\/button>/g, '').replace(/<div class="resize-handle[^>]*><\/div>/g, ''),
+          left: el.style.left,
+          top: el.style.top,
+          width: el.style.width,
+          height: el.style.height,
+          fontSize: el.style.fontSize,
+          fontFamily: el.style.fontFamily,
+          color: el.style.color,
+          textAlign: el.style.textAlign,
+          fontWeight: el.style.fontWeight,
+          fontStyle: el.style.fontStyle,
+          textDecoration: el.style.textDecoration,
+          opacity: el.style.opacity,
+          zIndex: el.style.zIndex
+        }))
+      };
+      
+      console.log('Template saved:', templateData);
+      
+      // Create downloadable JSON file
+      const dataStr = JSON.stringify(templateData, null, 2);
+      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      
+      const exportFileDefaultName = 'certificate_template.json';
+      
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+      
+      alert('Template saved and downloaded successfully!');
+      
+      // Here you would typically send the data to your server
+      // fetch('/save-template', { method: 'POST', body: JSON.stringify(templateData) })
+    }
+
+    // Utility functions
+    function rgbToHex(rgb) {
+      const result = rgb.match(/\d+/g);
+      if (!result) return '#000000';
+      return '#' + result.map(x => parseInt(x).toString(16).padStart(2, '0')).join('');
+    }
+
+    // Window resize handler
+    window.addEventListener('resize', function() {
+      if (selectedElement) {
+        showToolbar();
+      }
+    });
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      initPlaceholders();
+      
+      // Add default title element
+      // const titleElement = createTextElement('Certificate of Completion', 200, 150);
+      // titleElement.style.fontSize = '32px';
+      // titleElement.style.fontWeight = 'bold';
+      // titleElement.style.textAlign = 'center';
+      // titleElement.style.width = '400px';
+      // titleElement.style.zIndex = '2';
+      
+      // Add default content element
+      const contentElement = createTextElement('This certifies that \x7B\x7B student_name \x7D\x7D has successfully completed \x7B\x7B course_name \x7D\x7D', 100, 250);
+      contentElement.style.fontSize = '18px';
+      contentElement.style.textAlign = 'center';
+      contentElement.style.width = '600px';
+      contentElement.style.height = '100px';
+      contentElement.style.zIndex = '1';
+      
+      // Schedule auto-save when elements change
+      document.getElementById('canvas').addEventListener('input', scheduleAutoSave);
+    });
+  </script>
+</body>
+</html>

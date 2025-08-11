@@ -1358,6 +1358,11 @@
                     <a href="#" class="menu-item" data-section="completion-certificates">
                         <i class="fas fa-medal"></i> Completion Certificates
                     </a>
+                    <a href="{% url 'create_certificate_template' %}" target="_blank"
+                        class="menu-item" data-section="certificates-template"
+                        onclick="window.open(this.href, '_blank'); return false;">
+                        <i class="fas fa-edit"></i> Certificate Template
+                    </a>
                 </div>
 
                 <div class="menu-section">
@@ -1507,11 +1512,12 @@
 
                                             <td><span class="status-badge status-active">Active</span></td>
                                             <td>
+                                                {% if cert.generated_pdf %}
                                                  <button class="btn btn-info btn-sm"
                                                     onclick="previewCertificate('{{ cert.generated_pdf.url }}')">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
-                                                {% if cert.generated_pdf %}
+                                                
                                                     <a href="{{ cert.generated_pdf.url }}" class="btn btn-success btn-sm" download>
                                                         <i class="fas fa-download"></i>
                                                     </a>
@@ -1860,6 +1866,8 @@
                         </div>
                     </div>
                 </section>
+
+                
 
                 <!-- Admin Management -->
                 <section id="admin-management" class="content-section">

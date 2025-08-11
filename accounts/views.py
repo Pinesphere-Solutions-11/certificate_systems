@@ -37,53 +37,46 @@ def is_admin(user):
 @login_required
 @user_passes_test(is_admin)
 def template_editor(request):
-    return render(request, 'admin/create_certificate_template.html')
+    return render(request, 'admin/certificate_editor.html')
 
-# Save modified template
 @login_required
 @user_passes_test(is_admin)
 def save_template(request):
     if request.method == 'POST':
-        name = request.POST.get('template_name')
-        certificate_type = request.POST.get('certificate_type')
-        html_content = request.POST.get('html_content')
-        background_image = request.FILES.get('background_image')
+        try:
+            name = request.POST.get('template_name')
+            certificate_type = request.POST.get('certificate_type')
+            html_content = request.POST.get('html_content')
+            css_content = request.POST.get('css_content', '')  # New field
+            background_image = request.FILES.get('background_image')
 
-        # Create or update template
-        template, created = CertificateTemplate.objects.update_or_create(
-            name=name,
-            defaults={
-                'certificate_type': certificate_type,
-                'html_content': html_content,
-                'background_image': background_image if background_image else None,
-            }
-        )
-        return JsonResponse({'status': 'success', 'message': 'Template saved successfully'})
+            # Combine HTML and CSS if provided separately
+            if css_content and '<style>' not in html_content:
+                html_content = f'<style>{css_content}</style>{html_content}'
 
+            template, created = CertificateTemplate.objects.update_or_create(
+                name=name,
+                defaults={
+                    'certificate_type': certificate_type,
+                    'html_content': html_content,
+                    'background_image': background_image if background_image else None,
+                }
+            )
+            
+            return JsonResponse({
+                'status': 'success', 
+                'message': 'Template saved successfully',
+                'template_id': template.id
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            })
+    
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 
-
-@user_passes_test(is_admin, login_url='login')
-def create_certificate_template(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        template_type = request.POST.get('template_type')
-        content_html = request.POST.get('content_html')
-
-        background_image = request.FILES.get('background_image')
-        if background_image:
-            image_path = default_storage.save(f'templates/backgrounds/{background_image.name}', background_image)
-        else:
-            image_path = None
-
-        CertificateTemplate.objects.create(
-            name=name,
-            template_type=template_type,
-            content_html=content_html,
-            background_image=image_path
-        )
-        return render(request, 'admin/close_window.html')  # close popup page after saving
-    return render(request, 'admin/create_certificate_template.html')
 @login_required
 def ping_session(request):
     return HttpResponse("pong")

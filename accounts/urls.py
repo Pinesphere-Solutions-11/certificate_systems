@@ -39,7 +39,9 @@ urlpatterns = [
     # ======================
     # 📝 Manual Certificate Creation
     # ======================
-    path('certificate/offer/create/', create_offer_letter, name='create_offer_letter'),                 # Create offer letter manually
+    path('certificate/offer/create/', create_offer_letter, name='create_offer_letter'),  
+    path('admin/create-template/', views.template_editor, name='create_certificate_template'),
+                                                                                                # Create offer letter manually
     path('certificate/completion/create/', create_completion_certificate, name='create_completion_certificate'), # Create completion cert manually
 
     # ======================
@@ -65,9 +67,10 @@ urlpatterns = [
     # ======================
     # 🎨 Certificate Template Management (Admin Only)
     # ======================
-    path('dashboard/admin/template-editor/', views.template_editor, name='template_editor'),       # Template editor UI
+    path('admin/create-template/', views.template_editor, name='create_certificate_template'),
+      # Template editor UI
     path('admin/template-editor/save/', views.save_template, name='save_template'),                # Save template via POST
-    path('admin/create-template/', views.create_certificate_template, name='create_certificate_template'),  # Admin creates template
+    # path('admin/create-template/', views.create_certificate_template, name='create_certificate_template'),  # Admin creates template
 
     # ======================
     # 🗑️ Certificate Deletion (Admin only)
