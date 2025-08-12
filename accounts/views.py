@@ -135,6 +135,7 @@ def login_view(request, role):
 
     if role not in template_map:
         return redirect('login', role='student')
+    
 
     # ✅ STUDENT LOGIN using Certificate model
     if role == 'student':
@@ -687,7 +688,6 @@ from datetime import datetime
 
 @login_required
 @user_passes_test(is_admin)
-
 def create_completion_certificate(request):
     if request.method == 'POST':
         data = request.POST
@@ -925,7 +925,7 @@ def student_login_view(request):
 
         return render(request, 'student-login.html')
    
-
+#credential verification
 @csrf_exempt
 def verification_view(request):
     
@@ -1146,5 +1146,5 @@ from django.contrib import messages
 def delete_certificate(request, pk):
     cert = get_object_or_404(Certificate, pk=pk)
     cert.delete()
-    messages.success(request, "Certificate deleted successfully.")
+    messages.success(request, "")
     return redirect('admin_dashboard')
