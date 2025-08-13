@@ -9,6 +9,11 @@
       --primary-dark: #026aaf;
       --background: #f1f5f9;
       --card-bg: #fff;
+      --danger: #ff7675;
+      --danger: #ff7675;
+      --light: #f8f9fa;
+      --dark: #2d3436;
+      --gray: #dfe6e9;
       --border-color: #e2e8f0;
       --text-dark: #1e293b;
     }
@@ -404,7 +409,33 @@
     .save-btn:hover {
       background: #047857;
     }
-
+    .cancel-btn {
+            background: white;
+            color: var(--danger);
+            border: 2px solid var(--danger);
+            box-shadow: 0 4px 15px rgba(255, 118, 117, 0.1);
+        }
+        
+        .cancel-btn:hover {
+            background: var(--danger);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 118, 117, 0.3);
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.9rem 2rem;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
     .preview-section {
       margin-top: 1.5rem;
       padding-top: 1.5rem;
@@ -474,6 +505,7 @@
       gap: 0.5rem;
       margin-top: 0.5rem;
     }
+     
 
     .fit-btn {
       padding: 0.25rem 0.5rem;
@@ -642,7 +674,11 @@
       </div>
 
       <div class="preview-section">
-        <div class="section-title">Actions</div>
+        
+                <a href="#" class="btn cancel-btn" onclick="closeAndGoBack(); return false;">
+    <i class="fas fa-arrow-left"></i> Back
+</a>
+              
         <button class="save-btn" onclick="saveTemplate()">Save Template</button>
       </div>
     </div>
@@ -665,6 +701,9 @@
   </div>
 
   <script>
+    function closeAndGoBack() {
+    window.close(); // This will close the current tab
+}
     let selectedElement = null;
     let dragElement = null;
     let dragOffset = { x: 0, y: 0 };
@@ -1254,7 +1293,12 @@
     })
     .then(response => response.json())
     .then(data => {
-        alert(data.message);
+        if (data.status === "success") {
+            alert("Template saved successfully!");
+            closeAndGoBack(); // closes the tab
+        } else {
+            alert("Error: " + data.message);
+        }
     })
     .catch(error => {
         console.error('Error saving template:', error);
