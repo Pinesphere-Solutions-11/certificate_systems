@@ -246,59 +246,106 @@
     .resize-handle.sw { bottom: -4px; left: -4px; cursor: sw-resize; }
     .resize-handle.se { bottom: -4px; right: -4px; cursor: se-resize; }
 
-    .toolbar {
-      display: none;
-      position: fixed;
-      background: white;
-      border: 1px solid var(--border-color);
+    /* Sidebar Toolbar Styles */
+    .text-formatting {
+      margin-bottom: 1.5rem;
+      background: #f8fafc;
+      padding: 1rem;
       border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      display: none;
+    }
+
+    .text-formatting.show {
+      display: block;
+    }
+
+    .selected-element-info {
+      background: #eff6ff;
       padding: 0.5rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      z-index: 1001;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      max-width: 400px;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      font-size: 0.8rem;
+      color: var(--primary-dark);
+      border-left: 3px solid var(--primary-color);
     }
 
-    .toolbar.show {
+    .formatting-group {
+      margin-bottom: 1rem;
+    }
+
+    .formatting-group-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .button-group {
       display: flex;
-      align-items: center;
+      gap: 0.25rem;
+      margin-bottom: 0.5rem;
     }
 
-    .toolbar button {
-      padding: 0.25rem 0.5rem;
-      border: 1px solid var(--border-color);
+    .format-btn {
+      flex: 1;
+      padding: 0.5rem;
       background: white;
+      border: 1px solid var(--border-color);
       border-radius: 4px;
       cursor: pointer;
       font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
     }
 
-    .toolbar button:hover {
+    .format-btn:hover {
       background: #f8fafc;
     }
 
-    .toolbar button.active {
+    .format-btn.active {
       background: var(--primary-color);
       color: white;
+      border-color: var(--primary-color);
     }
 
-    .toolbar input, .toolbar select {
-      padding: 0.25rem;
+    .input-group {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .input-group label {
+      font-size: 0.8rem;
+      margin: 0;
+      min-width: 60px;
+    }
+
+    .input-group input,
+    .input-group select {
+      padding: 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .color-opacity-group {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .color-input {
+      width: 40px;
+      height: 35px;
+      padding: 2px;
       border: 1px solid var(--border-color);
       border-radius: 4px;
-      font-size: 0.8rem;
-      width: auto;
+      cursor: pointer;
     }
 
-    .toolbar-group {
-      display: flex;
-      gap: 0.25rem;
-      align-items: center;
-      padding: 0.25rem;
-      background: #f8fafc;
-      border-radius: 4px;
-      margin: 0.125rem;
+    .opacity-slider {
+      flex: 1;
     }
 
     .add-text-btn {
@@ -446,6 +493,31 @@
       background: var(--primary-color);
       color: white;
     }
+
+    .no-selection-message {
+      text-align: center;
+      color: #64748b;
+      font-size: 0.9rem;
+      padding: 2rem 1rem;
+      font-style: italic;
+    }
+
+    .load-template-btn {
+      background: #7c3aed;
+      color: white;
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+
+    .load-template-btn:hover {
+      background: #6d28d9;
+    }
   </style>
 </head>
 <body>
@@ -461,6 +533,8 @@
         </select>
         <a href="#" class="preview-link" id="previewLink">Preview Default Template</a>
       </div>
+
+      <button class="load-template-btn" onclick="loadPDFTemplate()">Load PDF Template</button>
 
       <div class="canvas-settings">
         <div class="section-title">Canvas Settings</div>
@@ -491,6 +565,67 @@
       </div>
 
       <button class="add-text-btn" onclick="addTextElement()">+ Add Text Element</button>
+
+      <!-- Text Formatting Panel (in Sidebar) -->
+      <div class="text-formatting" id="textFormattingPanel">
+        <div class="section-title">Text Formatting</div>
+        
+        <div class="selected-element-info" id="selectedElementInfo">
+          Element selected - adjust formatting below
+        </div>
+
+        <div class="formatting-group">
+          <span class="formatting-group-title">Style</span>
+          <div class="button-group">
+            <button class="format-btn" onclick="toggleBold()" id="boldBtn">Bold</button>
+            <button class="format-btn" onclick="toggleItalic()" id="italicBtn">Italic</button>
+            <button class="format-btn" onclick="toggleUnderline()" id="underlineBtn">Underline</button>
+          </div>
+        </div>
+
+        <div class="formatting-group">
+          <span class="formatting-group-title">Font</span>
+          <div class="input-group">
+            <select id="fontFamily" onchange="changeFontFamily()">
+              <option value="Arial">Arial</option>
+              <option value="Times New Roman">Times New Roman</option>
+              <option value="Georgia">Georgia</option>
+              <option value="Helvetica">Helvetica</option>
+              <option value="Courier New">Courier New</option>
+              <option value="Impact">Impact</option>
+              <option value="Comic Sans MS">Comic Sans</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Size:</label>
+            <input type="number" id="fontSize" value="16" min="8" max="72" onchange="changeFontSize()">
+          </div>
+        </div>
+
+        <div class="formatting-group">
+          <span class="formatting-group-title">Color & Opacity</span>
+          <div class="color-opacity-group">
+            <input type="color" id="textColor" class="color-input" value="#000000" onchange="changeTextColor()">
+            <input type="range" id="opacity" class="opacity-slider" min="0" max="100" value="100" onchange="changeOpacity()">
+          </div>
+        </div>
+
+        <div class="formatting-group">
+          <span class="formatting-group-title">Alignment</span>
+          <select id="textAlign" onchange="changeTextAlign()">
+            <option value="left">Left</option>
+            <option value="center">Center</option>
+            <option value="right">Right</option>
+            <option value="justify">Justify</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="text-formatting show" id="noSelectionPanel">
+        <div class="no-selection-message">
+          Select a text element to edit its formatting
+        </div>
+      </div>
 
       <div class="layer-controls">
         <div class="section-title">Layer Controls</div>
@@ -529,42 +664,6 @@
     <button class="zoom-btn" onclick="resetZoom()" title="Reset Zoom">⌂</button>
   </div>
 
-  <!-- Enhanced formatting toolbar -->
-  <div class="toolbar" id="toolbar">
-    <div class="toolbar-group">
-      <button onclick="toggleBold()" id="boldBtn">B</button>
-      <button onclick="toggleItalic()" id="italicBtn">I</button>
-      <button onclick="toggleUnderline()" id="underlineBtn">U</button>
-    </div>
-    <div class="toolbar-group">
-      <select id="fontFamily" onchange="changeFontFamily()">
-        <option value="Arial">Arial</option>
-        <option value="Times New Roman">Times New Roman</option>
-        <option value="Georgia">Georgia</option>
-        <option value="Helvetica">Helvetica</option>
-        <option value="Courier New">Courier New</option>
-        <option value="Impact">Impact</option>
-        <option value="Comic Sans MS">Comic Sans</option>
-      </select>
-    </div>
-    <div class="toolbar-group">
-      <input type="number" id="fontSize" value="16" min="8" max="72" onchange="changeFontSize()">
-      <span style="font-size: 0.7rem;">px</span>
-    </div>
-    <div class="toolbar-group">
-      <input type="color" id="textColor" value="#000000" onchange="changeTextColor()">
-      <input type="range" id="opacity" min="0" max="100" value="100" onchange="changeOpacity()">
-    </div>
-    <div class="toolbar-group">
-      <select id="textAlign" onchange="changeTextAlign()">
-        <option value="left">Left</option>
-        <option value="center">Center</option>
-        <option value="right">Right</option>
-        <option value="justify">Justify</option>
-      </select>
-    </div>
-  </div>
-
   <script>
     let selectedElement = null;
     let dragElement = null;
@@ -578,7 +677,7 @@
       '\x7B\x7B title \x7D\x7D', '\x7B\x7B student_name \x7D\x7D', '\x7B\x7B student_id \x7D\x7D', '\x7B\x7B course_name \x7D\x7D',
       '\x7B\x7B degree \x7D\x7D', '\x7B\x7B department \x7D\x7D', '\x7B\x7B college \x7D\x7D', '\x7B\x7B location \x7D\x7D',
       '\x7B\x7B start_date \x7D\x7D', '\x7B\x7B end_date \x7D\x7D', '\x7B\x7B duration \x7D\x7D', '\x7B\x7B completion_date \x7D\x7D', 
-      '\x7B\x7B issue_date \x7D\x7D'
+      '\x7B\x7B issue_date \x7D\x7D', '\x7B\x7B director_name \x7D\x7D', '\x7B\x7B credential_id \x7D\x7D'
     ];
 
     // Initialize placeholder buttons
@@ -592,6 +691,71 @@
         btn.onclick = () => insertPlaceholder(tag);
         grid.appendChild(btn);
       });
+    }
+
+    // Load PDF template content with exact positioning and placeholders as normal text
+    function loadPDFTemplate() {
+      // Clear existing content
+      document.getElementById('canvas').innerHTML = '';
+      
+      // Main content paragraph - placeholders displayed as normal text
+      const mainContent = createTextElement(
+        'This is to certify that <strong>\x7B\x7B title \x7D\x7D. \x7B\x7B student_name \x7D\x7D</strong> (\x7B\x7B student_id \x7D\x7D), a <strong>\x7B\x7B degree \x7D\x7D \x7B\x7B department \x7D\x7D</strong> student from <strong>\x7B\x7B college \x7D\x7D</strong>, has been permitted to undergo internship in the area of <strong>\x7B\x7B course_name \x7D\x7D</strong> at <strong>Pinesphere</strong> under our supervision and guidance.',
+        80, 330
+      );
+      mainContent.style.width = '634px';
+      mainContent.style.fontSize = '18px';
+      mainContent.style.fontFamily = 'Times New Roman, serif';
+      mainContent.style.lineHeight = '1.8';
+      mainContent.style.textAlign = 'justify';
+      mainContent.style.color = '#000';
+
+      // Duration paragraph
+      const durationContent = createTextElement(
+        'The internship duration is from <strong>\x7B\x7B start_date \x7D\x7D</strong> to <strong>\x7B\x7B end_date \x7D\x7D</strong>.',
+        80, 520
+      );
+      durationContent.style.width = '634px';
+      durationContent.style.fontSize = '18px';
+      durationContent.style.fontFamily = 'Times New Roman, serif';
+      durationContent.style.lineHeight = '1.8';
+      durationContent.style.color = '#000';
+
+      // Footer signature section with more spacing
+      const footerContent = createTextElement(
+        'Yours sincerely,<br><br><br>For Pinesphere Solutions',
+        80, 740
+      );
+      footerContent.style.width = '634px';
+      footerContent.style.fontSize = '16px';
+      footerContent.style.fontFamily = 'Times New Roman, serif';
+      footerContent.style.lineHeight = '1.8';
+      footerContent.style.color = '#000';
+
+      // Director name and title with signature space
+      const directorInfo = createTextElement(
+        '<br><br>\x7B\x7B director_name \x7D\x7D<br><strong>Director</strong>',
+        80, 860
+      );
+      directorInfo.style.width = '300px';
+      directorInfo.style.fontSize = '16px';
+      directorInfo.style.fontFamily = 'Times New Roman, serif';
+      directorInfo.style.lineHeight = '1.8';
+      directorInfo.style.color = '#000';
+
+      // Certificate ID and issue date (right aligned)
+      const issueDetails = createTextElement(
+        'Certificate ID: \x7B\x7B credential_id \x7D\x7D<br><br><strong>Date of issue: \x7B\x7B issue_date \x7D\x7D</strong>',
+        450, 880
+      );
+      issueDetails.style.width = '264px';
+      issueDetails.style.fontSize = '16px';
+      issueDetails.style.fontFamily = 'Times New Roman, serif';
+      issueDetails.style.lineHeight = '1.6';
+      issueDetails.style.textAlign = 'right';
+      issueDetails.style.color = '#000';
+
+      alert('PDF template load. Placeholders are now displayed as normal text and will be replaced.');
     }
 
     // Canvas size management
@@ -718,7 +882,8 @@
         if (selection.rangeCount > 0 && selectedElement.contains(selection.focusNode)) {
           const range = selection.getRangeAt(0);
           range.deleteContents();
-          range.insertNode(document.createTextNode(tag));
+          const textNode = document.createTextNode(tag);
+          range.insertNode(textNode);
           range.collapse();
         } else {
           selectedElement.innerHTML += tag;
@@ -740,7 +905,7 @@
         e.stopPropagation();
         enterEditMode(element);
       };
-      element.oninput = () => updateToolbar();
+      element.oninput = () => updateSidebarToolbar();
       
       // Delete button
       const deleteBtn = element.querySelector('.delete-btn');
@@ -793,11 +958,11 @@
 
     // Add text element button handler
     function addTextElement() {
-      const element = createTextElement();
+      const element = createTextElement('{{ student_name }}', 100, 100);
       selectElement(element);
     }
 
-    // Select element
+    // Select element and show sidebar toolbar
     function selectElement(element) {
       if (selectedElement) {
         selectedElement.classList.remove('selected');
@@ -806,8 +971,8 @@
       
       selectedElement = element;
       element.classList.add('selected');
-      updateToolbar();
-      showToolbar();
+      updateSidebarToolbar();
+      showSidebarToolbar();
     }
 
     // Enter edit mode
@@ -845,7 +1010,7 @@
     // Delete element
     function deleteElement(element) {
       if (selectedElement === element) {
-        hideToolbar();
+        hideSidebarToolbar();
         selectedElement = null;
       }
       element.remove();
@@ -934,63 +1099,29 @@
           selectedElement.classList.remove('selected');
           selectedElement.classList.remove('editing');
           selectedElement = null;
-          hideToolbar();
+          hideSidebarToolbar();
         }
       }
     };
 
-    // Toolbar functions
-    function showToolbar() {
-      if (!selectedElement) return;
+    // Sidebar Toolbar functions
+    function showSidebarToolbar() {
+      document.getElementById('textFormattingPanel').classList.add('show');
+      document.getElementById('noSelectionPanel').classList.remove('show');
       
-      const toolbar = document.getElementById('toolbar');
-      const rect = selectedElement.getBoundingClientRect();
-      const canvasArea = document.getElementById('canvasArea');
-      const canvasAreaRect = canvasArea.getBoundingClientRect();
-      
-      // Get toolbar dimensions (approximate)
-      const toolbarWidth = 400;
-      const toolbarHeight = 60;
-      
-      // Center toolbar horizontally relative to the text element
-      let left = rect.left + (rect.width / 2) - (toolbarWidth / 2);
-      let top = rect.top - toolbarHeight - 10; // Position above by default
-      
-      // Check if toolbar fits above the element
-      if (top < canvasAreaRect.top) {
-        // If not enough space above, position below
-        top = rect.bottom + 10;
+      // Update element info
+      const info = document.getElementById('selectedElementInfo');
+      if (selectedElement) {
+        info.textContent = `Element #${selectedElement.id} selected - adjust formatting below`;
       }
-      
-      // Check if toolbar fits below the element
-      if (top + toolbarHeight > canvasAreaRect.bottom) {
-        // If not enough space below, position above (even if it goes outside)
-        top = rect.top - toolbarHeight - 10;
-      }
-      
-      // Keep toolbar horizontally within canvas area bounds
-      if (left < canvasAreaRect.left) {
-        left = canvasAreaRect.left + 10;
-      }
-      if (left + toolbarWidth > canvasAreaRect.right) {
-        left = canvasAreaRect.right - toolbarWidth - 10;
-      }
-      
-      // Ensure toolbar doesn't go completely outside viewport
-      if (top < 0) {
-        top = 10;
-      }
-      
-      toolbar.style.left = left + 'px';
-      toolbar.style.top = top + 'px';
-      toolbar.classList.add('show');
     }
 
-    function hideToolbar() {
-      document.getElementById('toolbar').classList.remove('show');
+    function hideSidebarToolbar() {
+      document.getElementById('textFormattingPanel').classList.remove('show');
+      document.getElementById('noSelectionPanel').classList.add('show');
     }
 
-    function updateToolbar() {
+    function updateSidebarToolbar() {
       if (!selectedElement) return;
       
       const style = window.getComputedStyle(selectedElement);
@@ -1013,17 +1144,17 @@
 
     function toggleBold() {
       document.execCommand('bold');
-      updateToolbar();
+      updateSidebarToolbar();
     }
 
     function toggleItalic() {
       document.execCommand('italic');
-      updateToolbar();
+      updateSidebarToolbar();
     }
 
     function toggleUnderline() {
       document.execCommand('underline');
-      updateToolbar();
+      updateSidebarToolbar();
     }
 
     function changeFontFamily() {
@@ -1102,6 +1233,35 @@
       }
     };
 
+    // Save template with enhanced data
+   function saveTemplate() {
+    const canvas = document.getElementById('canvas');
+    const certificateType = document.getElementById('certificate_type').value;
+
+    // Capture the HTML content (background + positioned text elements)
+    const templateHTML = canvas.outerHTML;
+
+    fetch("{% url 'save_certificate_template' %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({
+            certificate_type: certificateType,
+            html_content: templateHTML
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+    })
+    .catch(error => {
+        console.error('Error saving template:', error);
+        alert('Failed to save template. Check console for details.');
+    });
+}
+
     // Keyboard shortcuts
     document.addEventListener('keydown', function(e) {
       if (selectedElement) {
@@ -1175,66 +1335,6 @@
       }
     });
 
-    // Auto-save functionality (optional)
-    let autoSaveTimer;
-    function scheduleAutoSave() {
-      clearTimeout(autoSaveTimer);
-      autoSaveTimer = setTimeout(() => {
-        // Auto-save logic here
-        console.log('Auto-saving template...');
-      }, 5000);
-    }
-
-    // Save template with enhanced data
-    function saveTemplate() {
-      const canvas = document.getElementById('canvas');
-      const elements = canvas.querySelectorAll('.text-element');
-      
-      const templateData = {
-        certificateType: document.getElementById('certificate_type').value,
-        canvasWidth: canvas.style.width || '794px',
-        canvasHeight: canvas.style.height || '1123px',
-        backgroundImage: canvas.style.backgroundImage,
-        backgroundFit: currentBackgroundFit,
-        elements: Array.from(elements).map((el, index) => ({
-          id: el.id,
-          index: index,
-          content: el.innerHTML.replace(/<button[^>]*>.*?<\/button>/g, '').replace(/<div class="resize-handle[^>]*><\/div>/g, ''),
-          left: el.style.left,
-          top: el.style.top,
-          width: el.style.width,
-          height: el.style.height,
-          fontSize: el.style.fontSize,
-          fontFamily: el.style.fontFamily,
-          color: el.style.color,
-          textAlign: el.style.textAlign,
-          fontWeight: el.style.fontWeight,
-          fontStyle: el.style.fontStyle,
-          textDecoration: el.style.textDecoration,
-          opacity: el.style.opacity,
-          zIndex: el.style.zIndex
-        }))
-      };
-      
-      console.log('Template saved:', templateData);
-      
-      // Create downloadable JSON file
-      const dataStr = JSON.stringify(templateData, null, 2);
-      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-      
-      const exportFileDefaultName = 'certificate_template.json';
-      
-      const linkElement = document.createElement('a');
-      linkElement.setAttribute('href', dataUri);
-      linkElement.setAttribute('download', exportFileDefaultName);
-      linkElement.click();
-      
-      alert('Template saved and downloaded successfully!');
-      
-      // Here you would typically send the data to your server
-      // fetch('/save-template', { method: 'POST', body: JSON.stringify(templateData) })
-    }
-
     // Utility functions
     function rgbToHex(rgb) {
       const result = rgb.match(/\d+/g);
@@ -1242,35 +1342,12 @@
       return '#' + result.map(x => parseInt(x).toString(16).padStart(2, '0')).join('');
     }
 
-    // Window resize handler
-    window.addEventListener('resize', function() {
-      if (selectedElement) {
-        showToolbar();
-      }
-    });
-
     // Initialize
     document.addEventListener('DOMContentLoaded', function() {
       initPlaceholders();
       
-      // Add default title element
-      // const titleElement = createTextElement('Certificate of Completion', 200, 150);
-      // titleElement.style.fontSize = '32px';
-      // titleElement.style.fontWeight = 'bold';
-      // titleElement.style.textAlign = 'center';
-      // titleElement.style.width = '400px';
-      // titleElement.style.zIndex = '2';
-      
-      // Add default content element
-      const contentElement = createTextElement('This certifies that \x7B\x7B student_name \x7D\x7D has successfully completed \x7B\x7B course_name \x7D\x7D', 100, 250);
-      contentElement.style.fontSize = '18px';
-      contentElement.style.textAlign = 'center';
-      contentElement.style.width = '600px';
-      contentElement.style.height = '100px';
-      contentElement.style.zIndex = '1';
-      
-      // Schedule auto-save when elements change
-      document.getElementById('canvas').addEventListener('input', scheduleAutoSave);
+      // Show no selection panel initially
+      hideSidebarToolbar();
     });
   </script>
 </body>

@@ -1,4 +1,7 @@
 import csv
+from io import BytesIO
+import json
+from string import Template
 from uuid import uuid4
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
@@ -38,6 +41,38 @@ def is_admin(user):
 @user_passes_test(is_admin)
 def template_editor(request):
     return render(request, 'admin/certificate_editor.html')
+
+@login_required
+@user_passes_test(is_admin)
+def template_editor(request):
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        return render(request, "admin/certificate_editor.html")
+    return render(request, "admin/certificate_editor.html") 
+
+@login_required
+@user_passes_test(is_admin)
+@csrf_exempt
+def save_certificate_template(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            certificate_type = data.get("certificate_type")
+            html_content = data.get("html_content")
+
+            if not certificate_type or not html_content:
+                return JsonResponse({"status": "error", "message": "Missing template data"}, status=400)
+
+            CertificateTemplate.objects.update_or_create(
+                template_type=certificate_type,
+                defaults={"html_content": html_content}
+            )
+
+            return JsonResponse({"status": "success", "message": "Template saved successfully!"})
+
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+    return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
 
 @login_required
 @user_passes_test(is_admin)
@@ -179,11 +214,14 @@ def login_view(request, role):
     return render(request, f'login/{template_map[role]}', {'form': form})
 
 
-@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @never_cache
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def logout_view(request):
-    logout(request)
-    return redirect('index')
+    logout(request)  # Clears Django session & user data
+    request.session.flush()  # Extra precaution: remove all session data
+    response = redirect('index')  # Redirect to home page
+    response.delete_cookie('sessionid')  # Delete session cookie explicitly
+    return response
 
 
 @login_required
@@ -460,39 +498,47 @@ import os
 import tempfile
 from weasyprint import HTML
 from django.core.files.base import File
+from .models import CertificateTemplate 
+from django.template.loader import render_to_string
 
+def generate_certificate_pdf(certificate, template_source, is_raw_html=False):
+    """
+    Generates a PDF for a certificate.
+    If is_raw_html=True, template_source is treated as a full HTML string.
+    Otherwise, it's treated as a Django template file path.
+    """
 
-def generate_certificate_pdf(certificate, template_name):
-    import os
-    from weasyprint import HTML
-    from django.template.loader import render_to_string
-    import tempfile
-
+    # Paths for static and media
     static_path = os.path.join(settings.BASE_DIR, 'static').replace('\\', '/')
     base_url = f'file:///{static_path}'
-    
     media_path = os.path.join(settings.MEDIA_ROOT).replace('\\', '/')
     base_media_url = f'file:///{media_path}'
 
-    html_string = render_to_string(template_name, {
-        'certificate': certificate,
-        'base_media_url': base_media_url,
-        'base_url': base_url
-    })
+    # Render HTML
+    if is_raw_html:
+        template = Template(template_source)
+        html_content = template.render({
+            'certificate': certificate,
+            'base_url': base_url,
+            'base_media_url': base_media_url
+        })
+    else:
+        html_content = render_to_string(template_source, {
+            'certificate': certificate,
+            'base_url': base_url,
+            'base_media_url': base_media_url
+        })
 
-    tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
-    tmp_file.close()
+    # Create PDF in memory
+    pdf_buffer = BytesIO()
+    HTML(string=html_content, base_url=base_url).write_pdf(pdf_buffer)
 
-    HTML(string=html_string, base_url=base_url).write_pdf(tmp_file.name)
-
-    with open(tmp_file.name, 'rb') as pdf_file:
-        certificate.generated_pdf.save(
-            f"{certificate.student_name}_{certificate.certificate_type}.pdf",
-            File(pdf_file)
-        )
-
-    os.remove(tmp_file.name)
-
+    # Save PDF file to model
+    certificate.generated_pdf.save(
+        f"{certificate.student_name}_{certificate.certificate_type}.pdf",
+        File(pdf_buffer),
+        save=True
+    )
 # COORDINATOR ADD STUDENT FORM #
 from django.http import JsonResponse
 from .models import Student
@@ -560,7 +606,12 @@ def create_offer_letter(request):
 
         
         cert.save()
-        generate_certificate_pdf(cert, 'login/internship_offer.html')
+        template_obj = CertificateTemplate.objects.filter(template_type='offer').first()
+        if template_obj:
+            generate_certificate_pdf(cert, template_obj.html_content, is_raw_html=True)
+        else:
+            generate_certificate_pdf(cert, 'login/internship_offer.html')
+        
 
         return JsonResponse({
             'status': 'success',
@@ -637,15 +688,13 @@ def create_offer_letter(request):
         data = request.POST
         signature_file = request.FILES.get('offerSignature')
 
-        # Convert dates
         try:
             start_date = datetime.strptime(data.get('offerStartDate'), '%Y-%m-%d').date()
-            end_date = datetime.strptime(data.get('offerEndDate'), '%Y-%m-%d').date()
+            end_date   = datetime.strptime(data.get('offerEndDate'),   '%Y-%m-%d').date()
             issue_date = datetime.strptime(data.get('offerIssueDate'), '%Y-%m-%d').date()
         except Exception:
             return JsonResponse({'status': 'error', 'message': 'Invalid date format'}, status=400)
-        
-        # Create certificate
+
         cert = Certificate(
             certificate_type='offer',
             title=data.get('offerTitle'),
@@ -660,25 +709,25 @@ def create_offer_letter(request):
             start_date=start_date,
             end_date=end_date,
             completion_date=issue_date,
-            issue_date=issue_date,  
+            issue_date=issue_date,
             director_name=data.get('offerDirector'),
             signature=signature_file,
             created_by=request.user,
-            
         )
-
-        
         cert.save()
+
+        # ONLY pass the default template name; the function will prefer a DB template if present.
         generate_certificate_pdf(cert, 'login/internship_offer.html')
 
         return JsonResponse({
             'status': 'success',
             'message': 'Offer Letter created successfully!',
             'certificate_number': cert.certificate_number,
-            'credential_id' : cert.credential_id,
+            'credential_id': cert.credential_id,
             'student': cert.student_name,
             'course': cert.course_name,
-            'date': cert.issue_date.strftime('%Y-%m-%d')
+            'date': cert.issue_date.strftime('%Y-%m-%d'),
+            'download_url': cert.generated_pdf.url if cert.generated_pdf else ''
         }, status=200)
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
@@ -695,7 +744,7 @@ def create_completion_certificate(request):
 
         try:
             start_date = datetime.strptime(data.get('completionStartDate'), '%Y-%m-%d').date()
-            end_date = datetime.strptime(data.get('completionEndDate'), '%Y-%m-%d').date()
+            end_date   = datetime.strptime(data.get('completionEndDate'),   '%Y-%m-%d').date()
             issue_date = datetime.strptime(data.get('completionIssueDate'), '%Y-%m-%d').date()
         except (ValueError, TypeError):
             return JsonResponse({'status': 'error', 'message': 'Invalid or missing date(s)'}, status=400)
@@ -713,25 +762,26 @@ def create_completion_certificate(request):
             duration=data.get('completionDuration'),
             start_date=start_date,
             end_date=end_date,
-            completion_date=issue_date,  
-            issue_date=issue_date,       
+            completion_date=issue_date,
+            issue_date=issue_date,
             director_name=data.get('completionDirector'),
             signature=signature_file,
             created_by=request.user,
         )
-        
-
         cert.save()
+
+        # ONLY pass the default template name
         generate_certificate_pdf(cert, 'login/internship_completion.html')
 
         return JsonResponse({
             'status': 'success',
             'message': 'Completion Certificate created successfully!',
             'certificate_number': cert.certificate_number,
-            'credential_id' : cert.credential_id,
+            'credential_id': cert.credential_id,
             'student': cert.student_name,
             'course': cert.course_name,
-            'date': cert.issue_date.strftime('%Y-%m-%d')
+            'date': cert.issue_date.strftime('%Y-%m-%d'),
+            'download_url': cert.generated_pdf.url if cert.generated_pdf else ''
         }, status=200)
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
@@ -1148,3 +1198,4 @@ def delete_certificate(request, pk):
     cert.delete()
     messages.success(request, "")
     return redirect('admin_dashboard')
+

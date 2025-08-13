@@ -6,7 +6,7 @@ from .views import (
     add_student, student_login_view, verification_view, contact_view, download_certificate,
     login_view, logout_view, dashboard_redirect,
     admin_dashboard, coordinator_dashboard, student_dashboard,
-    create_offer_letter, create_completion_certificate, delete_certificate,preview_offer_certificate,delete_offer_certificate,download_offer_certificate
+    create_offer_letter, create_completion_certificate, delete_certificate
 )
 
 urlpatterns = [
@@ -42,7 +42,7 @@ urlpatterns = [
     path('certificate/offer/create/', create_offer_letter, name='create_offer_letter'),  
     path('admin/create-template/', views.template_editor, name='create_certificate_template'),     # Create offer letter manually
     path('certificate/completion/create/', create_completion_certificate, name='create_completion_certificate'), # Create completion cert manually
-
+    
      
     # 📩 Contact Form
      
@@ -70,7 +70,7 @@ urlpatterns = [
       # Template editor UI
     path('admin/template-editor/save/', views.save_template, name='save_template'),                # Save template via POST
     # path('admin/create-template/', views.create_certificate_template, name='create_certificate_template'),  # Admin creates template
-
+    path('admin/save-template/', views.save_certificate_template, name='save_certificate_template'),
      
     # 🗑️ Certificate Deletion (Admin only)
      

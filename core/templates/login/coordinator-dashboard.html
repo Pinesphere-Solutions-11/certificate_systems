@@ -786,10 +786,19 @@
     </div>
 
     <script>
+        // Force reload if user navigates back to this page after logout
+    window.history.pushState(null, "", window.location.href);
+    window.onpopstate = function () {
         window.history.pushState(null, "", window.location.href);
-            window.onpopstate = function () {
-                window.history.pushState(null, "", window.location.href);
-            };
+        location.replace("{% url 'index' %}"); // Redirect to home page
+    };
+
+    // // Also clear any cached page when loaded
+    // window.onload = function () {
+    //     if (!document.body.hasAttribute("data-logged-in")) {
+    //         location.replace("{% url 'index' %}");
+    //     }
+    // };
         setInterval(() => {
             fetch('/accounts/ping/');
         }, 5 * 60 * 1000);

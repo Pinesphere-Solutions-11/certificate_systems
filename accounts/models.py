@@ -57,6 +57,7 @@ class AdminUser(models.Model):
 
     def __str__(self):
         return self.full_name
+    
 
 
 from django.core.files.storage import FileSystemStorage
@@ -126,6 +127,8 @@ class Certificate(models.Model):
     def __str__(self):
         return f"{self.certificate_type.title()} - {self.certificate_number} - {self.student_name}"
 
+
+
 class ContactMessage(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()
@@ -136,19 +139,16 @@ class ContactMessage(models.Model):
     def __str__(self):
         return f"{self.name} - {self.subject}"
 
+# models.py
 class CertificateTemplate(models.Model):
-    TEMPLATE_TYPES = (
+    TEMPLATE_TYPES = [
         ('offer', 'Internship Offer Letter'),
         ('completion', 'Internship Completion Certificate'),
-    )
-
-    name = models.CharField(max_length=100)
-    type = models.CharField(max_length=20, choices=TEMPLATE_TYPES)
-    background_image = models.ImageField(upload_to='certificate_templates/')
-    font_family = models.CharField(max_length=100, default='Times New Roman')
-    html_content = models.TextField()
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    ]
+    template_type = models.CharField(max_length=20, choices=TEMPLATE_TYPES, unique=True)
+    background_image = models.ImageField(upload_to='certificate_backgrounds/', blank=True, null=True)
+    html_content = models.TextField()  # This stores your full HTML with placeholders
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.name} ({self.get_type_display()})"
+        return f"{self.get_template_type_display()} Template"
