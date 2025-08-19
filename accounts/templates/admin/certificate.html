@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Editor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --sidebar-width: 275px;
+            --primary-color: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --primary-light: #dbeafe;
+            --secondary-color: #8b5cf6;
+            --accent-color: #06b6d4;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #06b6d4;
+
+            /* Dark theme colors */
+            --sidebar-bg: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+            --sidebar-text: #e2e8f0;
+            --sidebar-active: rgba(59, 130, 246, 0.15);
+            --sidebar-hover: rgba(255, 255, 255, 0.05);
+
+            /* Content colors */
+            --content-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-light: #64748b;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --border-hover: #cbd5e1;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+
+            /* Animations */
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: all 0.15s ease;
+            --border-radius: 16px;
+            --border-radius-sm: 8px;
+            --border-radius-lg: 24px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--content-bg);
+            margin: 0;
+            padding: 0;
+            color: var(--text-dark);
+        }
+
+        /* Dashboard Card Styles */
+        .cert-editor-section {
+            margin: 2rem;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        .cert-card-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .cert-card-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .cert-card-header i {
+            font-size: 1.25rem;
+        }
+
+        .cert-card-body {
+            padding: 2rem;
+        }
+
+        /* Editor Container */
+        .cert-editor-container {
+            display: flex;
+            height: 80vh;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            overflow: hidden;
+            background: var(--card-bg);
+        }
+
+        .cert-sidebar {
+            width: 320px;
+            background: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 1.5rem;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .cert-canvas-area {
+            flex: 1;
+            background: #e5e7eb;
+            position: relative;
+            overflow: auto;
+            padding: 20px;
+        }
+
+        /* Form Styles */
+        .cert-form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .cert-form-group label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+        }
+
+        .cert-form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            background: white;
+            transition: var(--transition);
+        }
+
+        .cert-form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* File Upload Styles */
+        .cert-file-upload {
+            position: relative;
+            display: block;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .cert-file-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .cert-file-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            border: 2px dashed var(--border-color);
+            border-radius: var(--border-radius-sm);
+            background: #f8fafc;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .cert-file-label:hover {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+        }
+
+        .cert-file-label.has-file {
+            border-color: var(--success-color);
+            background: #ecfdf5;
+        }
+
+        .cert-file-icon {
+            font-size: 2.5rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .cert-file-text {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 0.25rem;
+        }
+
+        .cert-file-subtext {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Preview Area */
+        .cert-background-preview {
+            width: 100%;
+            height: 150px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: white;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Canvas Styles */
+        .cert-canvas-container {
+            position: relative;
+            display: inline-block;
+            min-width: 100%;
+            min-height: 100%;
+        }
+
+        .cert-canvas {
+            position: relative;
+            width: 794px;
+            height: 1123px;
+            background: white;
+            box-shadow: var(--shadow-xl);
+            border-radius: var(--border-radius-sm);
+            overflow: hidden;
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            margin: 0 auto;
+        }
+
+        /* Buttons */
+        .cert-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            width: 100%;
+        }
+
+        .cert-btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .cert-btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, #1e3a8a 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .cert-btn-success {
+            background: linear-gradient(135deg, var(--success-color) 0%, #047857 100%);
+            color: white;
+        }
+
+        .cert-btn-success:hover {
+            background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Hidden Elements */
+        .cert-hidden {
+            display: none;
+        }
+
+        .cert-show {
+            display: block;
+        }
+
+        /* Zoom Controls */
+        .cert-zoom-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: var(--border-radius-sm);
+            padding: 8px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .cert-zoom-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--border-color);
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: var(--transition);
+        }
+
+        .cert-zoom-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .cert-zoom-level {
+            font-size: 12px;
+            color: var(--text-dark);
+            min-width: 40px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* Text Elements */
+        .cert-text-element {
+            position: absolute;
+            cursor: move;
+            border: 2px dashed transparent;
+            padding: 8px;
+            min-width: 100px;
+            min-height: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+            outline: none;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .cert-text-element:hover {
+            border-color: var(--primary-color);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .cert-text-element.selected {
+            border-color: var(--primary-color);
+            border-style: solid;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        /* Section Dividers */
+        .cert-section-divider {
+            border-top: 1px solid var(--border-color);
+            margin: 1.5rem 0;
+            padding-top: 1.5rem;
+        }
+
+        .cert-section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Status Messages */
+        .cert-status-message {
+            padding: 1rem;
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cert-status-success {
+            background: #ecfdf5;
+            border: 1px solid #d1fae5;
+            color: #065f46;
+        }
+
+        .cert-status-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        /* Placeholder Grid Styles */
+        .cert-placeholder-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .cert-placeholder-btn {
+            padding: 0.5rem;
+            background: white;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            color: #475569;
+            transition: var(--transition);
+            text-align: center;
+            word-break: break-all;
+            line-height: 1.2;
+            font-family: monospace;
+        }
+
+        .cert-placeholder-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Text Element Interaction */
+        .cert-text-element.selected {
+            border-color: var(--primary-color) !important;
+            border-style: solid !important;
+            background: rgba(59, 130, 246, 0.1) !important;
+        }
+
+        .cert-text-element.editing {
+            cursor: text;
+            background: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        /* Delete button for text elements */
+        .cert-delete-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 20px;
+            height: 20px;
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 12px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .cert-text-element.selected .cert-delete-btn {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <section id="cert-editor-section" class="cert-editor-section">
+        <div class="cert-card-header">
+            <h3><i class="fas fa-certificate"></i> Certificate Template Editor</h3>
+        </div>
+        <div class="cert-card-body">
+            <div class="cert-editor-container">
+                <!-- Sidebar -->
+                <div class="cert-sidebar">
+                    <!-- Certificate Preview -->
+                    <div class="cert-form-group">
+                        <label for="cert-preview-select">
+                            <i class="fas fa-eye"></i> Certificate Preview
+                        </label>
+                        <select id="cert-preview-select" class="cert-form-control">
+                            <option value="">Select template to preview</option>
+                            <option value="offer">Internship Offer Template</option>
+                            <option value="completion">Internship Completion Template</option>
+                        </select>
+                    </div>
+
+                    <!-- Background Image Upload -->
+                    <div class="cert-form-group">
+                        <label for="cert-background-upload">
+                            <i class="fas fa-image"></i> Background Image *
+                        </label>
+                        <div class="cert-file-upload">
+                            <input 
+                                type="file" 
+                                id="cert-background-upload" 
+                                class="cert-file-input" 
+                                accept=".png,.jpg,.jpeg"
+                            >
+                            <label for="cert-background-upload" class="cert-file-label" id="cert-file-label">
+                                <i class="fas fa-cloud-upload-alt cert-file-icon"></i>
+                                <div class="cert-file-text">Click to upload background image</div>
+                                <div class="cert-file-subtext">PNG, JPG, JPEG up to 10MB</div>
+                            </label>
+                        </div>
+                        <div class="cert-background-preview" id="cert-background-preview">
+                            No image selected
+                        </div>
+                    </div>
+
+                    <!-- Certificate Type Selection (Hidden initially) -->
+                    <div class="cert-form-group cert-hidden" id="cert-type-section">
+                        <label for="cert-type-select">
+                            <i class="fas fa-tags"></i> Certificate Type
+                        </label>
+                        <select id="cert-type-select" class="cert-form-control">
+                            <option value="">Select certificate type</option>
+                            <option value="offer">Internship Offer</option>
+                            <option value="completion">Internship Completion</option>
+                        </select>
+                    </div>
+
+                    <!-- Save Template (Hidden initially) -->
+                    <div class="cert-section-divider cert-hidden" id="cert-save-section">
+                        <div class="cert-section-title">
+                            <i class="fas fa-save"></i> Save Template
+                        </div>
+                        <button class="cert-btn cert-btn-success" onclick="saveTemplate()" id="save-template-btn">
+                            <i class="fas fa-save"></i> Save Template
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Canvas Area -->
+                <div class="cert-canvas-area" id="cert-canvas-area">
+                    <div class="cert-canvas-container">
+                        <div class="cert-canvas" id="cert-canvas">
+                            <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #94a3b8; font-size: 1.1rem;">
+                                <div style="text-align: center;">
+                                    <i class="fas fa-certificate" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                                    <div>Upload a background image to get started</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Messages Area -->
+            <div id="cert-status-area" style="margin-top: 1rem;"></div>
+        </div>
+    </section>
+
+    <!-- Zoom Controls -->
+    <div class="cert-zoom-controls" id="cert-zoom-controls" style="display: none;">
+        <button class="cert-zoom-btn" onclick="zoomOut()">−</button>
+        <div class="cert-zoom-level" id="cert-zoom-level">100%</div>
+        <button class="cert-zoom-btn" onclick="zoomIn()">+</button>
+        <button class="cert-zoom-btn" onclick="resetZoom()" title="Reset Zoom">⌂</button>
+    </div>
+
+    <script>
+        let selectedElement = null;
+        let dragElement = null;
+        let dragOffset = { x: 0, y: 0 };
+        let elementCounter = 0;
+        let zoomLevel = 1;
+        let hasBackgroundImage = false;
+
+        // Placeholder tags list
+        const tagList = [
+            '\x7B\x7B title \x7D\x7D', '\x7B\x7B student_name \x7D\x7D', '\x7B\x7B student_id \x7D\x7D', '\x7B\x7B course_name \x7D\x7D',
+            '\x7B\x7B degree \x7D\x7D', '\x7B\x7B department \x7D\x7D', '\x7B\x7B college \x7D\x7D', '\x7B\x7B location \x7D\x7D',
+            '\x7B\x7B start_date \x7D\x7D', '\x7B\x7B end_date \x7D\x7D', '\x7B\x7B duration \x7D\x7D', '\x7B\x7B completion_date \x7D\x7D', 
+            '\x7B\x7B issue_date \x7D\x7D', '\x7B\x7B director_name \x7D\x7D', '\x7B\x7B credential_id \x7D\x7D'
+        ];
+
+
+        // Show status message
+        function showStatus(message, type = 'success') {
+            const statusArea = document.getElementById('cert-status-area');
+            statusArea.innerHTML = `
+                <div class="cert-status-message cert-status-${type}">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                    ${message}
+                </div>
+            `;
+            setTimeout(() => {
+                statusArea.innerHTML = '';
+            }, 3000);
+        }
+
+        // Background image upload handler
+        document.getElementById('cert-background-upload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Validate file type
+            const validTypes = ['image/png', 'image/jpg', 'image/jpeg'];
+            if (!validTypes.includes(file.type)) {
+                showStatus('Please select a valid image file (PNG, JPG, JPEG)', 'error');
+                return;
+            }
+
+            // Validate file size (10MB)
+            if (file.size > 10 * 1024 * 1024) {
+                showStatus('File size must be less than 10MB', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const canvas = document.getElementById('cert-canvas');
+                const preview = document.getElementById('cert-background-preview');
+                const fileLabel = document.getElementById('cert-file-label');
+
+                // Update canvas background
+                canvas.style.backgroundImage = `url(${e.target.result})`;
+                canvas.style.backgroundSize = 'cover';
+                canvas.style.backgroundPosition = 'center';
+                canvas.innerHTML = ''; // Clear placeholder content
+
+                // Update preview
+                preview.style.backgroundImage = `url(${e.target.result})`;
+                preview.innerHTML = '';
+
+                // Update file label
+                fileLabel.classList.add('has-file');
+                fileLabel.innerHTML = `
+                    <i class="fas fa-check-circle cert-file-icon" style="color: var(--success-color);"></i>
+                    <div class="cert-file-text" style="color: var(--success-color);">Background image uploaded</div>
+                    <div class="cert-file-subtext">${file.name}</div>
+                `;
+
+                hasBackgroundImage = true;
+
+                // Show certificate type selection
+                document.getElementById('cert-type-section').classList.remove('cert-hidden');
+                document.getElementById('cert-type-section').classList.add('cert-show');
+
+                // Show zoom controls
+                document.getElementById('cert-zoom-controls').style.display = 'flex';
+
+                showStatus('Background image uploaded successfully!');
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Certificate type selection handler
+        document.getElementById('cert-type-select').addEventListener('change', function() {
+            if (this.value && hasBackgroundImage) {
+                document.getElementById('cert-save-section').classList.remove('cert-hidden');
+                document.getElementById('cert-save-section').classList.add('cert-show');
+                document.getElementById('cert-text-actions').classList.remove('cert-hidden');
+                document.getElementById('cert-text-actions').classList.add('cert-show');
+            }
+        });
+
+        // Preview template handler
+        document.getElementById('cert-preview-select').addEventListener('change', function() {
+            if (this.value) {
+                // This would typically show a preview modal or sidebar
+                showStatus(`Previewing ${this.options[this.selectedIndex].text}`);
+            }
+        });
+
+        // Zoom functionality
+        function zoomIn() {
+            if (zoomLevel < 3) {
+                zoomLevel += 0.25;
+                applyZoom();
+            }
+        }
+
+        function zoomOut() {
+            if (zoomLevel > 0.25) {
+                zoomLevel -= 0.25;
+                applyZoom();
+            }
+        }
+
+        function resetZoom() {
+            zoomLevel = 1;
+            applyZoom();
+        }
+
+        function applyZoom() {
+            const canvas = document.getElementById('cert-canvas');
+            canvas.style.transform = `scale(${zoomLevel})`;
+            canvas.style.transformOrigin = 'top left';
+            
+            document.getElementById('cert-zoom-level').textContent = Math.round(zoomLevel * 100) + '%';
+            
+            const container = canvas.parentElement;
+            container.style.width = (canvas.offsetWidth * zoomLevel) + 'px';
+            container.style.height = (canvas.offsetHeight * zoomLevel) + 'px';
+        }
+
+        // Save template
+        function saveTemplate() {
+            const certType = document.getElementById('cert-type-select').value;
+            if (!certType || !hasBackgroundImage) {
+                showStatus('Please complete all required fields', 'error');
+                return;
+            }
+
+            const canvas = document.getElementById('cert-canvas');
+            const templateHTML = canvas.outerHTML;
+
+            // Simulate saving (replace with actual API call)
+            setTimeout(() => {
+                showStatus('Template saved successfully!');
+                
+                // Reset form after saving
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            }, 1000);
+
+            // Show saving status
+            showStatus('Saving template...', 'info');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initPlaceholders();
+            console.log('Certificate Editor initialized');
+        });
+    </script>
+</body>
+</html>

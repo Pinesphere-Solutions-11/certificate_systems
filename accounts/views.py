@@ -46,8 +46,8 @@ def template_editor(request):
 @user_passes_test(is_admin)
 def template_editor(request):
     if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-        return render(request, "admin/certificate_editor.html")
-    return render(request, "admin/certificate_editor.html") 
+        return render(request, "admin/certificate.html")
+    return render(request, "admin/certificate.html") 
 
 @login_required
 @user_passes_test(is_admin)
@@ -81,36 +81,63 @@ def save_template(request):
         try:
             name = request.POST.get('template_name')
             certificate_type = request.POST.get('certificate_type')
-            html_content = request.POST.get('html_content')
-            css_content = request.POST.get('css_content', '')  # New field
+            html_content = request.POST.get('html_content', '')
+            css_content = request.POST.get('css_content', '')
             background_image = request.FILES.get('background_image')
 
-            # Combine HTML and CSS if provided separately
-            if css_content and '<style>' not in html_content:
-                html_content = f'<style>{css_content}</style>{html_content}'
+            #  Replace placeholders with real Django template tags
+            PLACEHOLDER_MAP = {
+                "[[student_name]]": "{{ certificate.student_name }}",
+                "[[student_id]]": "{{ certificate.student_id }}",
+                "[[course_name]]": "{{ certificate.course_name }}",
+                "[[start_date]]": "{{ certificate.start_date|date:'d M Y' }}",
+                "[[end_date]]": "{{ certificate.end_date|date:'d M Y' }}",
+                "[[director_name]]": "{{ certificate.director_name }}",
+                "[[signature]]": "{% if certificate.signature %}<img src='{{ base_media_url }}/{{ certificate.signature.name }}' class='signature-img'>{% endif %}",
+                "[[qr_code]]": "{% if certificate.qr_code_path %}<img src='{{ base_media_url }}/{{ certificate.qr_code_path.name }}' class='qr-img'>{% endif %}",
+                "[[credential_id]]": "{{ certificate.credential_id }}",
+                "[[issue_date]]": "{{ certificate.issue_date|date:'d M Y' }}",
+            }
+            for placeholder, tag in PLACEHOLDER_MAP.items():
+                html_content = html_content.replace(placeholder, tag)
 
+            #  Add CSS content if provided
+            if css_content:
+                html_content = f"<style>{css_content}</style>{html_content}"
+
+            #  Add background if uploaded
+            if background_image:
+                # NOTE: we don’t hardcode file path; instead we rely on template rendering later
+                style_block = """
+                <style>
+                    body {
+                        background: url('{{ base_media_url }}/{{ certificate_template.background_image.name }}') no-repeat center center;
+                        background-size: cover;
+                    }
+                </style>
+                """
+                html_content = style_block + html_content
+
+            #  Save or update template
             template, created = CertificateTemplate.objects.update_or_create(
-                name=name,
+                template_type=certificate_type,
                 defaults={
-                    'certificate_type': certificate_type,
                     'html_content': html_content,
                     'background_image': background_image if background_image else None,
                 }
             )
-            
+
             return JsonResponse({
-                'status': 'success', 
+                'status': 'success',
                 'message': 'Template saved successfully',
                 'template_id': template.id
             })
-            
+
         except Exception as e:
-            return JsonResponse({
-                'status': 'error',
-                'message': str(e)
-            })
-    
+            return JsonResponse({'status': 'error', 'message': str(e)})
+
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
 
 @login_required
 def ping_session(request):
@@ -499,46 +526,37 @@ import tempfile
 from weasyprint import HTML
 from django.core.files.base import File
 from .models import CertificateTemplate 
+from django.template import Template, Context
 from django.template.loader import render_to_string
 
-def generate_certificate_pdf(certificate, template_source, is_raw_html=False):
-    """
-    Generates a PDF for a certificate.
-    If is_raw_html=True, template_source is treated as a full HTML string.
-    Otherwise, it's treated as a Django template file path.
-    """
-
-    # Paths for static and media
+def generate_certificate_pdf(certificate, default_template_name):
     static_path = os.path.join(settings.BASE_DIR, 'static').replace('\\', '/')
     base_url = f'file:///{static_path}'
     media_path = os.path.join(settings.MEDIA_ROOT).replace('\\', '/')
     base_media_url = f'file:///{media_path}'
 
-    # Render HTML
-    if is_raw_html:
-        template = Template(template_source)
-        html_content = template.render({
-            'certificate': certificate,
-            'base_url': base_url,
-            'base_media_url': base_media_url
-        })
-    else:
-        html_content = render_to_string(template_source, {
-            'certificate': certificate,
-            'base_url': base_url,
-            'base_media_url': base_media_url
-        })
+    # fetch template if exists
+    try:
+        certificate_template = CertificateTemplate.objects.get(template_type=certificate.certificate_type)
+    except CertificateTemplate.DoesNotExist:
+        certificate_template = None
 
-    # Create PDF in memory
+    html_content = render_to_string(default_template_name, {
+        'certificate': certificate,
+        'certificate_template': certificate_template,
+        'base_url': base_url,
+        'base_media_url': base_media_url,
+    })
+
     pdf_buffer = BytesIO()
     HTML(string=html_content, base_url=base_url).write_pdf(pdf_buffer)
 
-    # Save PDF file to model
     certificate.generated_pdf.save(
         f"{certificate.student_name}_{certificate.certificate_type}.pdf",
         File(pdf_buffer),
         save=True
     )
+    
 # COORDINATOR ADD STUDENT FORM #
 from django.http import JsonResponse
 from .models import Student
@@ -630,7 +648,6 @@ from datetime import datetime
 
 @login_required
 @user_passes_test(is_coordinator)
-
 def create_completion_certificate(request):
     if request.method == 'POST':
         data = request.POST

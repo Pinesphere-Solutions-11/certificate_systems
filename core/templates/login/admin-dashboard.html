@@ -1331,6 +1331,37 @@
             border-color: var(--danger-color);
             transform: translateY(-2px);
         }
+        #certificate-upload-section {
+        display: flex ;
+        flex-direction: column ;
+        gap: 8px;  
+        max-width: 600px;
+        margin: 0 auto;
+        align-items: center !important;
+    }
+    
+    #certificate-upload-section h3 {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    
+    .upload-form .form-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    .upload-form .form-row input[type="file"] {
+        flex-grow: 1;
+    }
+    
+    #bulk-upload .action-btn {
+        white-space: nowrap;
+        max-width: 200px;
+        padding: 8px;
+       
+    }
+
     </style>
 </head>
 
@@ -1362,6 +1393,9 @@
                     </a>
                     <a href="#" class="menu-item" data-section="completion-certificates">
                         <i class="fas fa-medal"></i> Completion Certificates
+                    </a>
+                    <a href="#" class="menu-item" data-section="bulk-upload">
+                        <i class="fas fa-cloud-upload-alt"></i> Bulk Uploads
                     </a>
                     <a href="{% url 'create_certificate_template' %}" target="_blank" class="menu-item"
                         data-section="certificates-template" onclick="window.open(this.href, '_blank'); return false;">
@@ -1541,22 +1575,7 @@
                                         {% endfor %}
                                         {% endif %}
                                     </tbody>
-                                    <!--Bulk Generation-->
-                                    <div class="certificate-form" id="bulkUploadForm" style="display: none;">
-                                        <div class="data-section">
-                                            <h3>Bulk Upload Certificates</h3>
-                                            <form id="bulkOfferUploadForm" enctype="multipart/form-data">
-                                                <input type="file" name="csvFile" accept=".csv, .xls, .xlsx" required>
-                                                <button type="submit" class="action-btn">Upload Offer Letters</button>
-                                            </form>
-                                            <br>
-                                            <form id="bulkCompletionUploadForm" enctype="multipart/form-data">
-                                                <input type="file" name="csvFile" accept=".csv, .xls, .xlsx" required>
-                                                <button type="submit" class="action-btn">Upload Completion
-                                                    Certificates</button>
-                                            </form>
-                                        </div>
-                                    </div>
+                                   
                                 </table>
 
                                 <!-- Offer Letter Form -->
@@ -1874,7 +1893,43 @@
                     </div>
                 </section>
 
-
+<!-- Bulk upload Management -->
+                <section id="bulk-upload" class="content-section">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-cloud-upload-alt"></i> Bulk Uploads</h3>
+                          
+      
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    
+                                            <!--Bulk Generation-->
+                                         <div class="data-section" id="certificate-upload-section" >
+                                                    
+                                                    <form id="bulkOfferUploadForm" enctype="multipart/form-data">
+                                                        <input type="file" name="csvFile" accept=".csv, .xls, .xlsx"
+                                                            required>
+                                                        <button type="submit" class="action-btn">Upload Offer
+                                                            Letters</button>
+                                                    </form>
+                                                    <br>
+                                                    <form id="bulkCompletionUploadForm" enctype="multipart/form-data">
+                                                        <input type="file" name="csvFile" accept=".csv, .xls, .xlsx"
+                                                            required>
+                                                        <button type="submit" class="action-btn">Upload Completion
+                                                            Certificates</button>
+                                                    </form>
+                                                </div>  
+                                       
+                                    
+                                </table>
+                               
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
                 <!-- Admin Management -->
                 <section id="admin-management" class="content-section">

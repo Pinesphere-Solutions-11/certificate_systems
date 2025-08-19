@@ -10,7 +10,7 @@
         }
 
         body {
-            background: url("{{ base_url }}/images/offer_letter_template.png") no-repeat center center;
+            background: url("{{ base_media_url }}/{{ certificate_template.background_image.name }}") no-repeat center center;
             background-size: cover;
             font-family: 'Times New Roman', serif;
             margin: 0;
@@ -64,47 +64,50 @@
         }
     </style>
 </head>
-
-<div class="content">
-    <p style="text-align: justify;">
-        This is to certify that <strong>{{ certificate.title }}. {{ certificate.student_name }}</strong> ({{ certificate.student_id }}),
-        a <strong>{{ certificate.degree }} {{ certificate.department }}</strong> student from
-        <strong>{{ certificate.college }}</strong>, has been permitted to undergo internship in the area of
-        <strong>{{ certificate.course_name }}</strong> at <strong>Pinesphere</strong> under our supervision and guidance.
-    </p>
-    <p>
-        The internship duration is from <strong>{{ certificate.start_date|date:"d M Y" }}</strong> to
-        <strong>{{ certificate.end_date|date:"d M Y" }}</strong>.
-    </p>
-</div>
-
-
-    <div class="footer">
-        Yours sincerely,<br><br>
-        For Pinesphere Solutions
-
-        <div class="signature-block">
-            {% if certificate.director_name == "Mr. Surendiran S" %}
-            <img src="{{ base_url }}/images/signatures/surendar_s.png" class="signature-img">
-            {{ certificate.director_name }}<br>
-            <strong>Director</strong>
-            {% else %}
-            <img src="{{ base_url }}/images/signatures/vasanth_nagarajan.png" class="signature-img">
-            {{ certificate.director_name }}<br>
-            <Strong>CTO & Co-Founder</Strong>
-            {% endif %}
+<body>
+    {% if certificate_template %}
+        <!--  Render the saved HTML content from DB -->
+        {{ certificate_template.html_content|safe }}
+    {% else %}
+        <!--  Fallback to the default design -->
+        <div class="content">
+            <p style="text-align: justify;">
+                This is to certify that <strong>{{ certificate.title }} {{ certificate.student_name }}</strong>
+                ({{ certificate.student_id }}), a <strong>{{ certificate.degree }} {{ certificate.department }}</strong>
+                student from <strong>{{ certificate.college }}</strong>, has been permitted to undergo internship in
+                the area of <strong>{{ certificate.course_name }}</strong> at <strong>Pinesphere</strong> under our
+                supervision and guidance.
+            </p>
+            <p>
+                The internship duration is from <strong>{{ certificate.start_date|date:"d M Y" }}</strong> to
+                <strong>{{ certificate.end_date|date:"d M Y" }}</strong>.
+            </p>
         </div>
-    </div>
-    <div class="issue-details">
-        {% if certificate.qr_code_path %}
-        <img src="{{ base_media_url }}/{{ certificate.qr_code_path.name }}" alt="QR Code" class="qr-img"><br>
-        {% endif %}
-        <p>Certificate ID: {{ certificate.credential_id }}</p>
-        <p><strong>Date of issue: {{ certificate.issue_date|date:"d M Y" }}</strong></p>
-    </div>
 
+        <div class="footer">
+            Yours sincerely,<br><br>
+            For Pinesphere Solutions
+            <div class="signature-block">
+                {% if certificate.director_name == "Mr. Surendiran S" %}
+                <img src="{{ base_url }}/images/signatures/surendar_s.png" class="signature-img">
+                {{ certificate.director_name }}<br>
+                <strong>Director</strong>
+                {% else %}
+                <img src="{{ base_url }}/images/signatures/vasanth_nagarajan.png" class="signature-img">
+                {{ certificate.director_name }}<br>
+                <strong>CTO & Co-Founder</strong>
+                {% endif %}
+            </div>
+        </div>
 
-
+        <div class="issue-details">
+            {% if certificate.qr_code_path %}
+            <img src="{{ base_media_url }}/{{ certificate.qr_code_path.name }}" alt="QR Code" class="qr-img"><br>
+            {% endif %}
+            <p>Certificate ID: {{ certificate.credential_id }}</p>
+            <p><strong>Date of issue: {{ certificate.issue_date|date:"d M Y" }}</strong></p>
+        </div>
+    {% endif %}
 </body>
 
 </html>
