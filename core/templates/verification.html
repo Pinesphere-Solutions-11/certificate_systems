@@ -23,7 +23,7 @@
       --white: #ffffff;
       --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       --transition: all 0.3s ease;
-      
+
       /* Professional modern variables with reduced contrast */
       --gradient-primary: linear-gradient(135deg, #070c92 0%, #9c88ff 100%);
       --gradient-secondary: linear-gradient(135deg, #c43035 0%, #dbaacc 100%);
@@ -48,7 +48,7 @@
     body {
       font-family: 'Poppins', sans-serif;
       background: var(--dark-bg);
-      background-image: 
+      background-image:
         radial-gradient(circle at 20% 80%, rgba(103, 115, 255, 0.08) 0%, transparent 50%),
         radial-gradient(circle at 80% 20%, rgba(156, 136, 255, 0.08) 0%, transparent 50%);
       background-attachment: fixed;
@@ -170,7 +170,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: 
+      background:
         radial-gradient(circle at 25% 25%, rgba(79, 70, 229, 0.05) 0%, transparent 50%),
         radial-gradient(circle at 75% 75%, rgba(124, 58, 237, 0.05) 0%, transparent 50%);
       animation: backgroundShift 25s ease-in-out infinite;
@@ -178,8 +178,15 @@
     }
 
     @keyframes backgroundShift {
-      0%, 100% { transform: translateX(0) translateY(0); }
-      50% { transform: translateX(-10px) translateY(-10px); }
+
+      0%,
+      100% {
+        transform: translateX(0) translateY(0);
+      }
+
+      50% {
+        transform: translateX(-10px) translateY(-10px);
+      }
     }
 
     .verification-container {
@@ -199,7 +206,7 @@
       border: 1px solid var(--glass-border);
       padding: 2.5rem;
       border-radius: 16px;
-      box-shadow: 
+      box-shadow:
         0 10px 30px rgba(0, 0, 0, 0.08),
         inset 0 1px 0 rgba(255, 255, 255, 0.8);
       position: relative;
@@ -225,7 +232,7 @@
 
     .verification-form:hover {
       transform: translateY(-5px);
-      box-shadow: 
+      box-shadow:
         0 15px 40px rgba(0, 0, 0, 0.12),
         inset 0 1px 0 rgba(255, 255, 255, 0.9);
     }
@@ -256,8 +263,13 @@
     }
 
     @keyframes softGlow {
-      from { box-shadow: 0 0 5px rgba(79, 70, 229, 0.3); }
-      to { box-shadow: 0 0 10px rgba(79, 70, 229, 0.5); }
+      from {
+        box-shadow: 0 0 5px rgba(79, 70, 229, 0.3);
+      }
+
+      to {
+        box-shadow: 0 0 10px rgba(79, 70, 229, 0.5);
+      }
     }
 
     .form-group {
@@ -345,7 +357,7 @@
       border: 1px solid var(--glass-border);
       padding: 2rem;
       border-radius: 16px;
-      box-shadow: 
+      box-shadow:
         0 10px 30px rgba(0, 0, 0, 0.08),
         inset 0 1px 0 rgba(255, 255, 255, 0.8);
       text-align: center;
@@ -358,14 +370,14 @@
     .certificate-preview.expanded {
       min-height: 700px;
       transform: translateY(-3px);
-      box-shadow: 
+      box-shadow:
         0 15px 40px rgba(0, 0, 0, 0.12),
         inset 0 1px 0 rgba(255, 255, 255, 0.9);
     }
 
     .certificate-preview:hover {
       transform: translateY(-3px);
-      box-shadow: 
+      box-shadow:
         0 15px 40px rgba(0, 0, 0, 0.12),
         inset 0 1px 0 rgba(255, 255, 255, 0.9);
     }
@@ -388,8 +400,17 @@
     }
 
     @keyframes subtlePulse {
-      0%, 100% { border-color: var(--accent-blue); opacity: 0.8; }
-      50% { border-color: var(--accent-purple); opacity: 1; }
+
+      0%,
+      100% {
+        border-color: var(--accent-blue);
+        opacity: 0.8;
+      }
+
+      50% {
+        border-color: var(--accent-purple);
+        opacity: 1;
+      }
     }
 
     .certificate-placeholder i {
@@ -403,8 +424,15 @@
     }
 
     @keyframes gentleFloat {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-5px); }
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-5px);
+      }
     }
 
     /* Updated PDF Preview Container with Scroll */
@@ -441,7 +469,7 @@
     .pdf-preview-container::-webkit-scrollbar-thumb:hover {
       background: var(--accent-purple);
     }
-    
+
     .pdf-preview-container canvas {
       width: 100%;
       height: auto;
@@ -500,8 +528,13 @@
     }
 
     @keyframes statusGlow {
-      from { box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
-      to { box-shadow: 0 4px 16px rgba(16, 185, 129, 0.5); }
+      from {
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      }
+
+      to {
+        box-shadow: 0 4px 16px rgba(16, 185, 129, 0.5);
+      }
     }
 
     .status-badge i {
@@ -715,11 +748,25 @@
       margin-bottom: 0.5rem;
     }
 
-    .share-platform.linkedin { color: #0077b5; }
-    .share-platform.twitter { color: #1da1f2; }
-    .share-platform.facebook { color: #4267b2; }
-    .share-platform.whatsapp { color: #25d366; }
-    .share-platform.email { color: var(--accent-blue); }
+    .share-platform.linkedin {
+      color: #0077b5;
+    }
+
+    .share-platform.twitter {
+      color: #1da1f2;
+    }
+
+    .share-platform.facebook {
+      color: #4267b2;
+    }
+
+    .share-platform.whatsapp {
+      color: #25d366;
+    }
+
+    .share-platform.email {
+      color: var(--accent-blue);
+    }
 
     .share-link-section {
       border-top: 1px solid var(--light-gray);
@@ -856,6 +903,7 @@
 
     /* Responsive Design */
     @media (max-width: 1200px) {
+
       .verification-form,
       .certificate-preview,
       .certificate-details {
@@ -938,8 +986,33 @@
     }
 
     @keyframes spin {
-      0% { transform: translate(-50%, -50%) rotate(0deg); }
-      100% { transform: translate(-50%, -50%) rotate(360deg); }
+      0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+      }
+
+      100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+      }
+    }
+
+    #popupNotification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #4BB543;
+      /* default success */
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      font-weight: bold;
+      z-index: 9999;
+      display: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    #popupNotification.error {
+      background-color: #e74c3c;
     }
   </style>
 </head>
@@ -987,7 +1060,7 @@
               <div class="form-group">
                 <label for="credentialId">Credential ID</label>
                 <input type="text" id="credentialId" name="credentialId" placeholder="Enter your credential ID" required
-                  {% if certificate_data %}value="{{ certificate_data.credential_id }}"{% endif %}>
+                  {% if certificate_data %}value="{{ certificate_data.credential_id }}" {% endif %}>
               </div>
               <button type="submit" class="verify-btn">
                 <i class="fas fa-shield-alt"></i> Verify Now
@@ -997,7 +1070,7 @@
 
           <div class="certificate-details" id="certificateDetails">
             <h3>
-              Certificate Details 
+              Certificate Details
               <span class="status-badge" id="statusBadge">
                 <i class="fas fa-check-circle"></i>
                 Verified
@@ -1021,17 +1094,17 @@
                 <div class="value" id="detailIssueDate">-</div>
               </div>
             </div>
-            
+
             <div class="certificate-info" id="certificateInfo">
               <p>
-                <strong>Credential ID:</strong> 
+                <strong>Credential ID:</strong>
                 <span id="credentialIdDisplay">{{ certificate_data.credential_id|default:'' }}</span>
                 <button class="copy-btn" onclick="copyToClipboard('credentialIdDisplay')">
                   <i class="fas fa-copy"></i> Copy
                 </button>
               </p>
               <p>
-                <strong>Credential URL:</strong> 
+                <strong>Credential URL:</strong>
                 <span id="credentialUrlDisplay">{{ request.build_absolute_uri|default:'' }}</span>
                 <button class="copy-btn" onclick="copyToClipboard('credentialUrlDisplay')">
                   <i class="fas fa-copy"></i> Copy
@@ -1043,77 +1116,36 @@
 
         <div class="certificate-preview" id="certificatePreview">
           {% if certificate_data %}
-            <div class="pdf-preview-container" id="pdfPreviewContainer"></div>
-            <div class="certificate-actions">
-              <button class="download-btn enabled" id="downloadBtn">
-                <i class="fas fa-download"></i> Download Certificate
-              </button>
-              <button class="share-btn enabled" id="shareBtn">
-                <i class="fas fa-share-alt"></i> Share Certificate
-              </button>
-            </div>
+          <div class="pdf-preview-container" id="pdfPreviewContainer"></div>
+          <div class="certificate-actions">
+            <button class="download-btn enabled" id="downloadBtn">
+              <i class="fas fa-download"></i> Download Certificate
+            </button>
+            <button class="share-btn enabled" id="shareBtn">
+              <i class="fas fa-share-alt"></i> Share Certificate
+            </button>
+          </div>
           {% else %}
-            <div class="certificate-placeholder" id="certificatePlaceholder">
-              <i class="fas fa-certificate"></i>
-              <span>Certificate preview will appear here</span>
-            </div>
-            <div class="pdf-preview-container" id="pdfPreviewContainer"></div>
-            <div class="certificate-actions">
-              <button class="download-btn" id="downloadBtn" disabled>
-                <i class="fas fa-download"></i> Download Certificate
-              </button>
-              <button class="share-btn" id="shareBtn">
+          <div class="certificate-placeholder" id="certificatePlaceholder">
+            <i class="fas fa-certificate"></i>
+            <span>Certificate preview will appear here</span>
+          </div>
+          <div class="pdf-preview-container" id="pdfPreviewContainer"></div>
+          <div class="certificate-actions">
+            <button class="download-btn" id="downloadBtn" disabled>
+              <i class="fas fa-download"></i> Download Certificate
+            </button>
+            <!-- <button class="share-btn" id="shareBtn">
                 <i class="fas fa-share-alt"></i> Share Certificate
-              </button>
-            </div>
+              </button> -->
+          </div>
           {% endif %}
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Share Modal -->
-  <!-- <div id="shareModal" class="share-modal">
-    <div class="share-modal-content">
-      <div class="share-modal-header">
-        <h3>Share Certificate</h3>
-        <span class="close" id="closeShareModal">&times;</span>
-      </div>
-      
-      <div class="share-platforms">
-        <a href="#" class="share-platform linkedin" id="shareLinkedIn">
-          <i class="fab fa-linkedin-in"></i>
-          <span>LinkedIn</span>
-        </a>
-        <a href="#" class="share-platform twitter" id="shareTwitter">
-          <i class="fab fa-twitter"></i>
-          <span>Twitter</span>
-        </a>
-        <a href="#" class="share-platform facebook" id="shareFacebook">
-          <i class="fab fa-facebook-f"></i>
-          <span>Facebook</span>
-        </a>
-        <a href="#" class="share-platform whatsapp" id="shareWhatsApp">
-          <i class="fab fa-whatsapp"></i>
-          <span>WhatsApp</span>
-        </a>
-        <a href="#" class="share-platform email" id="shareEmail">
-          <i class="fas fa-envelope"></i>
-          <span>Email</span>
-        </a>
-      </div>
 
-      <div class="share-link-section">
-        <h4>Or copy the link</h4>
-        <div class="share-link-input">
-          <input type="text" id="shareUrlInput" readonly>
-          <button onclick="copyShareUrl()">
-            <i class="fas fa-copy"></i> Copy
-          </button>
-        </div>
-      </div>
-    </div>
-  </div> -->
 
   <footer>
     <div class="container">
@@ -1202,44 +1234,44 @@
       });
 
       // Share modal functionality
-      shareBtn.addEventListener('click', function() {
+      shareBtn.addEventListener('click', function () {
         if (currentCertificateData) {
           openShareModal();
         }
       });
 
-      closeShareModal.addEventListener('click', function() {
+      closeShareModal.addEventListener('click', function () {
         shareModal.style.display = 'none';
       });
 
-      window.addEventListener('click', function(event) {
+      window.addEventListener('click', function (event) {
         if (event.target === shareModal) {
           shareModal.style.display = 'none';
         }
       });
 
       // Share platform handlers
-      document.getElementById('shareLinkedIn').addEventListener('click', function(e) {
+      document.getElementById('shareLinkedIn').addEventListener('click', function (e) {
         e.preventDefault();
         shareOnLinkedIn();
       });
 
-      document.getElementById('shareTwitter').addEventListener('click', function(e) {
+      document.getElementById('shareTwitter').addEventListener('click', function (e) {
         e.preventDefault();
         shareOnTwitter();
       });
 
-      document.getElementById('shareFacebook').addEventListener('click', function(e) {
+      document.getElementById('shareFacebook').addEventListener('click', function (e) {
         e.preventDefault();
         shareOnFacebook();
       });
 
-      document.getElementById('shareWhatsApp').addEventListener('click', function(e) {
+      document.getElementById('shareWhatsApp').addEventListener('click', function (e) {
         e.preventDefault();
         shareOnWhatsApp();
       });
 
-      document.getElementById('shareEmail').addEventListener('click', function(e) {
+      document.getElementById('shareEmail').addEventListener('click', function (e) {
         e.preventDefault();
         shareViaEmail();
       });
@@ -1262,13 +1294,13 @@
       function renderPDF(url) {
         pdfPreviewContainer.innerHTML = '';
         pdfPreviewContainer.classList.add('loading');
-        
-        pdfjsLib.getDocument(url).promise.then(function(pdf) {
+
+        pdfjsLib.getDocument(url).promise.then(function (pdf) {
           // Render all pages for scrolling
           const numPages = pdf.numPages;
-          
+
           for (let pageNumber = 1; pageNumber <= numPages; pageNumber++) {
-            pdf.getPage(pageNumber).then(function(page) {
+            pdf.getPage(pageNumber).then(function (page) {
               const scale = 1.5;
               const viewport = page.getViewport({ scale: scale });
 
@@ -1283,15 +1315,15 @@
               };
 
               pdfPreviewContainer.appendChild(canvas);
-              
+
               if (pageNumber === 1) {
                 pdfPreviewContainer.classList.remove('loading');
               }
-              
+
               page.render(renderContext);
             });
           }
-        }).catch(function(error) {
+        }).catch(function (error) {
           console.error('Error rendering PDF:', error);
           pdfPreviewContainer.classList.remove('loading');
           pdfPreviewContainer.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">Error loading PDF preview</p>';
@@ -1315,7 +1347,7 @@
           })
           .then(data => {
             if (data.error) {
-              alert(data.error);
+              showPopup(data.error, "error");
               return;
             }
 
@@ -1332,37 +1364,37 @@
                 certificatePlaceholder.style.display = 'none';
               }, 300);
             }
-            
+
             // Show PDF preview
             setTimeout(() => {
               pdfPreviewContainer.style.display = 'block';
               pdfPreviewContainer.style.opacity = '0';
               pdfPreviewContainer.style.transform = 'scale(0.9)';
-              
+
               renderPDF(data.preview_url);
-              
+
               setTimeout(() => {
                 pdfPreviewContainer.style.opacity = '1';
                 pdfPreviewContainer.style.transform = 'scale(1)';
                 pdfPreviewContainer.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
               }, 100);
             }, 300);
-            
+
             // Show certificate details
             setTimeout(() => {
               certificateDetails.style.display = 'block';
               certificateDetails.style.opacity = '0';
               certificateDetails.style.transform = 'translateY(15px)';
-              
+
               // Update certificate details
               document.getElementById('detailStudentName').textContent = data.student_name;
               document.getElementById('detailCourseName').textContent = data.course_name;
               document.getElementById('detailCertificateType').textContent = data.certificate_type;
               document.getElementById('detailIssueDate').textContent = data.issue_date || 'N/A';
-              
+
               document.getElementById('credentialIdDisplay').textContent = data.credential_id;
               document.getElementById('credentialUrlDisplay').textContent = window.location.origin + '{% url "verify" %}?id=' + data.credential_id;
-              
+
               setTimeout(() => {
                 certificateDetails.style.opacity = '1';
                 certificateDetails.style.transform = 'translateY(0)';
@@ -1375,8 +1407,8 @@
               downloadBtn.disabled = false;
               downloadBtn.classList.add('enabled');
               shareBtn.classList.add('enabled');
-              
-              downloadBtn.onclick = function() {
+
+              downloadBtn.onclick = function () {
                 window.open(data.preview_url, '_blank');
               };
             }, 600);
@@ -1392,50 +1424,9 @@
             }
           })
           .catch(error => {
-            alert('An error occurred during verification. Please try again.');
+            showPopup('Enter valid credential. An error occurred during verification.', "error");
             console.error('Error:', error);
           });
-      }
-
-      function openShareModal() {
-        const certificateUrl = window.location.origin + '{% url "verify" %}?id=' + currentCertificateData.credential_id;
-        document.getElementById('shareUrlInput').value = certificateUrl;
-        shareModal.style.display = 'block';
-      }
-
-      function shareOnLinkedIn() {
-        const url = encodeURIComponent(window.location.origin + '{% url "verify" %}?id=' + currentCertificateData.credential_id);
-        const title = encodeURIComponent(`I've earned a ${currentCertificateData.certificate_type} certificate in ${currentCertificateData.course_name} from PineSphere!`);
-        const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}&title=${title}`;
-        window.open(shareUrl, '_blank', 'width=600,height=500');
-      }
-
-      function shareOnTwitter() {
-        const url = encodeURIComponent(window.location.origin + '{% url "verify" %}?id=' + currentCertificateData.credential_id);
-        const text = encodeURIComponent(`🎉 I've earned a ${currentCertificateData.certificate_type} certificate in ${currentCertificateData.course_name} from @Pinesphere10941! #Certificate #Achievement #Learning`);
-        const shareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
-        window.open(shareUrl, '_blank', 'width=600,height=400');
-      }
-
-      function shareOnFacebook() {
-        const url = encodeURIComponent(window.location.origin + '{% url "verify" %}?id=' + currentCertificateData.credential_id);
-        const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
-        window.open(shareUrl, '_blank', 'width=600,height=500');
-      }
-
-      function shareOnWhatsApp() {
-        const url = encodeURIComponent(window.location.origin + '{% url "verify" %}?id=' + currentCertificateData.credential_id);
-        const text = encodeURIComponent(`🎉 I've earned a ${currentCertificateData.certificate_type} certificate in ${currentCertificateData.course_name} from PineSphere! Check it out: ${decodeURIComponent(url)}`);
-        const shareUrl = `https://wa.me/?text=${text}`;
-        window.open(shareUrl, '_blank');
-      }
-
-      function shareViaEmail() {
-        const url = window.location.origin + '{% url "verify" %}?id=' + currentCertificateData.credential_id;
-        const subject = encodeURIComponent(`My ${currentCertificateData.certificate_type} Certificate from PineSphere`);
-        const body = encodeURIComponent(`Hi,\n\nI'm excited to share that I've earned a ${currentCertificateData.certificate_type} certificate in ${currentCertificateData.course_name} from PineSphere!\n\nYou can view and verify my certificate here:\n${url}\n\nBest regards`);
-        const shareUrl = `mailto:?subject=${subject}&body=${body}`;
-        window.location.href = shareUrl;
       }
 
       function getQueryParam(name) {
@@ -1449,42 +1440,42 @@
         credentialIdInput.value = initialCredentialId;
         verifyCredential(initialCredentialId);
       }
-      
+
       // If certificate data is available on page load
-    //  {% if certificate_data %}
-        currentCertificateData = {
-          credential_id: '{{ certificate_data.credential_id }}',
-          student_name: '{{ certificate_data.student_name }}',
-          course_name: '{{ certificate_data.course_name }}',
-          certificate_type: '{{ certificate_data.certificate_type }}',
-          preview_url: '{{ certificate_data.preview_url }}',
-          issue_date: '{{ certificate_data.issue_date|default:"N/A" }}'
-        };
+      //  {% if certificate_data %}
+      currentCertificateData = {
+        credential_id: '{{ certificate_data.credential_id }}',
+        student_name: '{{ certificate_data.student_name }}',
+        course_name: '{{ certificate_data.course_name }}',
+        certificate_type: '{{ certificate_data.certificate_type }}',
+        preview_url: '{{ certificate_data.preview_url }}',
+        issue_date: '{{ certificate_data.issue_date|default:"N/A" }}'
+      };
 
-        // Expand the preview container for pre-loaded certificate
-        certificatePreview.classList.add('expanded');
+      // Expand the preview container for pre-loaded certificate
+      certificatePreview.classList.add('expanded');
 
-        if (certificatePlaceholder) {
-          certificatePlaceholder.style.display = 'none';
-        }
-        pdfPreviewContainer.style.display = 'block';
-        certificateDetails.style.display = 'block';
-        renderPDF('{{ certificate_data.preview_url }}');
-        
-        // Update certificate details
-        document.getElementById('detailStudentName').textContent = '{{ certificate_data.student_name }}';
-        document.getElementById('detailCourseName').textContent = '{{ certificate_data.course_name }}';
-        document.getElementById('detailCertificateType').textContent = '{{ certificate_data.certificate_type }}';
-        document.getElementById('detailIssueDate').textContent = '{{ certificate_data.issue_date|default:"N/A" }}';
-        
-        downloadBtn.disabled = false;
-        downloadBtn.classList.add('enabled');
-        shareBtn.classList.add('enabled');
-        
-        downloadBtn.onclick = function() {
-          window.open('{{ certificate_data.preview_url }}', '_blank');
-        };
-    //  {% endif %}
+      if (certificatePlaceholder) {
+        certificatePlaceholder.style.display = 'none';
+      }
+      pdfPreviewContainer.style.display = 'block';
+      certificateDetails.style.display = 'block';
+      renderPDF('{{ certificate_data.preview_url }}');
+
+      // Update certificate details
+      document.getElementById('detailStudentName').textContent = '{{ certificate_data.student_name }}';
+      document.getElementById('detailCourseName').textContent = '{{ certificate_data.course_name }}';
+      document.getElementById('detailCertificateType').textContent = '{{ certificate_data.certificate_type }}';
+      document.getElementById('detailIssueDate').textContent = '{{ certificate_data.issue_date|default:"N/A" }}';
+
+      downloadBtn.disabled = false;
+      downloadBtn.classList.add('enabled');
+      shareBtn.classList.add('enabled');
+
+      downloadBtn.onclick = function () {
+        window.open('{{ certificate_data.preview_url }}', '_blank');
+      };
+      //  {% endif %}
     });
 
     function copyToClipboard(elementId) {
@@ -1496,7 +1487,7 @@
         const originalContent = copyBtn.innerHTML;
         copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
         copyBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
-        
+
         setTimeout(() => {
           copyBtn.innerHTML = originalContent;
           copyBtn.style.background = '';
@@ -1506,7 +1497,7 @@
         const originalContent = copyBtn.innerHTML;
         copyBtn.innerHTML = '<i class="fas fa-times"></i> Failed';
         copyBtn.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
-        
+
         setTimeout(() => {
           copyBtn.innerHTML = originalContent;
           copyBtn.style.background = '';
@@ -1517,15 +1508,15 @@
     function copyShareUrl() {
       const shareUrlInput = document.getElementById('shareUrlInput');
       const copyBtn = shareUrlInput.nextElementSibling;
-      
+
       shareUrlInput.select();
       shareUrlInput.setSelectionRange(0, 99999);
-      
+
       navigator.clipboard.writeText(shareUrlInput.value).then(() => {
         const originalContent = copyBtn.innerHTML;
         copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
         copyBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
-        
+
         setTimeout(() => {
           copyBtn.innerHTML = originalContent;
           copyBtn.style.background = '';
@@ -1543,7 +1534,36 @@
         }
       });
     });
+    function showPopup(message, type = "success") {
+      const popup = document.getElementById("popupNotification");
+      popup.textContent = message;
+      popup.className = type === "error" ? "error" : "success";
+      popup.style.display = "block";
+      popup.style.opacity = "1";
+
+      // auto hide after 3s
+      setTimeout(() => {
+        popup.style.opacity = "0";
+        setTimeout(() => popup.style.display = "none", 300);
+      }, 3000);
+    }
+
   </script>
+  <!-- Success/Error Popup -->
+  <div id="popupNotification" style="
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #e74c3c;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-weight: bold;
+    z-index: 9999;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+"></div>
 </body>
 
 </html>

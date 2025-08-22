@@ -215,10 +215,31 @@
       border-radius: 0.375rem;
       cursor: pointer;
       transition: background 0.3s ease;
+      position: relative;
     }
 
     .btn:hover {
       background-color: #026aaf;
+    }
+
+    .btn:disabled {
+      background-color: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .btn .loading {
+      display: none;
+    }
+
+    .btn.loading .loading {
+      display: inline-block;
+      margin-right: 0.5rem;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     .map-container {
@@ -233,6 +254,68 @@
       width: 100%;
       height: 350px;
       border: none;
+    }
+
+    /* Notification Popup Styles */
+    .popup-notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      padding: 15px 25px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 500;
+      font-size: 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      transform: translateX(400px);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      max-width: 350px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .popup-notification.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .popup-notification.success {
+      background: linear-gradient(135deg, #10b981, #059669);
+      border-left: 4px solid #047857;
+    }
+
+    .popup-notification.error {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      border-left: 4px solid #b91c1c;
+    }
+
+    .popup-notification .icon {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .popup-notification .close-btn {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      padding: 0;
+      font-size: 16px;
+      opacity: 0.8;
+      transition: opacity 0.2s ease;
+    }
+
+    .popup-notification .close-btn:hover {
+      opacity: 1;
+    }
+
+    /* Hide the default Django messages */
+    .django-messages {
+      display: none;
     }
 
     /* Footer Styles */
@@ -292,7 +375,6 @@
       background-color: #000000;
       border-color: #ffffff88;
       color: #ffffff;
-
     }
 
     .social-icon.twitter i {
@@ -367,6 +449,13 @@
 
       .page-banner h1 {
         font-size: 2rem;
+      }
+
+      .popup-notification {
+        right: 10px;
+        top: 10px;
+        max-width: calc(100vw - 20px);
+        padding: 12px 20px;
       }
     }
 
@@ -447,13 +536,17 @@
         </div>
 
         <div class="contact-form">
-          {% if messages %}
-          {% for msg in messages %}
-          <div style="color: green;">{{ msg }}</div>
-          {% endfor %}
-          {% endif %}
+          <!-- Hide Django messages but keep them for JavaScript processing -->
+          <div class="django-messages">
+            {% if messages %}
+              {% for msg in messages %}
+                <div class="message" data-type="{% if msg.tags == 'error' %}error{% else %}success{% endif %}" data-message="{{ msg|escapejs }}"></div>
+              {% endfor %}
+            {% endif %}
+          </div>
+          
           <h2>Send Us a Message</h2>
-          <form method="POST">
+          <form method="POST" id="contactForm">
             {% csrf_token %}
             <div class="form-group">
               <label for="name">Name</label>
@@ -471,7 +564,10 @@
               <label for="message">Message</label>
               <textarea id="message" name="message" rows="5" required></textarea>
             </div>
-            <button type="submit" class="btn">Send Message</button>
+            <button type="submit" class="btn" id="submitBtn">
+              <i class="fas fa-spinner loading"></i>
+              Send Message
+            </button>
           </form>
         </div>
 
@@ -510,7 +606,69 @@
   </footer>
 
   <script>
+    // Notification System
+    function showNotification(message, type = 'success', duration = 5000) {
+      // Remove existing notifications
+      const existingNotifications = document.querySelectorAll('.popup-notification');
+      existingNotifications.forEach(notification => {
+        notification.remove();
+      });
+
+      // Create new notification
+      const notification = document.createElement('div');
+      notification.className = `popup-notification ${type}`;
+      
+      const icon = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+      
+      notification.innerHTML = `
+        <i class="icon ${icon}"></i>
+        <span>${message}</span>
+        <button class="close-btn" onclick="this.parentElement.remove()">
+          <i class="fas fa-times"></i>
+        </button>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      // Trigger animation
+      setTimeout(() => {
+        notification.classList.add('show');
+      }, 100);
+      
+      // Auto remove after duration
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+          if (notification.parentElement) {
+            notification.remove();
+          }
+        }, 400);
+      }, duration);
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
+      // Check for Django messages and show notifications
+      const messages = document.querySelectorAll('.django-messages .message');
+      messages.forEach(messageEl => {
+        const type = messageEl.getAttribute('data-type');
+        const message = messageEl.getAttribute('data-message');
+        showNotification(message, type);
+      });
+
+      // Form submission handler
+      const contactForm = document.getElementById('contactForm');
+      const submitBtn = document.getElementById('submitBtn');
+
+      contactForm.addEventListener('submit', function() {
+        // Show loading state
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+        
+        // The form will submit normally to Django
+        // Loading state will be visible until page redirects
+      });
+
+      // Mobile menu functionality
       const mobileMenu = document.getElementById('mobile-menu');
       const navLinks = document.querySelector('.nav-links');
       const loginDropdown = document.querySelector('#user-icon');

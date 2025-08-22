@@ -28,19 +28,19 @@ urlpatterns = [
      
     # 👨‍🎓 Student Management
      
-    path('student/add/', add_student, name='add_student'),                   # Coordinator adds a student
+    path('student/add/', add_student, name='add_student'),                                                    # Coordinator adds a student
 
      
     # 📥 Bulk Certificate Uploads (CSV)
      
-    path('certificate/offer/bulk-upload/', views.bulk_offer_upload, name='bulk_offer_upload'),         # Bulk upload offer letters
+    path('certificate/offer/bulk-upload/', views.bulk_offer_upload, name='bulk_offer_upload'),                # Bulk upload offer letters
     path('certificate/completion/bulk-upload/', views.bulk_completion_upload, name='bulk_completion_upload'), # Bulk upload completion certs
 
      
     # 📝 Manual Certificate Creation
      
-    path('certificate/offer/create/', create_offer_letter, name='create_offer_letter'),  
-    path('admin/create-template/', views.template_editor, name='create_certificate_template'),     # Create offer letter manually
+    path('certificate/offer/create/', create_offer_letter, name='create_offer_letter'),                           # Create offer letter manually
+    path('admin/create-template/', views.template_editor, name='create_certificate_template'),    
     path('certificate/completion/create/', create_completion_certificate, name='create_completion_certificate'), # Create completion cert manually
     
      
@@ -94,6 +94,6 @@ urlpatterns = [
      
     # 🗑️ Student Deletion (Admin only)
      
-    path('certificate/delete/<int:pk>/', delete_certificate, name='delete_certificate'),
+    path('certificate/delete/<int:cert_id>/', delete_certificate, name='delete_certificate'),
 
 ]

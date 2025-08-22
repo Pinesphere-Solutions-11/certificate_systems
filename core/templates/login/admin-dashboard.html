@@ -3029,11 +3029,7 @@
             showAlert(`Downloading ${type} certificate ID: ${id}`, 'success');
         }
 
-        function deleteCertificate(id, type) {
-            if (confirm(`Are you sure you want to delete this ${type} certificate?`)) {
-                showAlert(`${type} certificate ID ${id} deleted successfully`, 'success');
-            }
-        }
+        
 
         function addCertificate(type) {
             const fields = type === 'internship' ? [
@@ -3231,10 +3227,10 @@
                 })
                     .then(response => {
                         if (response.ok) {
-                            alert("Certificate deleted.");
+                            showPopup('Certificate Deleted', true);
                             location.reload();
                         } else {
-                            alert("Failed to delete certificate.");
+                            showPopup('Failed to delete!', false);
                         }
                     });
             }

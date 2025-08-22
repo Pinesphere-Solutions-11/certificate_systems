@@ -10,7 +10,7 @@
         }
 
         body {
-            background: url("{{ base_media_url }}/{{ certificate_template.background_image.name }}") no-repeat center center;
+            background: url("{{ base_url }}/images/offer_letter_template.png") no-repeat center center;
             background-size: cover;
             font-family: 'Times New Roman', serif;
             margin: 0;
@@ -65,10 +65,10 @@
     </style>
 </head>
 <body>
-    {% if certificate_template %}
+    <!-- {% if certificate_template %} -->
         <!--  Render the saved HTML content from DB -->
-        {{ certificate_template.html_content|safe }}
-    {% else %}
+        <!-- {{ certificate_template.html_content|safe }}
+    {% else %} -->
         <!--  Fallback to the default design -->
         <div class="content">
             <p style="text-align: justify;">
@@ -107,7 +107,7 @@
             <p>Certificate ID: {{ certificate.credential_id }}</p>
             <p><strong>Date of issue: {{ certificate.issue_date|date:"d M Y" }}</strong></p>
         </div>
-    {% endif %}
+    <!-- {% endif %} -->
 </body>
 
 </html>

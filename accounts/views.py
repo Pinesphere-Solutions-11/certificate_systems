@@ -995,7 +995,6 @@ def student_login_view(request):
 #credential verification
 @csrf_exempt
 def verification_view(request):
-    
     if request.method == "POST":
         credential_id = request.POST.get('credentialId', '').strip()
 
@@ -1210,8 +1209,8 @@ def delete_coordinator(request, pk):
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 
-def delete_certificate(request, pk):
-    cert = get_object_or_404(Certificate, pk=pk)
+def delete_certificate(request, cert_id):
+    cert = get_object_or_404(Certificate, id=cert_id)
     cert.delete()
     messages.success(request, "")
     return redirect('admin_dashboard')
