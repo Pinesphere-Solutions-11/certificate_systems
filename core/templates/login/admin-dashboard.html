@@ -2246,6 +2246,7 @@
 
 
     <script>
+
         window.history.pushState(null, "", window.location.href);
         window.onpopstate = function () {
             window.history.pushState(null, "", window.location.href);
@@ -2420,26 +2421,15 @@
                 "Electrical Engineering",
                 "Civil Engineering",
                 "Electronics and Communication Engineering",
-                "Electronics and Instrumentation Engineering",
                 "Mechatronics",
                 "Automobile Engineering",
-                "Robotics and Automation",
-                "Aeronautical Engineering",
-                "Marine Engineering",
-                "Mining Engineering",
-                "Production Engineering",
-                "Biomedical Engineering"
+                "Aeronautical Engineering"
             ],
             "B.Tech": [
                 "Information Technology",
                 "AI & DS",
                 "Biotechnology",
-                "Chemical Engineering",
-                "Food Technology",
                 "Petroleum Engineering",
-                "Textile Technology",
-                "Agricultural Engineering",
-                "Nanotechnology",
                 "Cyber Security",
                 "Data Science",
                 "Artificial Intelligence and Machine Learning"
@@ -2449,13 +2439,7 @@
                 "Mathematics",
                 "Physics",
                 "Chemistry",
-                "Biochemistry",
-                "Botany",
-                "Zoology",
-                "Microbiology",
-                "Biotechnology",
-                "Information Technology",
-                "Electronics"
+                "Information Technology"
             ],
             "B.A": [
                 "English Literature",
@@ -2463,12 +2447,7 @@
                 "Economics",
                 "Sociology",
                 "Political Science",
-                "Psychology",
-                "Tamil Literature",
-                "Public Administration",
-                "Philosophy",
-                "Visual Communication",
-                "Journalism and Mass Communication"
+                "Tamil Literature"
             ],
             "MBA": [
                 "Finance",
@@ -2609,91 +2588,154 @@
             }
 
             function handleCertificateSubmit(formId, url, type) {
-                const form = document.getElementById(formId);
-                form?.addEventListener('submit', function (e) {
-                    e.preventDefault();
-                    const formData = new FormData(form);
+    const form = document.getElementById(formId);
+    if (!form) return;
 
-                    // Common validation rules
-                    const alphaRegex = /^[A-Za-z\s]+$/; // Letters + spaces
-                    const domainRegex = /^[A-Za-z0-9\s.,-]+$/; // Letters, numbers, spaces, dots, commas, hyphens
+    // Hook up date constraints once per form
+    if (!form.dataset.dateBound) {
+        const startInput = form.querySelector('[name$="StartDate"], [name="start_date"]');
+        const endInput   = form.querySelector('[name$="EndDate"],   [name="end_date"]');
+        const issueInput = form.querySelector('[name$="IssueDate"], [name="issue_date"]');
 
-                    // 1️⃣ Student Name Validation
-                    const nameInput = form.querySelector('[name$="StudentName"], [name="student_name"]');
-                    if (nameInput) {
-                        const value = nameInput.value.trim();
-                        if (!alphaRegex.test(value)) {
-                            showPopup('Only letters and spaces allowed in student name.', false);
-                            return;
-                        }
-                    }
-
-
-
-                    // 3️⃣ Location Validation
-                    const locationInput = form.querySelector('[name$="Location"]');
-                    if (locationInput) {
-                        const value = locationInput.value.trim();
-                        if (value && !alphaRegex.test(value)) {
-                            showPopup('Only letters and spaces allowed in location field.', false);
-                            return;
-                        }
-                    }
-
-
-
-                    // 5️⃣ Student Department Validation
-                    const departmentInput = form.querySelector('[name="student_department"]');
-                    if (departmentInput) {
-                        const value = departmentInput.value.trim();
-                        if (!alphaRegex.test(value)) {
-                            showPopup('Only letters and spaces allowed in department field.', false);
-                            return;
-                        }
-                    }
-
-                    fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRFToken': getCookie('csrftoken')
-                        },
-                        body: formData
-                    })
-                        .then(response => {
-                            if (!response.ok) throw new Error('Server error. Please check the form.');
-                            return response.json();
-                        })
-                        .then(data => {
-                            if (data.status === 'success') {
-                                addCertificateToTable(
-                                    data.student,
-                                    data.course,
-                                    data.date,
-                                    data.certificate_number || 'CERT-' + Math.floor(100000 + Math.random() * 900000),
-                                    type,
-                                    data.download_url || ''
-                                );
-                                showPopup(data.message, true);
-                                form.reset();
-                                hideAllForms();
-
-                                document.querySelectorAll('.signature-preview').forEach(el => {
-                                    el.style.display = 'none';
-                                });
-
-                                setTimeout(() => {
-                                    window.location.reload();
-                                }, 1500);
-                            } else {
-                                showPopup(data.message || 'Failed to generate certificate.', false);
-                            }
-                        })
-                        .catch(err => {
-                            showPopup(err.message, false);
-                        });
-                });
+        const applyMins = () => {
+            if (startInput && startInput.value) {
+                if (endInput)   endInput.min   = startInput.value;
+                if (issueInput) issueInput.min = startInput.value;
             }
+        };
 
+        // When start changes, push mins forward and clear invalid picks
+        if (startInput) {
+            startInput.addEventListener('change', () => {
+                applyMins();
+                if (endInput && endInput.value && endInput.value < startInput.value) endInput.value = '';
+                if (issueInput && issueInput.value && issueInput.value < startInput.value) issueInput.value = '';
+            });
+        }
+
+        // Guard: end must be >= start
+        if (endInput && startInput) {
+            endInput.addEventListener('change', () => {
+                if (endInput.value && endInput.value < startInput.value) {
+                    alert('End date must be on or after Start date.');
+                    endInput.value = '';
+                }
+            });
+        }
+
+        // Guard: issue must be >= start
+        if (issueInput && startInput) {
+            issueInput.addEventListener('change', () => {
+                if (issueInput.value && issueInput.value < startInput.value) {
+                    alert('Issue date must be on or after Start date.');
+                    issueInput.value = '';
+                }
+            });
+        }
+
+        // Apply mins on initial load if a start date is prefilled
+        applyMins();
+        form.dataset.dateBound = '1';
+    }
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(form);
+
+        // Common validation rules
+        const alphaRegex  = /^[A-Za-z\s]+$/;       // Letters + spaces
+        const domainRegex = /^[A-Za-z0-9\s.,-]+$/; // Letters, numbers, spaces, dots, commas, hyphens
+
+        // 1) Student Name Validation
+        const nameInput = form.querySelector('[name$="StudentName"], [name="student_name"]');
+        if (nameInput) {
+            const value = nameInput.value.trim();
+            if (!alphaRegex.test(value)) {
+                showPopup('Only letters and spaces allowed in student name.', false);
+                return;
+            }
+        }
+
+        // 2) Location Validation
+        const locationInput = form.querySelector('[name$="Location"], [name="location"]');
+        if (locationInput) {
+            const value = locationInput.value.trim();
+            if (value && !alphaRegex.test(value)) {
+                showPopup('Only letters and spaces allowed in location field.', false);
+                return;
+            }
+        }
+
+        // 3) Department Validation (support both your old and new names)
+        const departmentInput = form.querySelector('[name$="Department"], [name="student_department"], [name="department"]');
+        if (departmentInput) {
+            const value = departmentInput.value.trim();
+            if (!alphaRegex.test(value)) {
+                showPopup('Only letters and spaces allowed in department field.', false);
+                return;
+            }
+        }
+
+        // NEW: Date validations before submit
+        const startInput = form.querySelector('[name$="StartDate"], [name="start_date"]');
+        const endInput   = form.querySelector('[name$="EndDate"],   [name="end_date"]');
+        const issueInput = form.querySelector('[name$="IssueDate"], [name="issue_date"]');
+
+        if (startInput && endInput) {
+            if (endInput.value && endInput.value < startInput.value) {
+                showPopup('End date must be on or after Start date.', false);
+                return;
+            }
+        }
+        if (startInput && issueInput) {
+            if (issueInput.value && issueInput.value < startInput.value) {
+                showPopup('Issue date must be on or after Start date.', false);
+                return;
+            }
+        }
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'X-Requested-With': 'XMLHttpRequest' // helps Django know it’s AJAX
+            },
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Server error. Please check the form.');
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                addCertificateToTable(
+                    data.student,
+                    data.course,
+                    data.date,
+                    data.certificate_number || 'CERT-' + Math.floor(100000 + Math.random() * 900000),
+                    type,
+                    data.download_url || ''
+                );
+                showPopup(data.message, true);
+                form.reset();
+                hideAllForms();
+
+                document.querySelectorAll('.signature-preview').forEach(el => {
+                    el.style.display = 'none';
+                });
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                showPopup(data.message || 'Failed to generate certificate.', false);
+            }
+        })
+        .catch(err => {
+            showPopup(err.message, false);
+        });
+    });
+}
 
             document.getElementById('bulkOfferUploadForm')?.addEventListener('submit', function (e) {
                 e.preventDefault();

@@ -1,11 +1,6 @@
 import uuid
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.utils import timezone
-from django.contrib.auth.models import AbstractUser
-from django.db import models
-from django.utils import timezone
-import datetime
 from django.conf import settings
 import qrcode
 from io import BytesIO
@@ -58,10 +53,8 @@ class AdminUser(models.Model):
     def __str__(self):
         return self.full_name
     
-
-
-from django.core.files.storage import FileSystemStorage
 from django.contrib.auth import get_user_model
+import json
 
 User = get_user_model()
 
@@ -98,7 +91,6 @@ class Certificate(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        
         if not self.certificate_number:
             last = Certificate.objects.order_by('-id').first()
             if last and last.certificate_number:
@@ -109,25 +101,34 @@ class Certificate(models.Model):
             else:
                 num = 1
             self.certificate_number = f"PS{num:03d}"
-          
+
         if not self.credential_id:
-            self.credential_id = uuid.uuid4().hex[:16]  
-            
+            self.credential_id = uuid.uuid4().hex[:16]
+
+        # --- Build QR content with student details ---
+        qr_data = {
+            "credential_id": self.credential_id,
+            "certificate_number": self.certificate_number,
+            "student_name": self.student_name,
+            "student_id": self.student_id,
+            "course_name": self.course_name,
+            "certificate_type": self.certificate_type,
+            "issue_date": self.issue_date.strftime("%Y-%m-%d") if self.issue_date else None,
+        }
+
         qr = qrcode.QRCode(box_size=6, border=2)
-        qr.add_data(self.credential_id)
+        qr.add_data(json.dumps(qr_data))   # Encode details as JSON
         qr.make(fit=True)
         img = qr.make_image(fill='black', back_color='white')
 
         buffer = BytesIO()
         img.save(buffer, format='PNG')
         self.qr_code_path.save(f"{self.certificate_number}_qr.png", File(buffer), save=False)
-        
+
         super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.certificate_type.title()} - {self.certificate_number} - {self.student_name}"
-
-
 
 class ContactMessage(models.Model):
     name = models.CharField(max_length=100)

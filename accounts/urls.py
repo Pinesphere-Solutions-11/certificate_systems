@@ -61,7 +61,8 @@ urlpatterns = [
      
     # 🔄 Session Ping (for timeout handling)
      
-    path('accounts/ping/', views.ping_session, name='ping_session'),        # AJAX ping to keep session alive
+    # path('accounts/ping/', views.ping_session, name='ping_session'),        # AJAX ping to keep session alive
+    path('ping/', views.ping_session, name='ping_session'),
 
      
     # 🎨 Certificate Template Management (Admin Only)
