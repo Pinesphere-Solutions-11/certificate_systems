@@ -10,7 +10,6 @@ from django.contrib import messages
 from django.http import Http404, HttpResponse, HttpResponseBadRequest, JsonResponse, FileResponse
 from weasyprint import HTML
 from django.core.files.base import File
-import tempfile
 from django.conf import settings
 from datetime import datetime
 from .forms import CoordinatorForm, StudentForm, AdminUserForm
@@ -31,6 +30,9 @@ from django.core.files.storage import default_storage
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import cache_control
 from django.views.decorators.cache import cache_control, never_cache
+from dateutil import parser
+import pandas as pd
+import io
 
 # Function for admin only login
 def is_admin(user):
@@ -692,16 +694,34 @@ def create_completion_certificate(request):
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
+
 @csrf_exempt
 @login_required
-@user_passes_test(is_admin)
+@user_passes_test(is_coordinator)
 def bulk_offer_upload(request):
     if request.method == 'POST' and request.FILES.get('csvFile'):
-        csv_file = request.FILES['csvFile']
-        decoded = csv_file.read().decode('utf-8').splitlines()
-        reader = csv.DictReader(decoded)
+        file_obj = request.FILES['csvFile']
+        file_name = file_obj.name.lower()
         created = []
 
+        # --- Handle CSV ---
+        if file_name.endswith('.csv'):
+            try:
+                decoded = file_obj.read().decode('utf-8').splitlines()
+            except UnicodeDecodeError:
+                file_obj.seek(0)
+                decoded = file_obj.read().decode('latin-1').splitlines()
+            reader = csv.DictReader(decoded)
+
+        # --- Handle Excel ---
+        elif file_name.endswith(('.xls', '.xlsx')):
+            df = pd.read_excel(file_obj)
+            reader = df.to_dict(orient='records')
+
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Unsupported file type'}, status=400)
+
+        # --- Create Certificates ---
         for row in reader:
             cert = Certificate.objects.create(
                 certificate_type='offer',
@@ -714,33 +734,48 @@ def bulk_offer_upload(request):
                 location=row['Location'],
                 course_name=row['Course Name'],
                 duration=row['Duration'],
-                start_date=datetime.strptime(row['Start Date'], '%Y-%m-%d'),
-                end_date=datetime.strptime(row['End Date'], '%Y-%m-%d'),
-                completion_date=datetime.strptime(row['Issue Date'], '%Y-%m-%d'),
-                issue_date=datetime.strptime(row['Issue Date'], '%Y-%m-%d'),
+                start_date=parser.parse(str(row['Start Date'])),
+                end_date=parser.parse(str(row['End Date'])),
+                completion_date=parser.parse(str(row['Issue Date'])),
+                issue_date=parser.parse(str(row['Issue Date'])),
                 director_name=row['Director Name'],
                 created_by=request.user
             )
-
-            
-
             generate_certificate_pdf(cert, 'login/internship_offer.html')
             created.append(cert.pk)
 
         return JsonResponse({'status': 'success', 'created': created}, status=200)
-    return JsonResponse({'status': 'error', 'message': 'CSV not found'}, status=400)
+
+    return JsonResponse({'status': 'error', 'message': 'CSV/Excel file not found'}, status=400)
 
 
 @csrf_exempt
 @login_required
-@user_passes_test(is_admin)
+@user_passes_test(is_coordinator)
 def bulk_completion_upload(request):
     if request.method == 'POST' and request.FILES.get('csvFile'):
-        csv_file = request.FILES['csvFile']
-        decoded = csv_file.read().decode('utf-8').splitlines()
-        reader = csv.DictReader(decoded)
+        file_obj = request.FILES['csvFile']
+        file_name = file_obj.name.lower()
         created = []
 
+        # --- Handle CSV ---
+        if file_name.endswith('.csv'):
+            try:
+                decoded = file_obj.read().decode('utf-8').splitlines()
+            except UnicodeDecodeError:
+                file_obj.seek(0)
+                decoded = file_obj.read().decode('latin-1').splitlines()
+            reader = csv.DictReader(decoded)
+
+        # --- Handle Excel ---
+        elif file_name.endswith(('.xls', '.xlsx')):
+            df = pd.read_excel(file_obj)
+            reader = df.to_dict(orient='records')
+
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Unsupported file type'}, status=400)
+
+        # --- Create Certificates ---
         for row in reader:
             cert = Certificate.objects.create(
                 certificate_type='completion',
@@ -753,99 +788,19 @@ def bulk_completion_upload(request):
                 location=row['Location'],
                 course_name=row['Course Name'],
                 duration=row['Duration'],
-                start_date=datetime.strptime(row['Start Date'], '%Y-%m-%d'),
-                end_date=datetime.strptime(row['End Date'], '%Y-%m-%d'),
-                completion_date=datetime.strptime(row['Issue Date'], '%Y-%m-%d'),
-                issue_date=datetime.strptime(row['Issue Date'], '%Y-%m-%d'),
+                start_date=parser.parse(str(row['Start Date'])),
+                end_date=parser.parse(str(row['End Date'])),
+                completion_date=parser.parse(str(row['Issue Date'])),
+                issue_date=parser.parse(str(row['Issue Date'])),
                 director_name=row['Director Name'],
                 created_by=request.user
             )
-
-            
-
             generate_certificate_pdf(cert, 'login/internship_completion.html')
             created.append(cert.pk)
 
         return JsonResponse({'status': 'success', 'created': created}, status=200)
-    return JsonResponse({'status': 'error', 'message': 'CSV not found'}, status=400)
 
-
-@csrf_exempt
-@login_required
-@user_passes_test(is_coordinator)
-def bulk_offer_upload(request):
-    if request.method == 'POST' and request.FILES.get('csvFile'):
-        csv_file = request.FILES['csvFile']
-        decoded = csv_file.read().decode('utf-8').splitlines()
-        reader = csv.DictReader(decoded)
-        created = []
-
-        for row in reader:
-            cert = Certificate.objects.create(
-                certificate_type='offer',
-                title=row['Title'],
-                student_name=row['Student Name'],
-                student_id=row['Student ID'],
-                department=row['Department'],
-                degree=row['Degree'],
-                college=row['College'],
-                location=row['Location'],
-                course_name=row['Course Name'],
-                duration=row['Duration'],
-                start_date=datetime.strptime(row['Start Date'], '%Y-%m-%d'),
-                end_date=datetime.strptime(row['End Date'], '%Y-%m-%d'),
-                completion_date=datetime.strptime(row['Issue Date'], '%Y-%m-%d'),
-                issue_date=datetime.strptime(row['Issue Date'], '%Y-%m-%d'),
-                director_name=row['Director Name'],
-                created_by=request.user
-            )
-
-            
-
-            generate_certificate_pdf(cert, 'login/internship_offer.html')
-            created.append(cert.pk)
-
-        return JsonResponse({'status': 'success', 'created': created}, status=200)
-    return JsonResponse({'status': 'error', 'message': 'CSV not found'}, status=400)
-
-
-@csrf_exempt
-@login_required
-@user_passes_test(is_coordinator)
-def bulk_completion_upload(request):
-    if request.method == 'POST' and request.FILES.get('csvFile'):
-        csv_file = request.FILES['csvFile']
-        decoded = csv_file.read().decode('utf-8').splitlines()
-        reader = csv.DictReader(decoded)
-        created = []
-
-        for row in reader:
-            cert = Certificate.objects.create(
-                certificate_type='completion',
-                title=row['Title'],
-                student_name=row['Student Name'],
-                student_id=row['Student ID'],
-                department=row['Department'],
-                degree=row['Degree'],
-                college=row['College'],
-                location=row['Location'],
-                course_name=row['Course Name'],
-                duration=row['Duration'],
-                start_date=datetime.strptime(row['Start Date'], '%Y-%m-%d'),
-                end_date=datetime.strptime(row['End Date'], '%Y-%m-%d'),
-                completion_date=datetime.strptime(row['Issue Date'], '%Y-%m-%d'),
-                issue_date=datetime.strptime(row['Issue Date'], '%Y-%m-%d'),
-                director_name=row['Director Name'],
-                created_by=request.user
-            )
-
-            
-
-            generate_certificate_pdf(cert, 'login/internship_completion.html')
-            created.append(cert.pk)
-
-        return JsonResponse({'status': 'success', 'created': created}, status=200)
-    return JsonResponse({'status': 'error', 'message': 'CSV not found'}, status=400)
+    return JsonResponse({'status': 'error', 'message': 'CSV/Excel file not found'}, status=400)
 
 
 

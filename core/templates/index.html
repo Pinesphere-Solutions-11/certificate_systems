@@ -197,6 +197,7 @@
     .section-header {
       text-align: center;
       margin-bottom: 3rem;
+      animation: fadeIn 1s ease-out;
     }
 
     .section-header h2 {
@@ -217,6 +218,12 @@
       height: 4px;
       background-color: var(--primary-color);
       border-radius: 2px;
+      animation: expandLine 1s ease-out 0.5s both;
+    }
+
+    @keyframes expandLine {
+      from { width: 0; }
+      to { width: 80px; }
     }
 
     .section-header p {
@@ -240,10 +247,29 @@
       text-align: center;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
       border: 1px solid rgba(0, 0, 0, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.5s ease;
+    }
+
+    .service-card:hover::before {
+      transform: scaleX(1);
     }
 
     .service-card:hover {
-      transform: translateY(-10px);
+      transform: translateY(-10px) rotateZ(1deg);
       box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
     }
 
@@ -259,22 +285,34 @@
       margin: 0 auto 1.5rem;
       font-size: 2rem;
       transition: var(--transition);
+      position: relative;
     }
 
     .service-card:hover .service-icon {
       background-color: var(--primary-color);
       color: var(--white);
+      transform: rotateY(180deg);
     }
 
     .service-card h3 {
       font-size: 1.4rem;
       margin-bottom: 1rem;
       color: var(--text-color);
+      transition: all 0.3s ease;
+    }
+
+    .service-card:hover h3 {
+      color: var(--primary-color);
     }
 
     .service-card p {
       color: var(--text-light);
       line-height: 1.6;
+      transition: all 0.3s ease;
+    }
+
+    .service-card:hover p {
+      transform: translateY(-5px);
     }
 
     /* Footer Styles */

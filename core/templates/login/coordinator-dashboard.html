@@ -1108,6 +1108,9 @@
                             showPopup(`Successfully generated ${data.created.length} offer certificates.`, true);
                             this.reset();
                             hideAllForms();
+                            setTimeout(() => {
+                                    window.location.reload();
+                                }, 1500);
                         } else {
                             showPopup(data.message || 'Bulk upload failed.', false);
                         }
@@ -1131,6 +1134,9 @@
                             showPopup(`Successfully generated ${data.created.length} completion certificates.`, true);
                             this.reset();
                             hideAllForms();
+                            setTimeout(() => {
+                                    window.location.reload();
+                                }, 1500);
                         } else {
                             showPopup(data.message || 'Bulk upload failed.', false);
                         }
