@@ -129,6 +129,7 @@ class Certificate(models.Model):
 
     def __str__(self):
         return f"{self.certificate_type.title()} - {self.certificate_number} - {self.student_name}"
+    
 
 class ContactMessage(models.Model):
     name = models.CharField(max_length=100)
@@ -153,3 +154,15 @@ class CertificateTemplate(models.Model):
 
     def __str__(self):
         return f"{self.get_template_type_display()} Template"
+    
+
+class StudentQuery(models.Model):
+    student_id = models.CharField(max_length=50)   # from session
+    student_name = models.CharField(max_length=255)
+    subject = models.CharField(max_length=255)
+    query = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    resolved = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.student_name} - {self.subject}"

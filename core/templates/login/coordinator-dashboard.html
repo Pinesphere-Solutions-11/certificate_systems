@@ -11,20 +11,48 @@
     <title>Pinesphere | Coordinator Dashboard</title>
     <link rel="icon" type="image/png" href="https://i.ibb.co/r2xvtYsR/logo-removebg-preview.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --primary-color: #3794D0;
-            --primary-dark: #026aaf;
-            --secondary-color: #f8fafc;
-            --text-color: #1e293b;
-            --text-color-light: #64748b;
-            --light-gray: #e2e8f0;
-            --white: #ffffff;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
+            --sidebar-width: 275px;
+            --primary-color: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --primary-light: #dbeafe;
+            --secondary-color: #8b5cf6;
+            --accent-color: #06b6d4;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #06b6d4;
+
+            /* Dark theme colors */
+            --sidebar-bg: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+            --sidebar-text: #e2e8f0;
+            --sidebar-active: rgba(59, 130, 246, 0.15);
+            --sidebar-hover: rgba(255, 255, 255, 0.05);
+
+            /* Content colors */
+            --content-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-light: #64748b;
+            --text-muted: #838588;
+            --border-color: #e2e8f0;
+            --border-hover: #cbd5e1;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+
+            /* Animations */
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: all 0.15s ease;
+            --border-radius: 16px;
+            --border-radius-sm: 8px;
+            --border-radius-lg: 24px;
         }
 
         * {
@@ -34,185 +62,488 @@
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--secondary-color);
-            color: var(--text-color);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--sidebar-bg);
+            color: var(--content-bg);
             line-height: 1.6;
-        }
-
-        .dashboard-container {
-            max-width: 100%;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .logout-btn {
-            background-color: #3794D0;
-            text-decoration: none !important;
-            font-size: 14px;
-            font-weight: 500;
-            padding: 0.60rem 1.5rem;
-            color: white;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            border: none;
-            cursor: pointer;
-            border-radius: 0.75rem;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-
-        .navbar {
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .logout-btn:hover {
-            background-color: #b61a1a;
-            transform: translateY(-3px);
-        }
-
-        .dashboard-header {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--light-gray);
+            min-height: 100vh;
         }
 
-        .welcome-message h1 {
-            font-size: 1.8rem;
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: var(--border-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .logo-text h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .logo-text p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .sidebar-nav {
+            padding: 1.5rem 0;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-section-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            padding: 0 1.5rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-item:hover {
+            background: var(--sidebar-hover);
+            border-left-color: var(--primary-color);
+        }
+
+        .nav-item.active {
+            background: var(--sidebar-active);
+            border-left-color: var(--primary-color);
             color: var(--primary-color);
         }
 
-        .welcome-message p {
-            color: var(--text-color-light);
+        .nav-item i {
+            width: 20px;
+            height: 20px;
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
         }
 
-        .action-buttons {
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: var(--card-bg);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow-sm);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .page-title p {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .dashboard-container {
+            padding: 2rem;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1rem;
             margin-bottom: 2rem;
         }
 
-        .action-btn {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.75rem 1.5rem;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 1rem;
-            font-weight: 500;
-        }
-
-        .action-btn i {
-            margin-right: 0.5rem;
-        }
-
-        .action-btn:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        .data-section {
-            background-color: var(--white);
-            border-radius: 0.5rem;
-            box-shadow: var(--shadow);
+        .action-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
             padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .action-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+
+        .action-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--border-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .action-card:nth-child(1) .action-card-icon {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        }
+
+        .action-card:nth-child(2) .action-card-icon {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+        }
+
+        .action-card:nth-child(3) .action-card-icon {
+            background: linear-gradient(135deg, var(--warning-color), #d97706);
+        }
+
+        .action-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .action-card p {
+            color: var(--text-light);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        /* Forms */
+        .certificate-form {
+            display: none;
             margin-bottom: 2rem;
         }
 
-        .section-title {
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
-            color: var(--primary-color);
+        .form-card {
+            background: var(--sidebar-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--text-muted);
+        }
+        .form-card:hover {
+            border: 1px solid var(--primary-color);
+        }
+
+        .form-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--content-bg);
+            margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
 
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        .data-table th {
-            text-align: left;
-            padding: 1rem;
-            background-color: var(--light-gray);
-            font-weight: 500;
-        }
-
-        .data-table td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--light-gray);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 2rem;
-            color: var(--text-color-light);
-        }
-
-        /* Certificate Form (hidden by default) */
-        .certificate-form {
-            display: none;
-            margin-top: 1.5rem;
-            padding: 1.5rem;
-            background-color: var(--light-gray);
-            border-radius: 0.5rem;
+        .form-card h3 i {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border-radius: var(--border-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.875rem;
         }
 
         .form-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
         }
 
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 0;
         }
 
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
-            font-weight: 500;
+            font-weight: 600;
+            color: var(--content-bg);
+            font-size: 0.875rem;
         }
 
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 0.25rem;
-            font-family: 'Poppins', sans-serif;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--sidebar-bg);
+            border-radius: var(--border-radius-sm);
+            font-family: inherit;
+            font-size: 0.875rem;
+            transition: var(--transition);
+            color: var(--content-bg);
+            background: var(--sidebar-bg);
+        }
+        
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            color: var(--sidebar-bg);
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
         .form-actions {
-            margin-top: 1rem;
+            margin-top: 2rem;
             text-align: right;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 0.875rem 2rem;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: var(--sidebar-bg);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-hover);
+            box-shadow: var(--shadow-sm);
+        }
+        .filter-section:hover {
+            border: 1px solid var(--primary-color);
+        }
+
+        .filter-section h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--content-bg);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Data Table */
+        .data-section {
+            background: var(--sidebar-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-hover);
+            overflow: hidden;
+        }
+        .data-section:hover {
+            border: 1px solid var(--primary-color);
+        }
+
+        .section-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, var(--sidebar-bg));
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--content-bg);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin: 0;
+        }
+
+        .section-title i {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border-radius: var(--border-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 1rem 1.5rem;
+            background: var(--text-dark);
+            font-weight: 600;
+            color: #f8fafc;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.875rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-light);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            padding: 1rem;
+        }
+
+        .pagination a,
+        .pagination span {
+            padding: 0.75rem 1rem;
+            border-radius: var(--border-radius-sm);
+            background: var(--card-bg);
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            font-size: 0.875rem;
+        }
+
+        .pagination a:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+
+        .pagination .current {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            font-weight: 600;
         }
 
         /* Footer */
         .dashboard-footer {
+            background: var(--card-bg);
+            margin-top: 3rem;
+            padding: 3rem 2rem 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 2rem;
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: solid rgba(0, 0, 0, 0.301);
+            margin-bottom: 2rem;
         }
 
         .footer-section h3 {
-            color: var(--primary-color);
+            color: var(--text-dark);
+            font-weight: 600;
             margin-bottom: 1rem;
         }
 
@@ -225,7 +556,7 @@
         }
 
         .footer-section a {
-            color: var(--text-color);
+            color: var(--text-light);
             text-decoration: none;
             transition: var(--transition);
         }
@@ -236,641 +567,878 @@
 
         .copyright {
             text-align: center;
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--light-gray);
-            color: var(--text-color-light);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .dashboard-container {
-                padding: 1rem;
-            }
-
-            .dashboard-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-
-            .action-btn {
-                width: 100%;
-                justify-content: center;
-            }
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-light);
+            font-size: 0.875rem;
         }
 
         /* Error message styling */
         .error-message {
-            color: #dc3545;
-            font-size: 0.875rem;
+            color: var(--danger-color);
+            font-size: 0.75rem;
             margin-top: 0.25rem;
         }
 
-        /* Signature preview */
         .signature-preview {
             max-width: 200px;
             max-height: 100px;
             margin-top: 0.5rem;
             display: none;
+            border-radius: var(--border-radius-sm);
         }
 
-        /* Offer Form Specific Styling */
-        #offerForm .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
         }
 
-        #offerForm .form-group {
-            flex: 1;
-            min-width: 200px;
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem;
+            }
+
+            .top-bar {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .data-table {
+                font-size: 0.75rem;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 0.75rem 0.5rem;
+            }
         }
 
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .pagination a,
-        .pagination span {
-            padding: 0.4rem 0.9rem;
-            border-radius: 0.6rem;
-            background-color: var(--background);
-            color: var(--text-dark);
-            text-decoration: none;
-            font-weight: 500;
-            border: 1px solid var(--border-color);
-            transition: var(--transition);
-            box-shadow: var(--shadow);
-        }
-
-        .pagination a:hover {
-            background-color: var(--primary-color);
-            color: #fff;
-            border-color: var(--primary-dark);
-        }
-
-        .pagination .current {
-            background-color: var(--primary-dark);
+        .mobile-menu-btn {
+            display: none;
+            background: var(--primary-color);
             color: white;
-            font-weight: 600;
-            pointer-events: none;
+            border: none;
+            padding: 0.75rem;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
         }
+
+        /* Popup notification */
+        #popupNotification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--success-color);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            z-index: 9999;
+            display: none;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-sm);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.75rem;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            font-size: 0.875rem;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning-color), #d97706);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, var(--info-color), #0891b2);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border-color);
+            color: var(--text-dark);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .btn-sm {
+            padding: 0.525rem;
+            font-size: 0.75rem;
+        }
+
+         /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-lg);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+            color: var(--success-color);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+select {
+    background-color: #020617;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+select option {
+    background-color: #0f172a;
+    color: rgb(216, 211, 211);
+}
     </style>
 </head>
 
 <body>
-
-    <div class="dashboard-container">
-        <header class="dashboard-header">
-            <div class="welcome-message">
-                <h1>Welcome back, Coordinator</h1>
-                <p>Here's your certificate management dashboard</p>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="logo-text">
+                    <h2>Coordinator</h2>
+                    <p>Certificate Management</p>
+                </div>
             </div>
-            <div style="display: flex; justify-content: flex-end;">
+        </div>
+
+        <nav class="sidebar-nav">
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Certificates</div>
+                <a href="#" class="nav-item" id="nav-offer">
+                    <i class="fas fa-file-signature"></i>
+                    Offer Letters
+                </a>
+                <a href="#" class="nav-item" id="nav-completion">
+                    <i class="fas fa-award"></i>
+                    Completion Certificates
+                </a>
+                <a href="#" class="nav-item" id="nav-bulk">
+                    <i class="fas fa-upload"></i>
+                    Bulk Upload
+                </a>
+                <a href="#" class="nav-item" id="nav-query">
+                    <i class="fas fa-question-circle"></i>
+                    Student Query
+                </a>
+
                 <form id="logoutForm" method="POST" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="logout-btn" style="padding: 1rem 1.75rem;">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </button>
-                </form>
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </form>
             </div>
-        </header>
-
-        <div class="action-buttons">
-            <button class="action-btn" id="showOfferForm">
-                <i class="fas fa-file-signature"></i> Generate Offer Letter
-            </button>
-            <button class="action-btn" id="showCompletionForm">
-                <i class="fas fa-award"></i> Generate Completion Certificate
-            </button>
-            <!-- <button class="action-btn" id="showStudentForm">
-                <i class="fas fa-user-plus"></i> Add Student
-            </button> -->
-            <button class="action-btn" id="showBulkUploadForm">
-                <i class="fas fa-upload"></i> Bulk Upload
-            </button>
-        </div>
-
-        <!-- Completion Certificate Form -->
-        <div class="certificate-form" id="completionForm">
-            <div class="data-section">
-                <h3>Generate Completion Certificate</h3>
-                <form id="createCompletionForm">
-                    <!-- Title, Name and Register Number -->
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="completionTitle">Title</label>
-                            <select id="completionTitle" name="completionTitle" required>
-                                <option value="">Select Title</option>
-                                <option value="Mr">Mr</option>
-                                <option value="Ms">Ms</option>
-                                <option value="Mrs">Mrs</option>
-                                <option value="Dr">Dr</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="completionStudentName">Student Name</label>
-                            <input type="text" id="completionStudentName" name="completionStudentName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="completionRegisterNumber">Register Number</label>
-                            <input type="text" id="completionRegisterNumber" name="completionRegisterNumber" required>
-                        </div>
-                    </div>
-
-                    <!-- Degree and College -->
-                    <div class="form-row">
-                        <div class="form-group">
-                                        <label for="completionDegree">Degree</label>
-                                        <select id="completionDegree" name="completionDegree" required
-                                            onchange="populateDepartments('completionDegree', 'completionDepartment')">
-                                            <option value="">Select Degree</option>
-                                            <option value="B.E">Bachelor's of Engineering</option>
-                                            <option value="B.Tech">B Tech</option>
-                                            <option value="B.Sc">B.Sc (Science)</option>
-                                            <option value="B.A">B.A (Arts)</option>
-                                            <option value="MBA">MBA</option>
-                                            <option value="Diploma">Diploma</option>
-                                        </select>
-                                    </div>
-                        <div class="form-group" id="completionDepartmentGroup" style="display:none;">
-                            <label for="completionDepartment">Department</label>
-                            <select id="completionDepartment" name="completionDepartment" required>
-                                <option value="">Select Department</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="completionCollege">College</label>
-                            <input type="text" id="completionCollege" name="completionCollege" required>
-                        </div>
-                    </div>
-
-                    <!-- Location and Course -->
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="completionLocation">Location</label>
-                            <input type="text" id="completionLocation" name="completionLocation">
-                        </div>
-                        <div class="form-group">
-                            <label for="completionCourseName">Course/Domain</label>
-                            <input type="text" id="completionCourseName" name="completionCourseName" required>
-                        </div>
-                    </div>
-
-                    <!-- Project Field  -->
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="completionProject">Project Name</label>
-                            <input type="text" id="completionProject" name="completionProject"
-                                placeholder="e.g., Online Portfolio System">
-                        </div>
-                    </div>
-
-                    <!-- Start Date, End Date, Duration -->
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="completionStartDate">Start Date</label>
-                            <input type="date" id="completionStartDate" name="completionStartDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="completionEndDate">End Date</label>
-                            <input type="date" id="completionEndDate" name="completionEndDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="completionDuration">Duration</label>
-                            <input type="text" id="completionDuration" name="completionDuration"
-                                placeholder="e.g., 2 weeks">
-                        </div>
-                    </div>
-
-                    <!-- Director -->
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="completionDirector">Director Name</label>
-                            <select id="completionDirector" name="completionDirector" required>
-                                <option value="">Select Director</option>
-                                <option value="Mr. Surendiran S">Mr. Surendiran S</option>
-                                <option value="Mr. Vasanth Nagarajan ">Mr. Vasanth Nagarajan</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="completionIssueDate">Date of Issue</label>
-                            <input type="date" id="completionIssueDate" name="completionIssueDate" required>
-                        </div>
-                    </div>
-
-
-
-                    <!-- Submit -->
-                    <div class="form-actions">
-                        <button type="submit" class="action-btn">
-                            <i class="fas fa-save"></i> Generate Certificate
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Student Form -->
-        <div class="certificate-form" id="addstudentForm">
-            <div class="data-section">
-                <h3>Add New Student</h3>
-                <form id="addStudentForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="newStudentName">Full Name</label>
-                            <input type="text" id="newStudentName" name="student_name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="newStudentEmail">Email</label>
-                            <input type="email" id="newStudentEmail" name="student_email" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="newStudentID">Register Number</label>
-                            <input type="text" id="newStudentID" name="student_id" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="newDepartment">Department</label>
-                            <input type="text" id="newDepartment" name="student_department" required>
-                        </div>
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="action-btn">
-                            <i class="fas fa-save"></i> Add Student
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!--Bulk Generation-->
-        <div class="certificate-form" id="bulkUploadForm" style="display: none;">
-            <div class="data-section">
-                <h3>Bulk Upload Certificates</h3>
-                <form id="bulkOfferUploadForm" enctype="multipart/form-data">
-                    <input type="file" name="csvFile" accept=".csv, .xls, .xlsx" required>
-                    <button type="submit" class="action-btn">Upload Offer Letters</button>
-                </form>
-                <br>
-                <form id="bulkCompletionUploadForm" enctype="multipart/form-data">
-                    <input type="file" name="csvFile" accept=".csv, .xls, .xlsx" required>
-                    <button type="submit" class="action-btn">Upload Completion Certificates</button>
-                </form>
-            </div>
-        </div>
-        <!-- Offer Letter Form -->
-        <div class="certificate-form" id="offerForm">
-            <div class="data-section">
-                <h3>Generate Offer Letter</h3>
-                <form id="createOfferForm" enctype="multipart/form-data">
-                    <!-- Title, Name and Register Number in one line -->
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="offerTitle">Title</label>
-                            <select id="offerTitle" name="offerTitle" required>
-                                <option value="">Select Title</option>
-                                <option value="Mr">Mr</option>
-                                <option value="Ms">Ms</option>
-                                <option value="Mrs">Mrs</option>
-                                <option value="Dr">Dr</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="offerStudentName">Student Name</label>
-                            <input type="text" id="offerStudentName" name="offerStudentName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="offerRegisterNumber">Register Number</label>
-                            <input type="text" id="offerRegisterNumber" name="offerRegisterNumber" required>
-                        </div>
-                    </div>
-
-                    <!-- Degree and College in one line -->
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="offerDegree">Degree</label>
-                            <select id="offerDegree" name="offerDegree" required
-                                onchange="populateDepartments('offerDegree', 'offerDepartment')">
-                                <option value="">Select Degree</option>
-                                <option value="B.E">Bachelor's of Engineering</option>
-                                <option value="B.Tech">B Tech</option>
-                                <option value="B.Sc">B.Sc (Science)</option>
-                                <option value="B.A">B.A (Arts)</option>
-                                <option value="MBA">MBA</option>
-                                <option value="Diploma">Diploma</option>
-                            </select>
-                        </div>
-                        <div class="form-group" id="offerDepartmentGroup" style="display:none;">
-                            <label for="offerDepartment">Department</label>
-                            <select id="offerDepartment" name="offerDepartment" required>
-                                <option value="">Select Department</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="offerCollege">College</label>
-                            <input type="text" id="offerCollege" name="offerCollege" required>
-                        </div>
-                    </div>
-
-                    <!-- Location and Domain in one line -->
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="offerLocation">Location</label>
-                            <input type="text" id="offerLocation" name="offerLocation">
-                        </div>
-                        <div class="form-group">
-                            <label for="offerCourseName">Domain</label>
-                            <input type="text" id="offerCourseName" name="offerCourseName" required>
-                        </div>
-                    </div>
-
-                    <!-- Start Date, End Date and Duration in one line -->
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="offerStartDate">Start Date</label>
-                            <input type="date" id="offerStartDate" name="offerStartDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="offerEndDate">End Date</label>
-                            <input type="date" id="offerEndDate" name="offerEndDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="offerDuration">Duration</label>
-                            <input type="text" id="offerDuration" name="offerDuration" placeholder="e.g., 6 months">
-                        </div>
-                    </div>
-
-                    <!-- Director Name and E-sign in one line -->
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="offerDirector">Director Name</label>
-                            <select id="offerDirector" name="offerDirector" required>
-                                <option value="">Select Director</option>
-                                <option value="Mr. Surendiran S">Mr. Surendiran S</option>
-                                <option value="Mr. Vasanth Nagarajan ">Mr. Vasanth Nagarajan</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="offerIssueDate">Date of Issue</label>
-                            <input type="date" id="offerIssueDate" name="offerIssueDate" required>
-                        </div>
-                    </div>
-
-                    <!-- Submit -->
-                    <div class="form-actions">
-                        <button type="submit" class="action-btn">
-                            <i class="fas fa-save"></i> Generate Certificate
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        <!-- Filter & Search -->
-        <form method="get" style="margin-bottom: 1.5rem;">
-            <div class="form-row">
-                <!-- Filter by Type -->
-                <div class="form-group">
-                    <label>Filter by Type</label>
-                    <select name="type" style="padding: 0.5rem; border-radius: 8px; border: 1px solid #ccc;">
-                        <option value="">All Types</option>
-                        <option value="offer" {% if request.GET.type == 'offer' %} selected {% endif %}>Offer Letter
-                        </option> 
-                        <option value="completion" {% if request.GET.type == 'completion' %} selected {% endif %}>
-                            Completion
-                            Certificate</option>
-                    </select>
-                </div>
-
-                <!-- Student Name -->
-                <div class="form-group">
-                    <label>Student Name</label>
-                    <input type="text" name="student_name" placeholder="Search by Student Name"
-                        value="{{ request.GET.student_name }}"
-                        style="padding: 0.5rem; border-radius: 8px; border: 1px solid #ccc;">
-                </div>
-
-                <!-- Course / Domain -->
-                <div class="form-group">
-                    <label>Course / Domain</label>
-                    <input type="text" name="course_name" placeholder="Search by Course/Domain"
-                        value="{{ request.GET.course_name }}"
-                        style="padding: 0.5rem; border-radius: 8px; border: 1px solid #ccc;">
-                </div>
-
-                <!-- Buttons -->
-                <div class="form-group" style="display: flex; align-items: flex-end; gap: 1rem;">
-                    <button type="submit" class="action-btn"><i class="fas fa-search"></i> Search</button>
-                    <a style="text-decoration: none; padding: 0.55rem 1.5rem; " href="{% url 'coordinator_dashboard' %}"
-                        class="action-btn"><i class="fas fa-sync-alt"></i> Reset</a>
-                </div>
-            </div>
-        </form>
-
-
-        <!-- Certificates Table -->
-        <div class="data-section">
-            <h2 class="section-title">
-                <i class="fas fa-certificate"></i> Students Certificates
-            </h2>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>STUDENT</th>
-                        <th>COURSE</th>
-                        <th>DATE</th>
-                        <th>CERTIFICATE ID</th>
-                        <th>TYPE</th>
-                        <th>ACTIONS</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if certificates %}
-                    {% for cert in certificates %}
-                    <tr>
-                        <td>{{ cert.student_name }}</td>
-                        <td>{{ cert.course_name }}</td>
-                        <td>{{ cert.completion_date|date:"Y-m-d" }}</td>
-                        <td>{{ cert.certificate_number }}</td>
-                        <td>{{ cert.get_certificate_type_display }}</td>
-                        <td>
-                            {% if cert.generated_pdf %}
-                            <a style="text-decoration: none;" href="{{ cert.generated_pdf.url }}" class="action-btn"
-                                download>Download</a>
-                            {% else %}
-                            <span class="action-btn disabled">N/A</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    {% else %}
-                    <tr>
-                        <td colspan="6" class="empty-state">No certificates created yet</td>
-                    </tr>
-                    {% endif %}
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Pagination of the form -->
-        {% if page_obj.has_other_pages %}
-        {% with query_params=request.GET.urlencode %}
-        <div style="text-align:center; margin-top: 1.5rem;">
-            <div class="pagination" style="display: flex; justify-content: center; align-items: center; gap: 1rem;">
-
-                {% if page_obj.has_previous %}
-                <a href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ page_obj.previous_page_number }}"
-                    class="action-btn">
-                    <i class="fas fa-angle-left"></i> Previous
-                </a>
-                {% endif %}
-
-                <span class="page-info" style="font-weight: 500;">
-                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-                </span>
-
-                {% if page_obj.has_next %}
-                <a href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ page_obj.next_page_number }}"
-                    class="action-btn">
-                    Next <i class="fas fa-angle-right"></i>
-                </a>
-                {% endif %}
-
-            </div>
-        </div>
-        {% endwith %}
-        {% endif %}
-
-
-        <!-- Footer -->
-        <footer class="dashboard-footer">
-            <div class="footer-section">
-                <h3>Pinesphere Solutions</h3>
-                <p>Empowering education through digital certificates. Create, manage, and distribute professional
-                    certificates with ease.</p>
-            </div>
-
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <ul>
-                    <li><a href="{% url 'index' %}">Home</a></li>
-                    <li><a href="{% url 'about' %}">About us</a></li>
-                    <li><a href="{% url 'contact' %}">Contact</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contact Info</h3>
-                <ul>
-                    <li><i class="fas fa-envelope"></i> pinespheresolutions144@gmil.com</li>
-                    <li><i class="fas fa-phone"></i> +91 94436 71149</li>
-                    <li><i class="fas fa-map-marker-alt"></i> 1ˢᵗ Floor, C block, NGP Institutions Campus, Kalapatti
-                        Main Rd, Sharp Nagar, Nehru Nagar West, Coimbatore, Tamil Nadu 641048</li>
-                </ul>
-            </div>
-        </footer>
-
-        <div class="copyright">
-            <p>&copy; 2025 Pinephere Solutions Private Limited</p>
-        </div>
+        </nav>
     </div>
 
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="page-title">
+                <h1>Welcome back, Coordinator</h1>
+                <p>Manage certificates and student records efficiently</p>
+            </div>
+            
+        </div>
+
+        <div class="dashboard-container">
+            
+
+            <!-- Query Section -->
+            <div class="certificate-form" id="query-section">
+                <div class="form-card">
+                    <h3>
+                        <i class="fas fa-question-circle"></i>
+                        Student Queries
+                    </h3>
+                     <table class="data-table" id="queriesTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Student</th>
+                <th>Subject</th>
+                <th>Query</th>
+                <th>Created At</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Queries will be injected here -->
+        </tbody>
+    </table>
+                </div>
+            </div>
+            
+
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <h3>
+                    <i class="fas fa-filter"></i>
+                    Filter & Search Certificates
+                </h3>
+                <form method="get">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Filter by Type</label>
+                            <select name="type">
+                                <option value="">All Types</option>
+                                <option value="offer" {% if request.GET.type == 'offer' %} selected {% endif %}>Offer Letter</option>
+                                <option value="completion" {% if request.GET.type == 'completion' %} selected {% endif %}>Completion Certificate</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Student Name</label>
+                            <input type="text" name="student_name" placeholder="Search by Student Name" value="{{ request.GET.student_name }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Course / Domain</label>
+                            <input type="text" name="course_name" placeholder="Search by Course/Domain" value="{{ request.GET.course_name }}">
+                        </div>
+                        <div class="form-group" style="display: flex; align-items: flex-end; gap: 1rem;">
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-search"></i>
+                                Search
+                            </button>
+                            <a href="{% url 'coordinator_dashboard' %}" class="btn-primary" style="text-decoration: none;">
+                                <i class="fas fa-sync-alt"></i>
+                                Reset
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Completion Certificate Form -->
+            <div class="certificate-form" id="completionForm">
+                <div class="form-card">
+                    <h3>
+                        <i class="fas fa-award"></i>
+                        Generate Completion Certificate
+                    </h3>
+                    <form id="createCompletionForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="completionTitle">Title</label>
+                                <select id="completionTitle" name="completionTitle" required>
+                                    <option value="">Select Title</option>
+                                    <option value="Mr">Mr</option>
+                                    <option value="Ms">Ms</option>
+                                    <option value="Mrs">Mrs</option>
+                                    <option value="Dr">Dr</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="completionStudentName">Student Name</label>
+                                <input type="text" id="completionStudentName" name="completionStudentName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="completionRegisterNumber">Register Number</label>
+                                <input type="text" id="completionRegisterNumber" name="completionRegisterNumber" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="completionDegree">Degree</label>
+                                <select id="completionDegree" name="completionDegree" required
+                                    onchange="populateDepartments('completionDegree', 'completionDepartment')">
+                                    <option value="">Select Degree</option>
+                                    <option value="B.E">Bachelor's of Engineering</option>
+                                    <option value="B.Tech">B Tech</option>
+                                    <option value="B.Sc">B.Sc (Science)</option>
+                                    <option value="B.A">B.A (Arts)</option>
+                                    <option value="MBA">MBA</option>
+                                    <option value="Diploma">Diploma</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="completionDepartmentGroup" style="display:none;">
+                                <label for="completionDepartment">Department</label>
+                                <select id="completionDepartment" name="completionDepartment" required>
+                                    <option value="">Select Department</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="completionCollege">College</label>
+                                <input type="text" id="completionCollege" name="completionCollege" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="completionLocation">Location</label>
+                                <input type="text" id="completionLocation" name="completionLocation">
+                            </div>
+                            <div class="form-group">
+                                <label for="completionCourseName">Course/Domain</label>
+                                <input type="text" id="completionCourseName" name="completionCourseName" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="completionProject">Project Name</label>
+                                <input type="text" id="completionProject" name="completionProject" placeholder="e.g., Online Portfolio System">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="completionStartDate">Start Date</label>
+                                <input type="date" id="completionStartDate" name="completionStartDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="completionEndDate">End Date</label>
+                                <input type="date" id="completionEndDate" name="completionEndDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="completionDuration">Duration</label>
+                                <input type="text" id="completionDuration" name="completionDuration" placeholder="e.g., 2 weeks">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="completionDirector">Director Name</label>
+                                <select id="completionDirector" name="completionDirector" required>
+                                    <option value="">Select Director</option>
+                                    <option value="Mr. Surendiran S">Mr. Surendiran S</option>
+                                    <option value="Mr. Vasanth Nagarajan ">Mr. Vasanth Nagarajan</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="completionIssueDate">Date of Issue</label>
+                                <input type="date" id="completionIssueDate" name="completionIssueDate" required>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-save"></i>
+                                Generate Certificate
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Offer Letter Form -->
+            <div class="certificate-form" id="offerForm">
+                <div class="form-card">
+                    <h3>
+                        <i class="fas fa-file-signature"></i>
+                        Generate Offer Letter
+                    </h3>
+                    <form id="createOfferForm" enctype="multipart/form-data">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="offerTitle">Title</label>
+                                <select id="offerTitle" name="offerTitle" required>
+                                    <option value="">Select Title</option>
+                                    <option value="Mr">Mr</option>
+                                    <option value="Ms">Ms</option>
+                                    <option value="Mrs">Mrs</option>
+                                    <option value="Dr">Dr</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="offerStudentName">Student Name</label>
+                                <input type="text" id="offerStudentName" name="offerStudentName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="offerRegisterNumber">Register Number</label>
+                                <input type="text" id="offerRegisterNumber" name="offerRegisterNumber" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="offerDegree">Degree</label>
+                                <select id="offerDegree" name="offerDegree" required
+                                    onchange="populateDepartments('offerDegree', 'offerDepartment')">
+                                    <option value="">Select Degree</option>
+                                    <option value="B.E">Bachelor's of Engineering</option>
+                                    <option value="B.Tech">B Tech</option>
+                                    <option value="B.Sc">B.Sc (Science)</option>
+                                    <option value="B.A">B.A (Arts)</option>
+                                    <option value="MBA">MBA</option>
+                                    <option value="Diploma">Diploma</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="offerDepartmentGroup" style="display:none;">
+                                <label for="offerDepartment">Department</label>
+                                <select id="offerDepartment" name="offerDepartment" required>
+                                    <option value="">Select Department</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="offerCollege">College</label>
+                                <input type="text" id="offerCollege" name="offerCollege" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="offerLocation">Location</label>
+                                <input type="text" id="offerLocation" name="offerLocation">
+                            </div>
+                            <div class="form-group">
+                                <label for="offerCourseName">Domain</label>
+                                <input type="text" id="offerCourseName" name="offerCourseName" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="offerStartDate">Start Date</label>
+                                <input type="date" id="offerStartDate" name="offerStartDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="offerEndDate">End Date</label>
+                                <input type="date" id="offerEndDate" name="offerEndDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="offerDuration">Duration</label>
+                                <input type="text" id="offerDuration" name="offerDuration" placeholder="e.g., 6 months">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="offerDirector">Director Name</label>
+                                <select id="offerDirector" name="offerDirector" required>
+                                    <option value="">Select Director</option>
+                                    <option value="Mr. Surendiran S">Mr. Surendiran S</option>
+                                    <option value="Mr. Vasanth Nagarajan ">Mr. Vasanth Nagarajan</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="offerIssueDate">Date of Issue</label>
+                                <input type="date" id="offerIssueDate" name="offerIssueDate" required>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-save"></i>
+                                Generate Certificate
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Student Form -->
+            <div class="certificate-form" id="addstudentForm">
+                <div class="form-card">
+                    <h3>
+                        <i class="fas fa-user-plus"></i>
+                        Add New Student
+                    </h3>
+                    <form id="addStudentForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="newStudentName">Full Name</label>
+                                <input type="text" id="newStudentName" name="student_name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="newStudentEmail">Email</label>
+                                <input type="email" id="newStudentEmail" name="student_email" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="newStudentID">Register Number</label>
+                                <input type="text" id="newStudentID" name="student_id" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="newDepartment">Department</label>
+                                <input type="text" id="newDepartment" name="student_department" required>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-save"></i>
+                                Add Student
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Bulk Upload Form -->
+            <div class="certificate-form" id="bulkUploadForm">
+                <div class="form-card">
+                    <h3>
+                        <i class="fas fa-upload"></i>
+                        Bulk Upload Certificates
+                    </h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <form id="bulkOfferUploadForm" enctype="multipart/form-data">
+                                <label>Upload Offer Letters</label>
+                                <input type="file" name="csvFile" accept=".csv, .xls, .xlsx" required style="margin-bottom: 1rem;">
+                                <button type="submit" class="btn-primary">
+                                    <i class="fas fa-file-signature"></i>
+                                    Upload Offer Letters
+                                </button>
+                            </form>
+                        </div>
+                        <div class="form-group">
+                            <form id="bulkCompletionUploadForm" enctype="multipart/form-data">
+                                <label>Upload Completion Certificates</label>
+                                <input type="file" name="csvFile" accept=".csv, .xls, .xlsx" required style="margin-bottom: 1rem;">
+                                <button type="submit" class="btn-primary">
+                                    <i class="fas fa-award"></i>
+                                    Upload Completion Certificates
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certificates Table -->
+            <div class="data-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-certificate"></i>
+                        Students Certificates
+                    </h2>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>STUDENT</th>
+                            <th>COURSE</th>
+                            <th>DATE</th>
+                            <th>CERTIFICATE ID</th>
+                            <th>TYPE</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if certificates %}
+                        {% for cert in certificates %}
+                        <tr>
+                            <td>{{ cert.student_name }}</td>
+                            <td>{{ cert.course_name }}</td>
+                            <td>{{ cert.completion_date|date:"Y-m-d" }}</td>
+                            <td>{{ cert.certificate_number }}</td>
+                            <td>{{ cert.get_certificate_type_display }}</td>
+                            <td>
+                                {% if cert.generated_pdf %}
+                                <a href="{{ cert.generated_pdf.url }}" class="download-btn" download>
+                                    <i class="fas fa-download"></i>
+                                    Download
+                                </a>
+                                {% else %}
+                                <span class="download-btn disabled">N/A</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <i class="fas fa-certificate"></i>
+                                <br>
+                                No certificates created yet
+                            </td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                {% if page_obj.has_other_pages %}
+                {% with query_params=request.GET.urlencode %}
+                <div class="pagination">
+                    {% if page_obj.has_previous %}
+                    <a href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ page_obj.previous_page_number }}">
+                        <i class="fas fa-angle-left"></i> Previous
+                    </a>
+                    {% endif %}
+
+                    <span class="current">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+
+                    {% if page_obj.has_next %}
+                    <a href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ page_obj.next_page_number }}">
+                        Next <i class="fas fa-angle-right"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                {% endwith %}
+                {% endif %}
+            </div>
+        </div>
+
+       
+    </div>
+
+    <!-- Popup Notification -->
+    <div id="popupNotification"></div>
+
     <script>
-        // Force reload if user navigates back to this page after logout
-    window.history.pushState(null, "", window.location.href);
-    window.onpopstate = function () {
-        window.history.pushState(null, "", window.location.href);
-        location.replace("{% url 'index' %}"); // Redirect to home page
+        document.addEventListener("DOMContentLoaded", function() {
+    const tableBody = document.querySelector("#queriesTable tbody");
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            const cookies = document.cookie.split(";");
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + "=")) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie("csrftoken");
+
+    // ✅ Format date like "Aug. 30, 2025"
+    function formatDate(isoString) {
+        const date = new Date(isoString);
+        return new Intl.DateTimeFormat("en-US", { 
+            month: "short", day: "2-digit", year: "numeric" 
+        }).format(date);
+    }
+
+    function fetchQueries() {
+        fetch("/accounts/queries/list/")
+            .then(res => res.json())
+            .then(data => {
+                tableBody.innerHTML = ""; 
+                data.queries.forEach(q => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${q.id}</td>
+                        <td>${q.student}</td>
+                        <td>${q.subject}</td>
+                        <td>${q.query_text}</td>
+                        <td>${formatDate(q.created_at)}</td>
+                        <td>
+                            <span class="status-badge status-active ${q.resolved ? "status-resolved" : "status-pending"}">
+                              ${q.resolved ? "Completed" : "Pending"}
+                            </span>
+                        </td>
+                        <td>
+                            ${q.resolved ? "" : `<button class="btn btn-success btn-sm" onclick="resolveQuery(${q.id})"><i class="fas fa-check"></i></button>`}
+                            <button class="btn btn-danger btn-sm" onclick="deleteQuery(${q.id})"><i class="fas fa-trash"></i></button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(err => console.error("Error fetching queries:", err));
+    }
+
+    window.resolveQuery = function(id) {
+        fetch(`/accounts/queries/resolve/${id}/`, { 
+            method: "POST",
+            headers: { "X-CSRFToken": csrftoken }
+        })
+        .then(res => res.json())
+        .then(data => {
+            showPopup(data.message);
+            fetchQueries(); // ✅ Refresh table so status changes
+        });
     };
 
-    // // Also clear any cached page when loaded
-    // window.onload = function () {
-    //     if (!document.body.hasAttribute("data-logged-in")) {
-    //         location.replace("{% url 'index' %}");
-    //     }
-    // };
+    window.deleteQuery = function(id) {
+        fetch(`/accounts/queries/delete/${id}/`, { 
+            method: "POST",
+            headers: { "X-CSRFToken": csrftoken }
+        })
+        .then(res => res.json())
+        .then(data => {
+            showPopup(data.message);
+            fetchQueries();
+        });
+    };
+
+    // Initial load
+    fetchQueries();
+});
+
+
+        // Force reload if user navigates back to this page after logout
+        window.history.pushState(null, "", window.location.href);
+        window.onpopstate = function () {
+            window.history.pushState(null, "", window.location.href);
+            location.replace("{% url 'index' %}");
+        };
+
+        // Keep session alive
         setInterval(() => {
             fetch('/accounts/ping/');
         }, 5 * 60 * 1000);
+
+        // Department data
         const departmentData = {
             "B.E": [
                 "Computer Science and Engineering", "AI & DS",
-                "Mechanical Engineering",
-                "Electrical Engineering",
-                "Civil Engineering",
-                "Electronics and Communication",
+                "Mechanical Engineering", "Electrical Engineering",
+                "Civil Engineering", "Electronics and Communication",
                 "Electronics and Instrumentation Engineering",
-                "Mechatronics",
-                "Automobile Engineering",
-                "Robotics and Automation",
-                "Aeronautical Engineering",
-                "Marine Engineering",
-                "Mining Engineering",
-                "Production Engineering",
-                "Biomedical Engineering"
+                "Mechatronics", "Automobile Engineering",
+                "Robotics and Automation", "Aeronautical Engineering",
+                "Marine Engineering", "Mining Engineering",
+                "Production Engineering", "Biomedical Engineering"
             ],
             "B.Tech": [
-                "Information Technology",
-                "AI & DS",
-                "Biotechnology",
-                "Chemical Engineering",
-                "Food Technology",
-                "Petroleum Engineering",
-                "Textile Technology",
-                "Agricultural Engineering",
-                "Nanotechnology",
-                "Cyber Security",
-                "Data Science",
+                "Information Technology", "AI & DS", "Biotechnology",
+                "Chemical Engineering", "Food Technology",
+                "Petroleum Engineering", "Textile Technology",
+                "Agricultural Engineering", "Nanotechnology",
+                "Cyber Security", "Data Science",
                 "Artificial Intelligence and Machine Learning"
             ],
             "B.Sc": [
-                "Computer Science",
-                "Mathematics",
-                "Physics",
-                "Chemistry",
-                "Biochemistry",
-                "Botany",
-                "Zoology",
-                "Microbiology",
-                "Biotechnology",
-                "Information Technology",
-                "Electronics"
+                "Computer Science", "Mathematics", "Physics",
+                "Chemistry", "Biochemistry", "Botany", "Zoology",
+                "Microbiology", "Biotechnology", "Information Technology", "Electronics"
             ],
             "B.A": [
-                "English Literature",
-                "History",
-                "Economics",
-                "Sociology",
-                "Political Science",
-                "Psychology",
-                "Tamil Literature",
-                "Public Administration",
-                "Philosophy",
-                "Visual Communication",
+                "English Literature", "History", "Economics",
+                "Sociology", "Political Science", "Psychology",
+                "Tamil Literature", "Public Administration",
+                "Philosophy", "Visual Communication",
                 "Journalism and Mass Communication"
             ],
             "MBA": [
-                "Finance",
-                "Marketing",
-                "Human Resource Management",
-                "Operations Management",
-                "International Business"
+                "Finance", "Marketing", "Human Resource Management",
+                "Operations Management", "International Business"
             ],
             "Diploma": [
-                "Computer Engineering",
-                "Mechanical Engineering",
-                "Civil Engineering",
-                "Electrical and Electronics Engineering",
+                "Computer Engineering", "Mechanical Engineering",
+                "Civil Engineering", "Electrical and Electronics Engineering",
                 "Electronics and Communication Engineering"
             ]
         };
@@ -896,67 +1464,72 @@
             }
         }
 
-        function checkImageSize(input) {
-            const errorElement = document.getElementById(input.id + 'Error');
-            const previewElement = document.getElementById(input.id + 'Preview');
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-                const img = new Image();
-                const objectURL = URL.createObjectURL(file);
-                img.onload = function () {
-                    const megapixels = (this.width * this.height) / 1000000;
-                    if (megapixels > 2) {
-                        errorElement.textContent = 'Image exceeds 2MP limit.';
-                        input.value = '';
-                        previewElement.style.display = 'none';
-                    } else {
-                        errorElement.textContent = '';
-                        previewElement.src = objectURL;
-                        previewElement.style.display = 'block';
-                    }
-                    URL.revokeObjectURL(objectURL);
-                };
-                img.src = objectURL;
-            }
-        }
-
         function showPopup(message, success = true) {
             let popup = document.getElementById('popupNotification');
-            if (!popup) {
-                popup = document.createElement('div');
-                popup.id = 'popupNotification';
-                popup.style.position = 'fixed';
-                popup.style.top = '20px';
-                popup.style.right = '20px';
-                popup.style.zIndex = '9999';
-                popup.style.padding = '12px 20px';
-                popup.style.borderRadius = '6px';
-                popup.style.color = 'white';
-                popup.style.fontWeight = 'bold';
-                document.body.appendChild(popup);
-            }
-            popup.style.backgroundColor = success ? '#4BB543' : '#FF3333';
+            popup.style.backgroundColor = success ? 'var(--success-color)' : 'var(--danger-color)';
             popup.textContent = message;
             popup.style.display = 'block';
             setTimeout(() => { popup.style.display = 'none'; }, 3000);
         }
 
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
+            // Mobile menu toggle
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const sidebar = document.getElementById('sidebar');
+
+            mobileMenuBtn?.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+            });
+
+            // Form elements
             const showOfferForm = document.getElementById('showOfferForm');
             const showCompletionForm = document.getElementById('showCompletionForm');
-            const showStudentForm = document.getElementById('showStudentForm');
             const showBulkUploadForm = document.getElementById('showBulkUploadForm');
+            const showQueryForm = document.getElementById('showQueryForm');
             const offerForm = document.getElementById('offerForm');
             const completionForm = document.getElementById('completionForm');
-            const studentForm = document.getElementById('addstudentForm');
             const bulkUploadForm = document.getElementById('bulkUploadForm');
+            const queryForm = document.getElementById('query-section');
             const tableBody = document.querySelector('.data-table tbody');
+
+            // Navigation items
+            const navOffer = document.getElementById('nav-offer');
+            const navCompletion = document.getElementById('nav-completion');
+            const navBulk = document.getElementById('nav-bulk');
+            const navQuery = document.getElementById('nav-query');
 
             function hideAllForms() {
                 offerForm.style.display = 'none';
                 completionForm.style.display = 'none';
-                studentForm.style.display = 'none';
                 bulkUploadForm.style.display = 'none';
+                queryForm.style.display = 'none';
+                
+                // Update nav states
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+            }
+
+            function setActiveNav(activeItem) {
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                activeItem.classList.add('active');
             }
 
             hideAllForms();
@@ -964,26 +1537,58 @@
             showOfferForm?.addEventListener('click', () => {
                 hideAllForms();
                 offerForm.style.display = 'block';
+                setActiveNav(navOffer);
+            });
+
+            navOffer?.addEventListener('click', (e) => {
+                e.preventDefault();
+                hideAllForms();
+                offerForm.style.display = 'block';
+                setActiveNav(navOffer);
             });
 
             showCompletionForm?.addEventListener('click', () => {
                 hideAllForms();
                 completionForm.style.display = 'block';
+                setActiveNav(navCompletion);
             });
 
-            showStudentForm?.addEventListener('click', () => {
+            navCompletion?.addEventListener('click', (e) => {
+                e.preventDefault();
                 hideAllForms();
-                studentForm.style.display = 'block';
+                completionForm.style.display = 'block';
+                setActiveNav(navCompletion);
             });
 
             showBulkUploadForm?.addEventListener('click', () => {
                 hideAllForms();
                 bulkUploadForm.style.display = 'block';
+                setActiveNav(navBulk);
+            });
+
+            navBulk?.addEventListener('click', (e) => {
+                e.preventDefault();
+                hideAllForms();
+                bulkUploadForm.style.display = 'block';
+                setActiveNav(navBulk);
+            });
+
+            showQueryForm?.addEventListener('click', () => {
+                hideAllForms();
+                queryForm.style.display = 'block';
+                setActiveNav(navQuery);
+            });
+
+            navQuery?.addEventListener('click', (e) => {
+                e.preventDefault();
+                hideAllForms();
+                queryForm.style.display = 'block';
+                setActiveNav(navQuery);
             });
 
             function addCertificateToTable(student, course, date, certId, type, downloadUrl) {
                 const emptyRow = document.querySelector('.empty-state');
-                if (emptyRow) emptyRow.remove();
+                if (emptyRow) emptyRow.closest('tr').remove();
                 const row = document.createElement('tr');
                 row.innerHTML = `
                 <td>${student}</td>
@@ -992,7 +1597,7 @@
                 <td>${certId}</td>
                 <td>${type}</td>
                 <td>
-                    ${downloadUrl ? `<a href="${downloadUrl}" class="action-btn" download>Download</a>` : '<span class="action-btn disabled">N/A</span>'}
+                    ${downloadUrl ? `<a href="${downloadUrl}" class="download-btn" download><i class="fas fa-download"></i> Download</a>` : '<span class="download-btn disabled">N/A</span>'}
                 </td>`;
                 tableBody.appendChild(row);
             }
@@ -1003,11 +1608,10 @@
                     e.preventDefault();
                     const formData = new FormData(form);
 
-                    // Common validation rules
-                    const alphaRegex = /^[A-Za-z\s]+$/; // Letters + spaces
-                    const domainRegex = /^[A-Za-z0-9\s.,-]+$/; // Letters, numbers, spaces, dots, commas, hyphens
+                    // Validation
+                    const alphaRegex = /^[A-Za-z\s]+$/;
+                    const domainRegex = /^[A-Za-z0-9\s.,-]+$/;
 
-                    // 1️⃣ Student Name Validation
                     const nameInput = form.querySelector('[name$="StudentName"], [name="student_name"]');
                     if (nameInput) {
                         const value = nameInput.value.trim();
@@ -1017,9 +1621,6 @@
                         }
                     }
 
-
-
-                    // 3️⃣ Location Validation
                     const locationInput = form.querySelector('[name$="Location"]');
                     if (locationInput) {
                         const value = locationInput.value.trim();
@@ -1029,7 +1630,6 @@
                         }
                     }
 
-                    // 4️⃣ Course/Domain Validation
                     const domainInput = form.querySelector('[name$="CourseName"]');
                     if (domainInput) {
                         const value = domainInput.value.trim();
@@ -1039,7 +1639,6 @@
                         }
                     }
 
-                    // 5️⃣ Student Department Validation
                     const departmentInput = form.querySelector('[name="student_department"]');
                     if (departmentInput) {
                         const value = departmentInput.value.trim();
@@ -1056,42 +1655,39 @@
                         },
                         body: formData
                     })
-                        .then(response => {
-                            if (!response.ok) throw new Error('Server error. Please check the form.');
-                            return response.json();
-                        })
-                        .then(data => {
-                            if (data.status === 'success') {
-                                addCertificateToTable(
-                                    data.student,
-                                    data.course,
-                                    data.date,
-                                    data.certificate_number || 'CERT-' + Math.floor(100000 + Math.random() * 900000),
-                                    type,
-                                    data.download_url || ''
-                                );
-                                showPopup(data.message, true);
-                                form.reset();
-                                hideAllForms();
+                    .then(response => {
+                        if (!response.ok) throw new Error('Server error. Please check the form.');
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.status === 'success') {
+                            addCertificateToTable(
+                                data.student,
+                                data.course,
+                                data.date,
+                                data.certificate_number || 'CERT-' + Math.floor(100000 + Math.random() * 900000),
+                                type,
+                                data.download_url || ''
+                            );
+                            showPopup(data.message, true);
+                            form.reset();
+                            hideAllForms();
+                            document.querySelector('[href="#"]').classList.add('active');
 
-                                document.querySelectorAll('.signature-preview').forEach(el => {
-                                    el.style.display = 'none';
-                                });
-
-                                setTimeout(() => {
-                                    window.location.reload();
-                                }, 1500);
-                            } else {
-                                showPopup(data.message || 'Failed to generate certificate.', false);
-                            }
-                        })
-                        .catch(err => {
-                            showPopup(err.message, false);
-                        });
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1500);
+                        } else {
+                            showPopup(data.message || 'Failed to generate certificate.', false);
+                        }
+                    })
+                    .catch(err => {
+                        showPopup(err.message, false);
+                    });
                 });
             }
 
-
+            // Bulk upload handlers
             document.getElementById('bulkOfferUploadForm')?.addEventListener('submit', function (e) {
                 e.preventDefault();
                 const formData = new FormData(this);
@@ -1102,20 +1698,21 @@
                     },
                     body: formData
                 })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.status === 'success') {
-                            showPopup(`Successfully generated ${data.created.length} offer certificates.`, true);
-                            this.reset();
-                            hideAllForms();
-                            setTimeout(() => {
-                                    window.location.reload();
-                                }, 1500);
-                        } else {
-                            showPopup(data.message || 'Bulk upload failed.', false);
-                        }
-                    })
-                    .catch(() => showPopup('Something went wrong!', false));
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showPopup(`Successfully generated ${data.created.length} offer certificates.`, true);
+                        this.reset();
+                        hideAllForms();
+                        document.querySelector('[href="#"]').classList.add('active');
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    } else {
+                        showPopup(data.message || 'Bulk upload failed.', false);
+                    }
+                })
+                .catch(() => showPopup('Something went wrong!', false));
             });
 
             document.getElementById('bulkCompletionUploadForm')?.addEventListener('submit', function (e) {
@@ -1128,59 +1725,28 @@
                     },
                     body: formData
                 })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.status === 'success') {
-                            showPopup(`Successfully generated ${data.created.length} completion certificates.`, true);
-                            this.reset();
-                            hideAllForms();
-                            setTimeout(() => {
-                                    window.location.reload();
-                                }, 1500);
-                        } else {
-                            showPopup(data.message || 'Bulk upload failed.', false);
-                        }
-                    })
-                    .catch(() => showPopup('Something went wrong!', false));
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showPopup(`Successfully generated ${data.created.length} completion certificates.`, true);
+                        this.reset();
+                        hideAllForms();
+                        document.querySelector('[href="#"]').classList.add('active');
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    } else {
+                        showPopup(data.message || 'Bulk upload failed.', false);
+                    }
+                })
+                .catch(() => showPopup('Something went wrong!', false));
             });
 
-            function getCookie(name) {
-                let cookieValue = null;
-                if (document.cookie && document.cookie !== '') {
-                    const cookies = document.cookie.split(';');
-                    for (let i = 0; i < cookies.length; i++) {
-                        const cookie = cookies[i].trim();
-                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
-                        }
-                    }
-                }
-                return cookieValue;
-            }
-
+            // Initialize form handlers
             handleCertificateSubmit('createOfferForm', '/accounts/certificate/offer/create/', 'Offer Letter');
             handleCertificateSubmit('createCompletionForm', '/accounts/certificate/completion/create/', 'Completion Certificate');
             handleCertificateSubmit('addStudentForm', '/accounts/student/add/', 'Student');
         });
     </script>
-
-    <!-- Success/Error Popup -->
-    <div id="popupNotification" style="
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background-color: #4BB543;
-    color: white;
-    padding: 15px 25px;
-    border-radius: 8px;
-    font-weight: bold;
-    z-index: 9999;
-    display: none;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    transition: all 0.3s ease;
-"></div>
-
 </body>
-
 </html>

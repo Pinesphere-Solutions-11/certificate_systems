@@ -96,5 +96,10 @@ urlpatterns = [
     # 🗑️ Student Deletion (Admin only)
      
     path('certificate/delete/<int:cert_id>/', delete_certificate, name='delete_certificate'),
+    
+    path('queries/submit/', views.submit_query, name='submit_query'),
+    path("queries/list/", views.query_list, name="query_list"),
+    path("queries/resolve/<int:pk>/", views.resolve_query, name="resolve_query"),
+    path("queries/delete/<int:pk>/", views.delete_query, name="delete_query"),
 
 ]

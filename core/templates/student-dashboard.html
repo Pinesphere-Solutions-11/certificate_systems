@@ -1,358 +1,936 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-  <title>Pinesphere | Student Dashboard</title>
-  <link rel="icon" type="image/png" href="https://i.ibb.co/r2xvtYsR/logo-removebg-preview.png">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Pinesphere | Student Dashboard</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/r2xvtYsR/logo-removebg-preview.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <style>
-    :root {
-      --primary-color: #3794D0;
-      --primary-dark: #026aaf;
-      --secondary-color: #f8fafc;
-      --text-color: #1e293b;
-      --text-color-light: #64748b;
-      --light-gray: #e2e8f0;
-      --white: #ffffff;
-      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      --transition: all 0.3s ease;
-    }
+    <style>
+        :root {
+            --sidebar-width: 275px;
+            --primary-color: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --primary-light: #dbeafe;
+            --secondary-color: #8b5cf6;
+            --accent-color: #06b6d4;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #06b6d4;
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
-    }
+            /* Dark theme colors */
+            --sidebar-bg: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+            --sidebar-text: #e2e8f0;
+            --sidebar-active: rgba(59, 130, 246, 0.15);
+            --sidebar-hover: rgba(255, 255, 255, 0.05);
 
-    body {
-      background-color: var(--secondary-color);
-      color: var(--text-color);
-      line-height: 1.6;
-    }
+            /* Content colors */
+            --content-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-light: #64748b;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --border-hover: #cbd5e1;
 
-    .dashboard-container {
-      max-width: 100%;
-      margin: 0 auto;
-      padding: 2rem;
-    }
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
 
-    .dashboard-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-bottom: 2rem;
-    }
+            /* Animations */
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: all 0.15s ease;
+            --border-radius: 16px;
+            --border-radius-sm: 8px;
+            --border-radius-lg: 24px;
+        }
 
-    .welcome-section h1 {
-      font-size: 1.8rem;
-      color: var(--primary-color);
-      margin-bottom: 0.5rem;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    .welcome-section p {
-      color: var(--text-color-light);
-    }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--sidebar-bg);
+            color: var(--content-bg);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
 
-    .header-actions {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-    }
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+        }
 
-    .action-btn {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.75rem 1.5rem;
-      background-color: var(--primary-color);
-      color: white;
-      border: none;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      transition: var(--transition);
-      font-size: 1rem;
-      font-weight: 500;
-      text-decoration: none;
-    }
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-    .action-btn i {
-      margin-right: 0.5rem;
-    }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
 
-    .action-btn:hover {
-      background-color: var(--primary-dark);
-      transform: translateY(-2px);
-    }
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: var(--border-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
 
-    .logout-btn {
-        background-color:#3794D0; 
-        text-decoration: none !important; 
-        font-size: 14px;                 
-        padding: 0.80rem 1.55rem;                 
-        color: white;  
-        border-radius: 10px;                   
-        display: inline-flex;             
-        align-items: center;             
-        gap: 6px;                        
-        border: none;
-        cursor: pointer;
-        border-radius: 0.75rem;
-        box-shadow: var(--shadow);
-        transition: var(--transition);
-        
-    }
-    .logout-btn:hover {
-        background-color:#b61a1a;
-        transform: translateY(-3px);
+        .logo-text h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
 
-    }
+        .logo-text p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
 
-    .stats-card {
-      background-color: var(--white);
-      border-radius: 0.5rem;
-      box-shadow: var(--shadow);
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-      text-align: center;
-    }
+        .sidebar-nav {
+            padding: 1.5rem 0;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 120px); /* Adjust based on header height */
+        }
 
-    .stats-card h3 {
-      font-size: 1rem;
-      color: var(--text-color-light);
-      margin-bottom: 0.5rem;
-    }
+        .nav-content {
+            flex: 1;
+        }
 
-    .stats-card .number {
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: var(--primary-color);
-    }
+        .nav-footer {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-    .empty-state {
-      background-color: var(--white);
-      border-radius: 0.5rem;
-      box-shadow: var(--shadow);
-      padding: 3rem 2rem;
-      margin-bottom: 2rem;
-      text-align: center;
-    }
+        .nav-section {
+            margin-bottom: 2rem;
+        }
 
-    .empty-state h3 {
-      font-size: 1.25rem;
-      margin-bottom: 1rem;
-      color: var(--text-color);
-    }
+        .nav-section-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            padding: 0 1.5rem;
+        }
 
-    .empty-state p {
-      color: var(--text-color-light);
-      max-width: 500px;
-      margin: 0 auto 1.5rem;
-    }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
+            margin-bottom: 0.25rem;
+            cursor: pointer;
+        }
 
-    .certificates-table {
-      background-color: var(--white);
-      border-radius: 0.5rem;
-      box-shadow: var(--shadow);
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-      display: none;
-    }
+        .nav-item:hover {
+            background: var(--sidebar-hover);
+            border-left-color: var(--primary-color);
+        }
 
-    .certificates-table h3 {
-      font-size: 1.25rem;
-      margin-bottom: 1rem;
-      color: var(--primary-color);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
+        .nav-item.active {
+            background: var(--sidebar-active);
+            border-left-color: var(--primary-color);
+            color: var(--primary-color);
+        }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1rem;
-    }
+        .nav-item i {
+            width: 20px;
+            height: 20px;
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+        }
 
-    th {
-      text-align: left;
-      padding: 1rem;
-      background-color: var(--light-gray);
-      font-weight: 500;
-    }
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            min-height: 100vh;
+        }
 
-    td {
-      padding: 1rem;
-      border-bottom: 1px solid var(--light-gray);
-    }
+        .top-bar {
+            background: var(--card-bg);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow-sm);
+            border-bottom: 1px solid var(--text-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    .download-btn {
-      color: var(--primary-color);
-      text-decoration: none;
-      font-weight: 500;
-    }
+        .page-title h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
 
-    .dashboard-footer {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-      margin-top: 3rem;
-      padding-top: 2rem;
-      border-top: 1px solid var(--light-gray);
-    }
+        .page-title p {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
 
-    .footer-section h3 {
-      color: var(--primary-color);
-      margin-bottom: 1rem;
-    }
+        .logout-btn {
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-sm);
+        }
 
-    .footer-section ul {
-      list-style: none;
-    }
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
 
-    .footer-section li {
-      margin-bottom: 0.5rem;
-    }
+        .dashboard-container {
+            padding: 2rem;
+        }
 
-    .footer-section a {
-      color: var(--text-color);
-      text-decoration: none;
-      transition: var(--transition);
-    }
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
 
-    .footer-section a:hover {
-      color: var(--primary-color);
-    }
+        .stats-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
 
-    .copyright {
-      text-align: center;
-      margin-top: 2rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--light-gray);
-      color: var(--text-color-light);
-    }
+        .stats-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
 
-    @media (max-width: 768px) {
-      .dashboard-container {
-        padding: 1rem;
-      }
+        .stats-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--border-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: white;
+            margin-bottom: 1rem;
+        }
 
-      .dashboard-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-      }
+        .stats-card:nth-child(1) .stats-card-icon {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        }
 
-      .header-actions {
-        flex-direction: column;
-        width: 100%;
-        gap: 0.75rem;
-      }
+        .stats-card:nth-child(2) .stats-card-icon {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+        }
 
-      .action-btn {
-        width: 100%;
-        justify-content: center;
-      }
+        .stats-card:nth-child(3) .stats-card-icon {
+            background: linear-gradient(135deg, var(--warning-color), #d97706);
+        }
 
-      .dashboard-footer {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+        .stats-card h3 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .stats-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        /* Query Form */
+        .query-form {
+            display: none;
+            margin-bottom: 2rem;
+        }
+
+        .form-card {
+            background: var(--sidebar-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--text-dark);
+        }
+
+        .form-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--content-bg);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .form-card h3 i {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border-radius: var(--border-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--content-bg);
+            font-size: 0.875rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius-sm);
+            font-family: inherit;
+            font-size: 0.875rem;
+            transition: var(--transition);
+            color: var(--content-bg);
+            background: rgba(255, 255, 255, 0.05);
+            resize: vertical;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-actions {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 0.875rem 2rem;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--content-bg);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            padding: 0.875rem 2rem;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Data Table */
+        .data-section {
+            background: var(--sidebar-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--text-dark);
+            overflow: hidden;
+        }
+        .data-section:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+            transform: scale(1);
+            border: var(--primary-color);
+        }
+
+        .section-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: linear-gradient(135deg, var(--sidebar-bg));
+        }
+        .section-header:hover { 
+            transform: scale(1.003);
+            border: var(--primary-color);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--content-bg);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin: 0;
+        }
+
+        .section-title i {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border-radius: var(--border-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 1rem 1.5rem;
+            background: var(--text-dark);
+            font-weight: 600;
+            color: #f8fafc;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            border-bottom: 1px solid var(--text-light);
+        }
+        .data-table tbody tr:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+            transform: scale(1.01);
+        }
+
+        .data-table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.875rem;
+            color: var(--content-bg);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-light);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-sm);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Footer */
+        .dashboard-footer {
+            background: var(--card-bg);
+            margin-top: 3rem;
+            padding: 3rem 2rem 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            color: var(--text-dark);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section p {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-section a:hover {
+            color: var(--primary-color);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        /* Popup notification */
+        #popupNotification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--success-color);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            z-index: 9999;
+            display: none;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem;
+            }
+
+            .top-bar {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .data-table {
+                font-size: 0.75rem;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+        }
+    </style>
 </head>
+
 <body>
-  <div class="dashboard-container">
-    <header class="dashboard-header">
-      <div class="welcome-section">
-        <h1>Welcome back, {{ student_name }}</h1>
-        <p>View and manage your certificates</p>
-      </div>
-      <div class="header-actions">
-        <div style="display: flex; justify-content: flex-end;">
-                <form id="logoutForm" method="POST" action="{% url 'logout' %}">
-                {% csrf_token %}
-                <button type="submit" class="action-btn logout-btn" style="padding: 1rem 1.75rem;">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-                </form>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <div class="logo-text">
+                    <h2>Student Portal</h2>
+                    <p>Certificate Dashboard</p>
+                </div>
             </div>
-      </div>
-    </header>
-
-    <div class="certificates-table" id="certificatesTable" style="display: block;">
-      <h3><i class="fas fa-certificate"></i> Your Certificates</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>CERTIFICATE ID</th>
-            <th>CERTIFICATE TYPE</th>
-            <th>COURSE</th>
-            <th>ISSUE DATE</th>
-            <th>ACTIONS</th>
-          </tr>
-        </thead>
-        
-        <tbody id="certificatesBody">
-          {% for cert in certificates %}
-          <tr>
-            <td>{{ cert.certificate_number }}</td>
-            <td>{{ cert.certificate_type }}</td>
-            <td>{{ cert.course_name }}</td>
-            <td>{{ cert.issue_date }}</td>
-            <td>
-              <a href="{% url 'download_certificate' cert.id %}" class="action-btn">Download</a>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-        
-      </table>
-    </div>
-    
-
-     <!-- Footer -->
-        <footer class="dashboard-footer">
-            <div class="footer-section">
-                <h3>Pinesphere Solutions</h3>
-                <p>Empowering education through digital certificates. Create, manage, and distribute professional
-                    certificates with ease.</p>
-            </div>
-
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <ul>
-                    <li><a href="{% url 'index' %}">Home</a></li>
-                    <li><a href="{% url 'about' %}">About us</a></li>
-                    <li><a href="{% url 'contact' %}">Contact</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contact Info</h3>
-                <ul>
-                    <li><i class="fas fa-envelope"></i> pinespheresolutions144@gmil.com</li>
-                    <li><i class="fas fa-phone"></i> +91 94436 71149</li>
-                    <li><i class="fas fa-map-marker-alt"></i>  1ˢᵗ Floor, C block, NGP Institutions Campus, Kalapatti Main Rd, Sharp Nagar, Nehru Nagar West, Coimbatore, Tamil Nadu 641048</li>
-                </ul>
-            </div>
-        </footer>
-
-        <div class="copyright">
-            <p>&copy; 2025 Pinephere Solutions Private Limited</p>
         </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-content">
+                <div class="nav-section">
+                    <div class="nav-section-title">Dashboard</div>
+                    
+                    <a href="#" class="nav-item" id="nav-certificates">
+                        <i class="fas fa-certificate"></i>
+                        My Certificates
+                    </a>
+                    <a href="#" class="nav-item" id="nav-query">
+                        <i class="fas fa-question-circle"></i>
+                        Submit Query
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-footer">
+                <div class="nav-section">
+                    <form id="logoutForm" method="POST" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </nav>
     </div>
 
-  <script>
-    
-      setInterval(() => {
-          fetch('/accounts/ping/');
-      }, 5 * 60 * 1000);
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="page-title">
+                <h1>Welcome back, {{ student_name }}</h1>
+                <p>View and manage your certificates</p>
+            </div>
+        </div>
 
-  </script>
+        <div class="dashboard-container">
+            <!-- Stats Grid -->
+            <div class="stats-grid" id="statsGrid">
+                
+                
+                
+            </div>
+
+            <!-- Query Form -->
+            <div class="query-form" id="queryForm">
+                <div class="form-card">
+                    <h3>
+                        <i class="fas fa-question-circle"></i>
+                        Submit Query
+                    </h3>
+                    <form id="studentQueryForm">
+                      {% csrf_token %}
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="subject">Subject</label>
+                                <input type="text" id="subject" name="subject" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="query">Query Details</label>
+                                <textarea name="query" id="query" placeholder="Please describe your query in detail..."></textarea>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-outline" id="cancelQuery">
+                                <i class="fas fa-times"></i>
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-paper-plane"></i>
+                                Submit Query
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Certificates Table -->
+            <div class="data-section" id="certificatesSection">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-certificate"></i>
+                        Your Certificates
+                    </h2>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>CERTIFICATE ID</th>
+                            <th>TYPE</th>
+                            <th>COURSE</th>
+                            <th>ISSUE DATE</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if certificates %}
+                        {% for cert in certificates %}
+                        <tr>
+                            <td>{{ cert.certificate_number }}</td>
+                            <td>{{ cert.certificate_type }}</td>
+                            <td>{{ cert.course_name }}</td>
+                            <td>{{ cert.issue_date }}</td>
+                            <td>
+                                <a href="{% url 'download_certificate' cert.id %}" class="download-btn">
+                                    <i class="fas fa-download"></i>
+                                    Download
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="empty-state">
+                                <i class="fas fa-certificate"></i>
+                                <br>
+                                No certificates available yet
+                            </td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        
+    </div>
+
+    <!-- Popup Notification -->
+    <div id="popupNotification"></div>
+
+   <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // --- Sidebar toggle ---
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        mobileMenuBtn?.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+
+        // --- Sections ---
+        const statsGrid = document.getElementById('statsGrid');
+        const queryForm = document.getElementById('queryForm');
+        const certificatesSection = document.getElementById('certificatesSection');
+
+        function hideAllSections() {
+            statsGrid.style.display = 'none';
+            queryForm.style.display = 'none';
+            certificatesSection.style.display = 'none';
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+        }
+
+        function setActiveNav(activeItem) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            activeItem.classList.add('active');
+        }
+
+        function showCertificates() {
+            hideAllSections();
+            certificatesSection.style.display = 'block';
+            setActiveNav(document.getElementById('nav-certificates'));
+        }
+
+        function showQueryForm() {
+            hideAllSections();
+            queryForm.style.display = 'block';
+            setActiveNav(document.getElementById('nav-query'));
+        }
+
+        // --- Navigation ---
+        document.getElementById('nav-certificates')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            showCertificates();
+        });
+
+        document.getElementById('nav-query')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            showQueryForm();
+        });
+
+        // --- Query form handlers ---
+        const cancelQuery = document.getElementById('cancelQuery');
+        const studentQueryForm = document.getElementById('studentQueryForm');
+
+        cancelQuery?.addEventListener('click', () => {
+            studentQueryForm.reset();
+            showCertificates();
+        });
+
+        studentQueryForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            fetch("/accounts/queries/submit/", {
+                method: "POST",
+                headers: { "X-CSRFToken": getCookie("csrftoken") },
+                body: formData
+            })
+            .then(res => res.text())   // fetch raw first
+            .then(text => {
+                try {
+                    const data = JSON.parse(text);
+                    showPopup(data.message, data.status === "success");
+                    if (data.status === "success") {
+                        studentQueryForm.reset();
+                        showCertificates();
+                    }
+                } catch (err) {
+                    console.error("Non-JSON response:", text);
+                    showPopup("Server returned unexpected response.", false);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                showPopup("Something went wrong. Try again.", false);
+            });
+        });
+
+        // --- Popup notification ---
+        function showPopup(message, success = true) {
+            let popup = document.getElementById('popupNotification');
+            popup.style.backgroundColor = success ? 'var(--success-color)' : 'var(--danger-color)';
+            popup.textContent = message;
+            popup.style.display = 'block';
+            setTimeout(() => { popup.style.display = 'none'; }, 3000);
+        }
+
+        // --- CSRF helper ---
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                document.cookie.split(';').forEach(cookie => {
+                    cookie = cookie.trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    }
+                });
+            }
+            return cookieValue;
+        }
+
+        // --- Default section ---
+        showCertificates();
+    });
+</script>
+
+
 </body>
 </html>

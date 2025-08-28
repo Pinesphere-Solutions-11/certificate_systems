@@ -1059,3 +1059,80 @@ def delete_certificate(request, cert_id):
     messages.success(request, "")
     return redirect('admin_dashboard')
 
+from .models import StudentQuery
+
+def submit_query(request):
+    if request.method == "POST":
+        # check if student is logged in
+        student_id = request.session.get("student_id")
+        student_name = request.session.get("student_name")
+
+        if not student_id or not student_name:
+            return JsonResponse(
+                {"status": "error", "message": "You must be logged in to submit a query."},
+                status=403
+            )
+
+        subject = request.POST.get("subject")
+        query_text = request.POST.get("query")
+
+        if not subject or not query_text:
+            return JsonResponse(
+                {"status": "error", "message": "All fields are required."},
+                status=400
+            )
+
+        # Save query
+        StudentQuery.objects.create(
+            student_id=student_id,
+            student_name=student_name,
+            subject=subject,
+            query=query_text
+        )
+
+        return JsonResponse(
+            {"status": "success", "message": "Query submitted successfully!"}
+        )
+
+    return JsonResponse({"status": "error", "message": "Invalid request"}, status=400)
+
+
+
+def query_list(request):
+    queries = StudentQuery.objects.all().order_by("-created_at")
+    data = [
+        {
+            "id": q.id,
+            "subject": q.subject,
+            "query_text": q.query,   # ✅ FIX: use q.query not q.query_text
+            "resolved": q.resolved,
+            "student": q.student_name,   # ✅ FIX: use student_name instead of username
+            "created_at": q.created_at.strftime("%Y-%m-%d %H:%M"),
+        }
+        for q in queries
+    ]
+    return JsonResponse({"queries": data})
+
+
+
+
+@user_passes_test(lambda u: u.role in ("admin", "coordinator"))
+def resolve_query(request, pk):
+    try:
+        query = StudentQuery.objects.get(pk=pk)
+        query.resolved = True
+        query.save()
+        return JsonResponse({"status": "success", "message": "Query marked as resolved"})
+    except StudentQuery.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "Query not found"}, status=404)
+
+
+
+@user_passes_test(lambda u: u.role in ("admin", "coordinator"))
+def delete_query(request, pk):
+    try:
+        query = StudentQuery.objects.get(pk=pk)
+        query.delete()
+        return JsonResponse({"status": "success", "message": "Query deleted"})
+    except StudentQuery.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "Query not found"}, status=404)
