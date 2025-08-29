@@ -499,127 +499,7 @@
             background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
             transform: scale(1.01);
         }
-        .activity-list {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1.5rem;
-                }
-
-                .activity-item {
-                    display: flex;
-                    align-items: flex-start;
-                    gap: 1rem;
-                    padding: 1.5rem;
-                    background: linear-gradient(135deg, #fafbfc 0%, #f8fafc 100%);
-                    border-radius: var(--border-radius-sm);
-                    border: 1px solid var(--border-color);
-                    transition: var(--transition);
-                }
-
-                .activity-item:hover {
-                    transform: translateX(8px);
-                    box-shadow: var(--shadow-sm);
-                    border-color: var(--primary-color);
-                }
-
-                .activity-icon {
-                    width: 48px;
-                    height: 48px;
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: white;
-                    font-size: 1.2rem;
-                    flex-shrink: 0;
-                }
-
-                .activity-icon.primary {
-                    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-                }
-
-                .activity-icon.success {
-                    background: linear-gradient(135deg, var(--success-color), #059669);
-                }
-
-                .activity-icon.warning {
-                    background: linear-gradient(135deg, var(--warning-color), #d97706);
-                }
-
-                .activity-content h4 {
-                    margin: 0 0 0.5rem 0;
-                    font-weight: 600;
-                    color: var(--text-dark);
-                    font-size: 1rem;
-                }
-
-                .activity-content p {
-                    margin: 0 0 0.5rem 0;
-                    color: var(--text-light);
-                    font-size: 0.875rem;
-                }
-
-                .activity-time {
-                    font-size: 0.75rem;
-                    color: var(--text-muted);
-                    font-weight: 500;
-                }
-
-                .grade-badge {
-                    padding: 0.375rem 0.75rem;
-                    border-radius: var(--border-radius-lg);
-                    font-size: 0.75rem;
-                    font-weight: 700;
-                    text-transform: uppercase;
-                }
-
-                .grade-a {
-                    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
-                    color: var(--success-color);
-                    border: 1px solid rgba(16, 185, 129, 0.2);
-                }
-
-                .role-badge {
-                    padding: 0.375rem 0.75rem;
-                    border-radius: var(--border-radius-lg);
-                    font-size: 0.75rem;
-                    font-weight: 600;
-                    text-transform: uppercase;
-                }
-
-                .role-super {
-                    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(124, 58, 237, 0.1));
-                    color: var(--secondary-color);
-                    border: 1px solid rgba(139, 92, 246, 0.2);
-                }
-
-                .role-admin {
-                    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(29, 78, 216, 0.1));
-                    color: var(--primary-color);
-                    border: 1px solid rgba(59, 130, 246, 0.2);
-                }
-
-                
-
-                .data-table th {
-                    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-                    color: var(--content-bg);
-                }
-
-                .activity-item {
-                    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-                }
-
-                .card-header {
-                    background: var(--sidebar-bg);
-                    
-                }
-
-                 .modal-header,
-                 .modal-footer {
-                    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-                }
-
+        
         /* Status Badges */
         .status-badge {
             display: inline-flex;
@@ -727,7 +607,7 @@
         .stat-card-number {
             font-size: 3rem;
             font-weight: 800;
-            color: var(--content-bg);
+            color: white;
             margin-bottom: 0.5rem;
             line-height: 1;
         }
@@ -1479,6 +1359,45 @@
         padding: 8px;
        
     }
+    /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            padding: 1rem;
+        }
+
+        .pagination a,
+        .pagination span {
+            padding: 0.75rem 1rem;
+            border-radius: var(--border-radius-sm);
+            background: var(--card-bg);
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            font-size: 0.875rem;
+        }
+
+        .pagination a:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+
+        .pagination .current {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            font-weight: 600;
+        }
+
 
     </style>
 </head>
@@ -1512,16 +1431,16 @@
                     <a href="#" class="menu-item" data-section="completion-certificates">
                         <i class="fas fa-medal"></i> Completion Certificates
                     </a>
-                    <a href="#" class="menu-item" data-section="bulk-uploads">
+                    <!-- <a href="#" class="menu-item" data-section="bulk-uploads">
                         <i class="fas fa-cloud-upload-alt"></i> Bulk Uploads
-                    </a>
+                    </a> -->
                     <a href="#" class="menu-item" data-section="query-management">
                         <i class="fas fa-question-circle"></i> Student Queries
                     </a>
-                    <a href="{% url 'create_certificate_template' %}" target="_blank" class="menu-item"
+                    <!-- <a href="{% url 'create_certificate_template' %}" target="_blank" class="menu-item"
                         data-section="certificates-template" onclick="window.open(this.href, '_blank'); return false;">
                         <i class="fas fa-edit"></i> Certificate Template
-                    </a>
+                    </a> -->
                 </div>
 
                 <div class="menu-section">
@@ -1880,6 +1799,28 @@
                                         {% endfor %}
                                     </tbody>
                                 </table>
+                                <!-- Pagination -->
+                {% if page_obj.has_other_pages %}
+                {% with query_params=request.GET.urlencode %}
+                <div class="pagination">
+                    {% if page_obj.has_previous %}
+                    <a href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ page_obj.previous_page_number }}">
+                        <i class="fas fa-angle-left"></i> Previous
+                    </a>
+                    {% endif %}
+
+                    <span class="current">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+
+                    {% if page_obj.has_next %}
+                    <a href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ page_obj.next_page_number }}">
+                        Next <i class="fas fa-angle-right"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                {% endwith %}
+                {% endif %}
 
                             </div>
 
@@ -2301,6 +2242,7 @@
 
                                     </tbody>
                                 </table>
+                        
                                 <!-- STUDENT FORM -->
                                 <div class="management-form" id="studentForm">
                                     <h3>Add New Student</h3>
@@ -2625,10 +2567,10 @@
                         .then(res => res.json())
                         .then(data => {
                             if (data.status === 'success') {
-                                alert('Certificate deleted successfully');
+                                showPopup('Certificate deleted successfully', true);
                                 location.reload();
                             } else {
-                                alert('Error deleting certificate');
+                                showPopup('Error deleting certificate', false);
                             }
                         });
                 }
@@ -3044,7 +2986,139 @@
             initializeDashboard();
             addCustomStyles();
         });
+        // Add custom styles for new elements
+        function addCustomStyles() {
+            const style = document.createElement('style');
+            style.textContent = `
+                .activity-list {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.5rem;
+                }
 
+                .activity-item {
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 1rem;
+                    padding: 1.5rem;
+                    background: linear-gradient(135deg, #fafbfc 0%, #f8fafc 100%);
+                    border-radius: var(--border-radius-sm);
+                    border: 1px solid var(--border-color);
+                    transition: var(--transition);
+                }
+
+                .activity-item:hover {
+                    transform: translateX(8px);
+                    box-shadow: var(--shadow-sm);
+                    border-color: var(--primary-color);
+                }
+
+                .activity-icon {
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-size: 1.2rem;
+                    flex-shrink: 0;
+                }
+
+                .activity-icon.primary {
+                    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+                }
+
+                .activity-icon.success {
+                    background: linear-gradient(135deg, var(--success-color), #059669);
+                }
+
+                .activity-icon.warning {
+                    background: linear-gradient(135deg, var(--warning-color), #d97706);
+                }
+
+                .activity-content h4 {
+                    margin: 0 0 0.5rem 0;
+                    font-weight: 600;
+                    color: var(--text-dark);
+                    font-size: 1rem;
+                }
+
+                .activity-content p {
+                    margin: 0 0 0.5rem 0;
+                    color: var(--text-light);
+                    font-size: 0.875rem;
+                }
+
+                .activity-time {
+                    font-size: 0.75rem;
+                    color: var(--text-muted);
+                    font-weight: 500;
+                }
+
+                .grade-badge {
+                    padding: 0.375rem 0.75rem;
+                    border-radius: var(--border-radius-lg);
+                    font-size: 0.75rem;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                }
+
+                .grade-a {
+                    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+                    color: var(--success-color);
+                    border: 1px solid rgba(16, 185, 129, 0.2);
+                }
+
+                .role-badge {
+                    padding: 0.375rem 0.75rem;
+                    border-radius: var(--border-radius-lg);
+                    font-size: 0.75rem;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                }
+
+                .role-super {
+                    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(124, 58, 237, 0.1));
+                    color: var(--secondary-color);
+                    border: 1px solid rgba(139, 92, 246, 0.2);
+                }
+
+                .role-admin {
+                    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(29, 78, 216, 0.1));
+                    color: var(--primary-color);
+                    border: 1px solid rgba(59, 130, 246, 0.2);
+                }
+
+                .dark-theme {
+                    --content-bg: #0f172a;
+                    --card-bg: #1e293b;
+                    --text-dark: #f1f5f9;
+                    --text-light: #94a3b8;
+                    --border-color: #334155;
+                    --border-hover: #475569;
+                }
+
+                .dark-theme .data-table th {
+                    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+                    color: var(--text-dark);
+                }
+
+                .dark-theme .activity-item {
+                    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+                }
+
+                .dark-theme .card-header {
+                    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+                }
+
+                .dark-theme .modal-header,
+                .dark-theme .modal-footer {
+                    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+                }
+            `;
+            document.head.appendChild(style);
+        }
         
 
         // Initialize dashboard
@@ -3702,6 +3776,7 @@
             handleAjaxFormSubmit('#studentForm', 'student');
             handleAjaxFormSubmit('#adminForm', 'admin');
         });
+        
     </script>
 </body>
 <!-- Success/Error Popup -->

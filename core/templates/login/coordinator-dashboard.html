@@ -4,14 +4,15 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <title>Pinesphere | Coordinator Dashboard</title>
     <link rel="icon" type="image/png" href="https://i.ibb.co/r2xvtYsR/logo-removebg-preview.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
     <style>
         :root {
@@ -214,6 +215,7 @@
         .logout-btn:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
+            background-color: #a71d1d;
         }
 
         .dashboard-container {
@@ -294,6 +296,7 @@
             box-shadow: var(--shadow-md);
             border: 1px solid var(--text-muted);
         }
+
         .form-card:hover {
             border: 1px solid var(--primary-color);
         }
@@ -352,7 +355,7 @@
             color: var(--content-bg);
             background: var(--sidebar-bg);
         }
-        
+
 
         .form-group input:focus,
         .form-group select:focus,
@@ -398,6 +401,7 @@
             border: 1px solid var(--border-hover);
             box-shadow: var(--shadow-sm);
         }
+
         .filter-section:hover {
             border: 1px solid var(--primary-color);
         }
@@ -420,6 +424,7 @@
             border: 1px solid var(--border-hover);
             overflow: hidden;
         }
+
         .data-section:hover {
             border: 1px solid var(--primary-color);
         }
@@ -769,7 +774,7 @@
             font-size: 0.75rem;
         }
 
-         /* Status Badges */
+        /* Status Badges */
         .status-badge {
             display: inline-flex;
             align-items: center;
@@ -787,17 +792,45 @@
             border: 1px solid rgba(16, 185, 129, 0.2);
         }
 
-select {
-    background-color: #020617;
-    border: 1px solid #ccc;
-    padding: 5px;
-    border-radius: 5px;
-}
+        .status-active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+            color: var(--success-color);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
 
-select option {
-    background-color: #0f172a;
-    color: rgb(216, 211, 211);
-}
+        .status-pending {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.1));
+            color: var(--warning-color);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .status-inactive {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+            color: var(--danger-color);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .nav-footer {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        select {
+            background-color: #020617;
+            border: 1px solid #ccc;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        select option {
+            background-color: #0f172a;
+            color: rgb(216, 211, 211);
+        }
     </style>
 </head>
 
@@ -817,7 +850,7 @@ select option {
         </div>
 
         <nav class="sidebar-nav">
-            
+
             <div class="nav-section">
                 <div class="nav-section-title">Certificates</div>
                 <a href="#" class="nav-item" id="nav-offer">
@@ -837,14 +870,23 @@ select option {
                     Student Query
                 </a>
 
-                <form id="logoutForm" method="POST" action="{% url 'logout' %}">
-                {% csrf_token %}
-                <button type="submit" class="logout-btn">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Logout
-                </button>
-            </form>
+                
             </div>
+            <br>
+            <br>
+            <br>
+            <br>
+            <div class="nav-footer">
+                    <div class="nav-section">
+                        <form id="logoutForm" method="POST" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="logout-btn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Logout
+                            </button>
+                        </form>
+                    </div>
+                </div>
         </nav>
     </div>
 
@@ -856,41 +898,13 @@ select option {
                 <i class="fas fa-bars"></i>
             </button>
             <div class="page-title">
-                <h1>Welcome back, Coordinator</h1>
+                <h1>Welcome back, {{ full_name }}</h1>
                 <p>Manage certificates and student records efficiently</p>
             </div>
-            
+
         </div>
 
         <div class="dashboard-container">
-            
-
-            <!-- Query Section -->
-            <div class="certificate-form" id="query-section">
-                <div class="form-card">
-                    <h3>
-                        <i class="fas fa-question-circle"></i>
-                        Student Queries
-                    </h3>
-                     <table class="data-table" id="queriesTable">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Student</th>
-                <th>Subject</th>
-                <th>Query</th>
-                <th>Created At</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Queries will be injected here -->
-        </tbody>
-    </table>
-                </div>
-            </div>
-            
 
             <!-- Filter Section -->
             <div class="filter-section">
@@ -904,30 +918,61 @@ select option {
                             <label>Filter by Type</label>
                             <select name="type">
                                 <option value="">All Types</option>
-                                <option value="offer" {% if request.GET.type == 'offer' %} selected {% endif %}>Offer Letter</option>
-                                <option value="completion" {% if request.GET.type == 'completion' %} selected {% endif %}>Completion Certificate</option>
+                                <option value="offer" {% if request.GET.type == 'offer' %} selected {% endif %}>Offer
+                                    Letter</option>
+                                <option value="completion" {% if request.GET.type == 'completion' %} selected {% endif %}>
+                                    Completion Certificate</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label>Student Name</label>
-                            <input type="text" name="student_name" placeholder="Search by Student Name" value="{{ request.GET.student_name }}">
+                            <input type="text" name="student_name" placeholder="Search by Student Name"
+                                value="{{ request.GET.student_name }}">
                         </div>
                         <div class="form-group">
                             <label>Course / Domain</label>
-                            <input type="text" name="course_name" placeholder="Search by Course/Domain" value="{{ request.GET.course_name }}">
+                            <input type="text" name="course_name" placeholder="Search by Course/Domain"
+                                value="{{ request.GET.course_name }}">
                         </div>
                         <div class="form-group" style="display: flex; align-items: flex-end; gap: 1rem;">
                             <button type="submit" class="btn-primary">
                                 <i class="fas fa-search"></i>
                                 Search
                             </button>
-                            <a href="{% url 'coordinator_dashboard' %}" class="btn-primary" style="text-decoration: none;">
+                            <a href="{% url 'coordinator_dashboard' %}" class="btn-primary"
+                                style="text-decoration: none;">
                                 <i class="fas fa-sync-alt"></i>
                                 Reset
                             </a>
                         </div>
                     </div>
                 </form>
+            </div>
+
+            <!-- Query Section -->
+            <div class="certificate-form" id="query-section">
+                <div class="form-card">
+                    <h3>
+                        <i class="fas fa-question-circle"></i>
+                        Student Queries
+                    </h3>
+                    <table class="data-table" id="queriesTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Student</th>
+                                <th>Subject</th>
+                                <th>Query</th>
+                                <th>Created At</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Queries will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- Completion Certificate Form -->
@@ -955,7 +1000,8 @@ select option {
                             </div>
                             <div class="form-group">
                                 <label for="completionRegisterNumber">Register Number</label>
-                                <input type="text" id="completionRegisterNumber" name="completionRegisterNumber" required>
+                                <input type="text" id="completionRegisterNumber" name="completionRegisterNumber"
+                                    required>
                             </div>
                         </div>
 
@@ -999,7 +1045,8 @@ select option {
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="completionProject">Project Name</label>
-                                <input type="text" id="completionProject" name="completionProject" placeholder="e.g., Online Portfolio System">
+                                <input type="text" id="completionProject" name="completionProject"
+                                    placeholder="e.g., Online Portfolio System">
                             </div>
                         </div>
 
@@ -1014,7 +1061,8 @@ select option {
                             </div>
                             <div class="form-group">
                                 <label for="completionDuration">Duration</label>
-                                <input type="text" id="completionDuration" name="completionDuration" placeholder="e.g., 2 weeks">
+                                <input type="text" id="completionDuration" name="completionDuration"
+                                    placeholder="e.g., 2 weeks">
                             </div>
                         </div>
 
@@ -1198,7 +1246,8 @@ select option {
                         <div class="form-group">
                             <form id="bulkOfferUploadForm" enctype="multipart/form-data">
                                 <label>Upload Offer Letters</label>
-                                <input type="file" name="csvFile" accept=".csv, .xls, .xlsx" required style="margin-bottom: 1rem;">
+                                <input type="file" name="csvFile" accept=".csv, .xls, .xlsx" required
+                                    style="margin-bottom: 1rem;">
                                 <button type="submit" class="btn-primary">
                                     <i class="fas fa-file-signature"></i>
                                     Upload Offer Letters
@@ -1208,7 +1257,8 @@ select option {
                         <div class="form-group">
                             <form id="bulkCompletionUploadForm" enctype="multipart/form-data">
                                 <label>Upload Completion Certificates</label>
-                                <input type="file" name="csvFile" accept=".csv, .xls, .xlsx" required style="margin-bottom: 1rem;">
+                                <input type="file" name="csvFile" accept=".csv, .xls, .xlsx" required
+                                    style="margin-bottom: 1rem;">
                                 <button type="submit" class="btn-primary">
                                     <i class="fas fa-award"></i>
                                     Upload Completion Certificates
@@ -1276,7 +1326,8 @@ select option {
                 {% with query_params=request.GET.urlencode %}
                 <div class="pagination">
                     {% if page_obj.has_previous %}
-                    <a href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ page_obj.previous_page_number }}">
+                    <a
+                        href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ page_obj.previous_page_number }}">
                         <i class="fas fa-angle-left"></i> Previous
                     </a>
                     {% endif %}
@@ -1296,48 +1347,48 @@ select option {
             </div>
         </div>
 
-       
+
     </div>
 
     <!-- Popup Notification -->
     <div id="popupNotification"></div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-    const tableBody = document.querySelector("#queriesTable tbody");
+        document.addEventListener("DOMContentLoaded", function () {
+            const tableBody = document.querySelector("#queriesTable tbody");
 
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== "") {
-            const cookies = document.cookie.split(";");
-            for (let cookie of cookies) {
-                cookie = cookie.trim();
-                if (cookie.startsWith(name + "=")) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== "") {
+                    const cookies = document.cookie.split(";");
+                    for (let cookie of cookies) {
+                        cookie = cookie.trim();
+                        if (cookie.startsWith(name + "=")) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
                 }
+                return cookieValue;
             }
-        }
-        return cookieValue;
-    }
-    const csrftoken = getCookie("csrftoken");
+            const csrftoken = getCookie("csrftoken");
 
-    // ✅ Format date like "Aug. 30, 2025"
-    function formatDate(isoString) {
-        const date = new Date(isoString);
-        return new Intl.DateTimeFormat("en-US", { 
-            month: "short", day: "2-digit", year: "numeric" 
-        }).format(date);
-    }
+            // ✅ Format date like "Aug. 30, 2025"
+            function formatDate(isoString) {
+                const date = new Date(isoString);
+                return new Intl.DateTimeFormat("en-US", {
+                    month: "short", day: "2-digit", year: "numeric"
+                }).format(date);
+            }
 
-    function fetchQueries() {
-        fetch("/accounts/queries/list/")
-            .then(res => res.json())
-            .then(data => {
-                tableBody.innerHTML = ""; 
-                data.queries.forEach(q => {
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
+            function fetchQueries() {
+                fetch("/accounts/queries/list/")
+                    .then(res => res.json())
+                    .then(data => {
+                        tableBody.innerHTML = "";
+                        data.queries.forEach(q => {
+                            const row = document.createElement("tr");
+                            row.innerHTML = `
                         <td>${q.id}</td>
                         <td>${q.student}</td>
                         <td>${q.subject}</td>
@@ -1353,39 +1404,39 @@ select option {
                             <button class="btn btn-danger btn-sm" onclick="deleteQuery(${q.id})"><i class="fas fa-trash"></i></button>
                         </td>
                     `;
-                    tableBody.appendChild(row);
-                });
-            })
-            .catch(err => console.error("Error fetching queries:", err));
-    }
+                            tableBody.appendChild(row);
+                        });
+                    })
+                    .catch(err => console.error("Error fetching queries:", err));
+            }
 
-    window.resolveQuery = function(id) {
-        fetch(`/accounts/queries/resolve/${id}/`, { 
-            method: "POST",
-            headers: { "X-CSRFToken": csrftoken }
-        })
-        .then(res => res.json())
-        .then(data => {
-            showPopup(data.message);
-            fetchQueries(); // ✅ Refresh table so status changes
-        });
-    };
+            window.resolveQuery = function (id) {
+                fetch(`/accounts/queries/resolve/${id}/`, {
+                    method: "POST",
+                    headers: { "X-CSRFToken": csrftoken }
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        showPopup(data.message);
+                        fetchQueries(); // ✅ Refresh table so status changes
+                    });
+            };
 
-    window.deleteQuery = function(id) {
-        fetch(`/accounts/queries/delete/${id}/`, { 
-            method: "POST",
-            headers: { "X-CSRFToken": csrftoken }
-        })
-        .then(res => res.json())
-        .then(data => {
-            showPopup(data.message);
+            window.deleteQuery = function (id) {
+                fetch(`/accounts/queries/delete/${id}/`, {
+                    method: "POST",
+                    headers: { "X-CSRFToken": csrftoken }
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        showPopup(data.message);
+                        fetchQueries();
+                    });
+            };
+
+            // Initial load
             fetchQueries();
         });
-    };
-
-    // Initial load
-    fetchQueries();
-});
 
 
         // Force reload if user navigates back to this page after logout
@@ -1518,7 +1569,7 @@ select option {
                 completionForm.style.display = 'none';
                 bulkUploadForm.style.display = 'none';
                 queryForm.style.display = 'none';
-                
+
                 // Update nav states
                 document.querySelectorAll('.nav-item').forEach(item => {
                     item.classList.remove('active');
@@ -1655,35 +1706,35 @@ select option {
                         },
                         body: formData
                     })
-                    .then(response => {
-                        if (!response.ok) throw new Error('Server error. Please check the form.');
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.status === 'success') {
-                            addCertificateToTable(
-                                data.student,
-                                data.course,
-                                data.date,
-                                data.certificate_number || 'CERT-' + Math.floor(100000 + Math.random() * 900000),
-                                type,
-                                data.download_url || ''
-                            );
-                            showPopup(data.message, true);
-                            form.reset();
-                            hideAllForms();
-                            document.querySelector('[href="#"]').classList.add('active');
+                        .then(response => {
+                            if (!response.ok) throw new Error('Server error. Please check the form.');
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.status === 'success') {
+                                addCertificateToTable(
+                                    data.student,
+                                    data.course,
+                                    data.date,
+                                    data.certificate_number || 'CERT-' + Math.floor(100000 + Math.random() * 900000),
+                                    type,
+                                    data.download_url || ''
+                                );
+                                showPopup(data.message, true);
+                                form.reset();
+                                hideAllForms();
+                                document.querySelector('[href="#"]').classList.add('active');
 
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 1500);
-                        } else {
-                            showPopup(data.message || 'Failed to generate certificate.', false);
-                        }
-                    })
-                    .catch(err => {
-                        showPopup(err.message, false);
-                    });
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 1500);
+                            } else {
+                                showPopup(data.message || 'Failed to generate certificate.', false);
+                            }
+                        })
+                        .catch(err => {
+                            showPopup(err.message, false);
+                        });
                 });
             }
 
@@ -1698,21 +1749,21 @@ select option {
                     },
                     body: formData
                 })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        showPopup(`Successfully generated ${data.created.length} offer certificates.`, true);
-                        this.reset();
-                        hideAllForms();
-                        document.querySelector('[href="#"]').classList.add('active');
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 1500);
-                    } else {
-                        showPopup(data.message || 'Bulk upload failed.', false);
-                    }
-                })
-                .catch(() => showPopup('Something went wrong!', false));
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            showPopup(`Successfully generated ${data.created.length} offer certificates.`, true);
+                            this.reset();
+                            hideAllForms();
+                            document.querySelector('[href="#"]').classList.add('active');
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1500);
+                        } else {
+                            showPopup(data.message || 'Bulk upload failed.', false);
+                        }
+                    })
+                    .catch(() => showPopup('Something went wrong!', false));
             });
 
             document.getElementById('bulkCompletionUploadForm')?.addEventListener('submit', function (e) {
@@ -1725,21 +1776,21 @@ select option {
                     },
                     body: formData
                 })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        showPopup(`Successfully generated ${data.created.length} completion certificates.`, true);
-                        this.reset();
-                        hideAllForms();
-                        document.querySelector('[href="#"]').classList.add('active');
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 1500);
-                    } else {
-                        showPopup(data.message || 'Bulk upload failed.', false);
-                    }
-                })
-                .catch(() => showPopup('Something went wrong!', false));
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            showPopup(`Successfully generated ${data.created.length} completion certificates.`, true);
+                            this.reset();
+                            hideAllForms();
+                            document.querySelector('[href="#"]').classList.add('active');
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1500);
+                        } else {
+                            showPopup(data.message || 'Bulk upload failed.', false);
+                        }
+                    })
+                    .catch(() => showPopup('Something went wrong!', false));
             });
 
             // Initialize form handlers
@@ -1749,4 +1800,5 @@ select option {
         });
     </script>
 </body>
+
 </html>

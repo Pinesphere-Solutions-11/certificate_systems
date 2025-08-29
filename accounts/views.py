@@ -456,8 +456,15 @@ def is_coordinator(user):
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @never_cache
 def coordinator_dashboard(request):
+    
+    full_name = request.session.get('full_name')
+    coordinator = Coordinator.objects.filter(full_name=full_name)
+    
     # Initial queryset: all certificates created by the logged-in coordinator
     certificates = Certificate.objects.filter(created_by=request.user).order_by('-created_at')
+    
+    offer_certificates = Certificate.objects.filter(certificate_type='offer')
+    completion_certificates = Certificate.objects.filter(certificate_type='completion')
 
     # --- Get filters from request GET parameters ---
     cert_type = request.GET.get('type', '').strip()
@@ -472,6 +479,8 @@ def coordinator_dashboard(request):
         filters &= Q(student_name__icontains=student_name)
     if course_name:
         filters &= Q(course_name__icontains=course_name)
+        
+    full_name = coordinator.full_name if coordinator.exists() else "Coordinator"
 
     # Apply all filters
     certificates = certificates.filter(filters)
@@ -486,8 +495,11 @@ def coordinator_dashboard(request):
         'certificates': page_obj,
         'page_obj': page_obj,
         'cert_type': cert_type,
+        'full_name': full_name,
         'student_name': student_name,
         'course_name': course_name,
+        'offer_certificates': offer_certificates,
+        'completion_certificates': completion_certificates,
     }
 
     return render(request, 'login/coordinator-dashboard.html', context)
@@ -502,6 +514,7 @@ def coordinator_dashboard(request):
 def student_dashboard(request):
     student_id = request.session.get('student_id')
     student_name = request.session.get('student_name')
+    
     if not student_name:
         return redirect('login', role='student')
 
@@ -511,6 +524,7 @@ def student_dashboard(request):
 
     # ✅ Use the name from the first certificate, fallback to "Student"
     student_name = certificates.first().student_name if certificates.exists() else "Student"
+    
 
     return render(request, 'student-dashboard.html', {
         'student_name': student_name,
@@ -1099,20 +1113,34 @@ def submit_query(request):
 
 
 def query_list(request):
-    queries = StudentQuery.objects.all().order_by("-created_at")
+    role = getattr(request.user, "role", None)
+
+    if role in ("admin", "coordinator"):
+        queries = StudentQuery.objects.all().order_by("-created_at")
+    else:
+        student_id = request.session.get("student_id")
+        student_name = request.session.get("student_name")
+
+        if not student_id or not student_name:
+            return JsonResponse({"queries": []})  # not logged in
+
+        queries = StudentQuery.objects.filter(
+            student_id=str(student_id).strip(),
+            student_name=str(student_name).strip()
+        ).order_by("-created_at")
+
     data = [
         {
             "id": q.id,
             "subject": q.subject,
-            "query_text": q.query,   # ✅ FIX: use q.query not q.query_text
+            "query_text": q.query,
             "resolved": q.resolved,
-            "student": q.student_name,   # ✅ FIX: use student_name instead of username
+            "student": q.student_name,
             "created_at": q.created_at.strftime("%Y-%m-%d %H:%M"),
         }
         for q in queries
     ]
     return JsonResponse({"queries": data})
-
 
 
 

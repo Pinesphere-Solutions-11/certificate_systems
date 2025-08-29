@@ -227,6 +227,7 @@
         .logout-btn:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
+            background-color: #a71d1d;
         }
 
         .dashboard-container {
@@ -655,6 +656,41 @@
             border-radius: var(--border-radius-sm);
             cursor: pointer;
         }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-lg);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+            color: var(--success-color);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .status-active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+            color: var(--success-color);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.1));
+            color: var(--warning-color);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .status-inactive {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.315));
+            color: var(--danger-color);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
     </style>
 </head>
 
@@ -757,6 +793,33 @@
                         </div>
                     </form>
                 </div>
+                <!-- Query management -->
+              <section id="query-management" class="content-section">
+  <div class="dashboard-card">
+    <div class="card-header">
+      <h3><i class="fas fa-question-circle"></i> Your Queries</h3>
+    </div>
+    <div class="card-body">
+      <div class="table-container">
+        <table class="data-table" id="queriesTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Subject</th>
+              <th>Query</th>
+              <th>Created At</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Rows will be injected by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
             </div>
 
             <!-- Certificates Table -->
@@ -815,6 +878,61 @@
     <div id="popupNotification"></div>
 
    <script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + "=")) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+const csrftoken = getCookie("csrftoken");
+
+function formatDate(isoString) {
+    const date = new Date(isoString);
+    return new Intl.DateTimeFormat("en-US", {
+        month: "short", day: "2-digit", year: "numeric"
+    }).format(date);
+}
+
+function fetchQueries() {
+    const tableBody = document.querySelector("#queriesTable tbody");
+    fetch("/accounts/queries/list/")
+        .then(res => res.json())
+        .then(data => {
+            tableBody.innerHTML = "";
+            data.queries.forEach(q => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${q.student}</td> <!-- Student column -->
+                    <td>${q.subject}</td>
+                    <td>${q.query_text}</td>
+                    <td>${formatDate(q.created_at)}</td>
+                    <td>
+                        <span class="status-badge status-active ${q.resolved ? "status-resolved" : "status-pending"}">
+                          ${q.resolved ? "Your Query has resolved" : "Pending"}
+                        </span>
+                    </td>
+                    
+                `;
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(err => console.error("Error fetching queries:", err));
+}
+
+// Initial load
+document.addEventListener("DOMContentLoaded", fetchQueries);
+
+
+
     document.addEventListener('DOMContentLoaded', function () {
         // --- Sidebar toggle ---
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
@@ -888,8 +1006,12 @@
                 try {
                     const data = JSON.parse(text);
                     showPopup(data.message, data.status === "success");
+
                     if (data.status === "success") {
                         studentQueryForm.reset();
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
                         showCertificates();
                     }
                 } catch (err) {
