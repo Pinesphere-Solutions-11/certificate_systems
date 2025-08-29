@@ -417,6 +417,9 @@ def admin_dashboard(request):
             return JsonResponse({'status': 'error', 'message': form.errors.as_json()}, status=400)
 
     context = {
+        "completion_certificates": page_obj.object_list,  # only current page records
+        "offer_certificates": page_obj.object_list,
+        "page_obj": page_obj,
         'certificates': page_obj,
         'page_obj': page_obj,
         'cert_type': cert_type,

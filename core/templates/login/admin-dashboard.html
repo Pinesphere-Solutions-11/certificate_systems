@@ -1798,9 +1798,14 @@
                                         </tr>
                                         {% endfor %}
                                     </tbody>
-                                </table>
-                                <!-- Pagination -->
-                {% if page_obj.has_other_pages %}
+                                  
+                                </table>             
+
+                            </div>
+
+                        </div>
+                          <!-- Pagination -->
+                                     {% if page_obj.has_other_pages %}
                 {% with query_params=request.GET.urlencode %}
                 <div class="pagination">
                     {% if page_obj.has_previous %}
@@ -1821,10 +1826,6 @@
                 </div>
                 {% endwith %}
                 {% endif %}
-
-                            </div>
-
-                        </div>
                     </div>
                     <!-- Completion Certificate Form -->
                     <div class="certificate-form" id="completionForm">
