@@ -246,10 +246,15 @@ def login_view(request, role):
 @never_cache
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def logout_view(request):
-    logout(request)  # Clears Django session & user data
-    request.session.flush()  # Extra precaution: remove all session data
-    response = redirect('index')  # Redirect to home page
-    response.delete_cookie('sessionid')  # Delete session cookie explicitly
+    # Kill session & logout
+    logout(request)
+    request.session.flush()  # double ensure session data is removed
+
+    # Redirect to home (or login page if you want)
+    response = redirect('index')
+
+    # Remove session cookie
+    response.delete_cookie('sessionid')
     return response
 
 
@@ -292,7 +297,7 @@ from accounts.models import Certificate, Student, Coordinator, AdminUser, User
 
 
 
-@login_required
+@login_required(login_url="index")
 @user_passes_test(is_admin)
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @never_cache

@@ -620,7 +620,13 @@
       });
     });
 
-    
+     if (!window.history.replaceState) {
+        window.history.forward();  // Old fallback
+      }
+      window.history.replaceState(null, "", window.location.href);
+      window.onpopstate = function () {
+          window.history.go(1);  // Prevents back navigation
+      };
   </script>
 </body>
 

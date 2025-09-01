@@ -52,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "core.middleware.NoCacheMiddleware",
 ]
 
 ROOT_URLCONF = 'certificate_system.urls'
@@ -74,7 +75,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'certificate_system.wsgi.application'
 
-SESSION_COOKIE_AGE = 1800
+SESSION_COOKIE_AGE =  60 * 30
 
 CSRF_COOKIE_SECURE = True
 
@@ -83,6 +84,8 @@ SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+SESSION_SAVE_EVERY_REQUEST = False
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -148,7 +151,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 AUTH_USER_MODEL = 'accounts.User'
 
-LOGIN_URL = '/accounts/login/coordinator/'
+LOGIN_URL = '/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

@@ -728,12 +728,11 @@
             <div class="nav-footer">
                 <div class="nav-section">
                     <form id="logoutForm" method="POST" action="{% url 'logout' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="logout-btn">
-                            <i class="fas fa-sign-out-alt"></i>
-                            Logout
-                        </button>
-                    </form>
+                    {% csrf_token %}
+                    <button type="submit" class="menu-item action-btn logout-btn" style="padding: 1rem 1.75rem;">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </form>
                 </div>
             </div>
         </nav>
