@@ -360,7 +360,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            
+
 
         }
 
@@ -469,7 +469,7 @@
             width: 100%;
             border-collapse: collapse;
             background: var(--text-dark);
-            color:var(--content-bg);
+            color: var(--content-bg);
         }
 
         .data-table th,
@@ -499,7 +499,7 @@
             background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
             transform: scale(1.01);
         }
-        
+
         /* Status Badges */
         .status-badge {
             display: inline-flex;
@@ -1313,7 +1313,7 @@
             padding: 0.75rem 1.5rem;
             border: 2px solid var(--border-color);
             background: transparent;
-            color: var(--content-bg);
+            color: white;
             border-radius: var(--border-radius-sm);
             font-weight: 600;
             cursor: pointer;
@@ -1329,37 +1329,39 @@
             border-color: var(--danger-color);
             transform: translateY(-2px);
         }
+
         #certificate-upload-section {
-        display: flex ;
-        flex-direction: column ;
-        gap: 8px;  
-        max-width: 600px;
-        margin: 0 auto;
-        align-items: center !important;
-    }
-    
-    #certificate-upload-section h3 {
-        text-align: center;
-        margin-bottom: 10px;
-    }
-    
-    .upload-form .form-row {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-    }
-    
-    .upload-form .form-row input[type="file"] {
-        flex-grow: 1;
-    }
-    
-    #bulk-uploads .action-btn {
-        white-space: nowrap;
-        max-width: 200px;
-        padding: 8px;
-       
-    }
-    /* Pagination */
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-width: 600px;
+            margin: 0 auto;
+            align-items: center !important;
+        }
+
+        #certificate-upload-section h3 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .upload-form .form-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .upload-form .form-row input[type="file"] {
+            flex-grow: 1;
+        }
+
+        #bulk-uploads .action-btn {
+            white-space: nowrap;
+            max-width: 200px;
+            padding: 8px;
+
+        }
+
+        /* Pagination */
         .pagination {
             display: flex;
             justify-content: center;
@@ -1397,8 +1399,6 @@
             border-color: var(--primary-color);
             font-weight: 600;
         }
-
-
     </style>
 </head>
 
@@ -1615,7 +1615,7 @@
                                         {% endfor %}
                                         {% endif %}
                                     </tbody>
-                                   
+
                                 </table>
 
                                 <!-- Offer Letter Form -->
@@ -1682,8 +1682,19 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="offerCourseName">Domain</label>
-                                                    <input type="text" id="offerCourseName" name="offerCourseName"
+                                                    <select type="text" id="offerCourseName" name="offerCourseName"
                                                         required>
+                                                        <option value="">Select Course</option>
+                                                        <option value="Python Full Stack Development">Python Full Stack
+                                                            Development</option>
+                                                        <option value="Generative AI">Generative AI</option>
+                                                        <option value="Java Full Stack Development">Java Full Stack
+                                                            Development</option>
+                                                        <option value="Frontend Development">Frontend Development
+                                                        </option>
+                                                        <option value="Backend Development">Backend Development</option>
+                                                        <option value="UI/UX">UI/UX</option>
+                                                    </select>
                                                 </div>
                                             </div>
 
@@ -1798,13 +1809,13 @@
                                         </tr>
                                         {% endfor %}
                                     </tbody>
-                                  
-                                </table>             
+
+                                </table>
 
                             </div>
 
                         </div>
-                          <!-- Pagination -->
+                        <!-- Pagination
                                      {% if page_obj.has_other_pages %}
                 {% with query_params=request.GET.urlencode %}
                 <div class="pagination">
@@ -1825,7 +1836,7 @@
                     {% endif %}
                 </div>
                 {% endwith %}
-                {% endif %}
+                {% endif %} -->
                     </div>
                     <!-- Completion Certificate Form -->
                     <div class="certificate-form" id="completionForm">
@@ -1891,8 +1902,18 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="completionCourseName">Course/Domain</label>
-                                        <input type="text" id="completionCourseName" name="completionCourseName"
+                                        <select type="text" id="completionCourseName" name="completionCourseName"
                                             required>
+                                            <option value="">Select Course</option>
+                                            <option value="Python Full Stack Development">Python Full Stack Development
+                                            </option>
+                                            <option value="Generative AI">Generative AI</option>
+                                            <option value="Java Full Stack Development">Java Full Stack Development
+                                            </option>
+                                            <option value="Frontend Development">Frontend Development</option>
+                                            <option value="Backend Development">Backend Development</option>
+                                            <option value="UI/UX">UI/UX</option>
+                                        </select>
                                     </div>
                                 </div>
 
@@ -1956,36 +1977,37 @@
                     </div>
                 </section>
 
-<!-- Bulk upload Management -->
+                <!-- Bulk upload Management -->
                 <section id="bulk-uploads" class="content-section">
                     <div class="dashboard-card">
                         <div class="card-header">
                             <h3><i class="fas fa-cloud-upload-alt"></i> Bulk Uploads</h3>
-                          
-      
+
+
                         </div>
                         <div class="card-body">
                             <div class="table-container">
                                 <table class="data-table">
-                                    
-                                            <!--Bulk Generation-->
-                                         <div class="certificate-form" id="bulkUploadForm" style="display: none;">
-            <div class="data-section">
-                <h3>Bulk Upload Certificates</h3>
-                <form id="bulkOfferUploadForm" enctype="multipart/form-data">
-                    <input type="file" name="csvFile" accept=".csv, .xls, .xlsx" required>
-                    <button type="submit" class="action-btn">Upload Offer Letters</button>
-                </form>
-                <br>
-                <form id="bulkCompletionUploadForm" enctype="multipart/form-data">
-                    <input type="file" name="csvFile" accept=".csv, .xls, .xlsx" required>
-                    <button type="submit" class="action-btn">Upload Completion Certificates</button>
-                </form>
-            </div>
-        </div>
-                                    
+
+                                    <!--Bulk Generation-->
+                                    <div class="certificate-form" id="bulkUploadForm" style="display: none;">
+                                        <div class="data-section">
+                                            <h3>Bulk Upload Certificates</h3>
+                                            <form id="bulkOfferUploadForm" enctype="multipart/form-data">
+                                                <input type="file" name="csvFile" accept=".csv, .xls, .xlsx" required>
+                                                <button type="submit" class="action-btn">Upload Offer Letters</button>
+                                            </form>
+                                            <br>
+                                            <form id="bulkCompletionUploadForm" enctype="multipart/form-data">
+                                                <input type="file" name="csvFile" accept=".csv, .xls, .xlsx" required>
+                                                <button type="submit" class="action-btn">Upload Completion
+                                                    Certificates</button>
+                                            </form>
+                                        </div>
+                                    </div>
+
                                 </table>
-                               
+
                             </div>
                         </div>
                     </div>
@@ -2243,7 +2265,7 @@
 
                                     </tbody>
                                 </table>
-                        
+
                                 <!-- STUDENT FORM -->
                                 <div class="management-form" id="studentForm">
                                     <h3>Add New Student</h3>
@@ -2301,33 +2323,33 @@
 
                 </section>
                 <!-- Query management -->
-              <section id="query-management" class="content-section">
-  <div class="dashboard-card">
-    <div class="card-header">
-      <h3><i class="fas fa-question-circle"></i> Student Queries</h3>
-    </div>
-    <div class="card-body">
-      <div class="table-container">
-        <table class="data-table" id="queriesTable">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Student</th>
-              <th>Subject</th>
-              <th>Query</th>
-              <th>Created At</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Rows will be injected by JS -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</section>
+                <section id="query-management" class="content-section">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-question-circle"></i> Student Queries</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table class="data-table" id="queriesTable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Student</th>
+                                            <th>Subject</th>
+                                            <th>Query</th>
+                                            <th>Created At</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Rows will be injected by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
             </div>
         </main>
@@ -2336,41 +2358,41 @@
 
 
     <script>
-   document.addEventListener("DOMContentLoaded", function() {
-    const tableBody = document.querySelector("#queriesTable tbody");
+        document.addEventListener("DOMContentLoaded", function () {
+            const tableBody = document.querySelector("#queriesTable tbody");
 
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== "") {
-            const cookies = document.cookie.split(";");
-            for (let cookie of cookies) {
-                cookie = cookie.trim();
-                if (cookie.startsWith(name + "=")) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== "") {
+                    const cookies = document.cookie.split(";");
+                    for (let cookie of cookies) {
+                        cookie = cookie.trim();
+                        if (cookie.startsWith(name + "=")) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
                 }
+                return cookieValue;
             }
-        }
-        return cookieValue;
-    }
-    const csrftoken = getCookie("csrftoken");
+            const csrftoken = getCookie("csrftoken");
 
-    // ✅ Format date like "Aug. 30, 2025"
-    function formatDate(isoString) {
-        const date = new Date(isoString);
-        return new Intl.DateTimeFormat("en-US", { 
-            month: "short", day: "2-digit", year: "numeric" 
-        }).format(date);
-    }
+            // ✅ Format date like "Aug. 30, 2025"
+            function formatDate(isoString) {
+                const date = new Date(isoString);
+                return new Intl.DateTimeFormat("en-US", {
+                    month: "short", day: "2-digit", year: "numeric"
+                }).format(date);
+            }
 
-    function fetchQueries() {
-        fetch("/accounts/queries/list/")
-            .then(res => res.json())
-            .then(data => {
-                tableBody.innerHTML = ""; 
-                data.queries.forEach(q => {
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
+            function fetchQueries() {
+                fetch("/accounts/queries/list/")
+                    .then(res => res.json())
+                    .then(data => {
+                        tableBody.innerHTML = "";
+                        data.queries.forEach(q => {
+                            const row = document.createElement("tr");
+                            row.innerHTML = `
                         <td>${q.id}</td>
                         <td>${q.student}</td>
                         <td>${q.subject}</td>
@@ -2386,39 +2408,39 @@
                             <button class="btn btn-danger btn-sm" onclick="deleteQuery(${q.id})"><i class="fas fa-trash"></i></button>
                         </td>
                     `;
-                    tableBody.appendChild(row);
-                });
-            })
-            .catch(err => console.error("Error fetching queries:", err));
-    }
+                            tableBody.appendChild(row);
+                        });
+                    })
+                    .catch(err => console.error("Error fetching queries:", err));
+            }
 
-    window.resolveQuery = function(id) {
-        fetch(`/accounts/queries/resolve/${id}/`, { 
-            method: "POST",
-            headers: { "X-CSRFToken": csrftoken }
-        })
-        .then(res => res.json())
-        .then(data => {
-            showPopup(data.message);
-            fetchQueries(); // ✅ Refresh table so status changes
-        });
-    };
+            window.resolveQuery = function (id) {
+                fetch(`/accounts/queries/resolve/${id}/`, {
+                    method: "POST",
+                    headers: { "X-CSRFToken": csrftoken }
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        showPopup(data.message);
+                        fetchQueries(); // ✅ Refresh table so status changes
+                    });
+            };
 
-    window.deleteQuery = function(id) {
-        fetch(`/accounts/queries/delete/${id}/`, { 
-            method: "POST",
-            headers: { "X-CSRFToken": csrftoken }
-        })
-        .then(res => res.json())
-        .then(data => {
-            showPopup(data.message);
+            window.deleteQuery = function (id) {
+                fetch(`/accounts/queries/delete/${id}/`, {
+                    method: "POST",
+                    headers: { "X-CSRFToken": csrftoken }
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        showPopup(data.message);
+                        fetchQueries();
+                    });
+            };
+
+            // Initial load
             fetchQueries();
         });
-    };
-
-    // Initial load
-    fetchQueries();
-});
 
 
 
@@ -2763,154 +2785,154 @@
             }
 
             function handleCertificateSubmit(formId, url, type) {
-    const form = document.getElementById(formId);
-    if (!form) return;
+                const form = document.getElementById(formId);
+                if (!form) return;
 
-    // Hook up date constraints once per form
-    if (!form.dataset.dateBound) {
-        const startInput = form.querySelector('[name$="StartDate"], [name="start_date"]');
-        const endInput   = form.querySelector('[name$="EndDate"],   [name="end_date"]');
-        const issueInput = form.querySelector('[name$="IssueDate"], [name="issue_date"]');
+                // Hook up date constraints once per form
+                if (!form.dataset.dateBound) {
+                    const startInput = form.querySelector('[name$="StartDate"], [name="start_date"]');
+                    const endInput = form.querySelector('[name$="EndDate"],   [name="end_date"]');
+                    const issueInput = form.querySelector('[name$="IssueDate"], [name="issue_date"]');
 
-        const applyMins = () => {
-            if (startInput && startInput.value) {
-                if (endInput)   endInput.min   = startInput.value;
-                if (issueInput) issueInput.min = startInput.value;
-            }
-        };
+                    const applyMins = () => {
+                        if (startInput && startInput.value) {
+                            if (endInput) endInput.min = startInput.value;
+                            if (issueInput) issueInput.min = startInput.value;
+                        }
+                    };
 
-        // When start changes, push mins forward and clear invalid picks
-        if (startInput) {
-            startInput.addEventListener('change', () => {
-                applyMins();
-                if (endInput && endInput.value && endInput.value < startInput.value) endInput.value = '';
-                if (issueInput && issueInput.value && issueInput.value < startInput.value) issueInput.value = '';
-            });
-        }
+                    // When start changes, push mins forward and clear invalid picks
+                    if (startInput) {
+                        startInput.addEventListener('change', () => {
+                            applyMins();
+                            if (endInput && endInput.value && endInput.value < startInput.value) endInput.value = '';
+                            if (issueInput && issueInput.value && issueInput.value < startInput.value) issueInput.value = '';
+                        });
+                    }
 
-        // Guard: end must be >= start
-        if (endInput && startInput) {
-            endInput.addEventListener('change', () => {
-                if (endInput.value && endInput.value < startInput.value) {
-                    alert('End date must be on or after Start date.');
-                    endInput.value = '';
+                    // Guard: end must be >= start
+                    if (endInput && startInput) {
+                        endInput.addEventListener('change', () => {
+                            if (endInput.value && endInput.value < startInput.value) {
+                                alert('End date must be on or after Start date.');
+                                endInput.value = '';
+                            }
+                        });
+                    }
+
+                    // Guard: issue must be >= start
+                    if (issueInput && startInput) {
+                        issueInput.addEventListener('change', () => {
+                            if (issueInput.value && issueInput.value < startInput.value) {
+                                alert('Issue date must be on or after Start date.');
+                                issueInput.value = '';
+                            }
+                        });
+                    }
+
+                    // Apply mins on initial load if a start date is prefilled
+                    applyMins();
+                    form.dataset.dateBound = '1';
                 }
-            });
-        }
 
-        // Guard: issue must be >= start
-        if (issueInput && startInput) {
-            issueInput.addEventListener('change', () => {
-                if (issueInput.value && issueInput.value < startInput.value) {
-                    alert('Issue date must be on or after Start date.');
-                    issueInput.value = '';
-                }
-            });
-        }
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const formData = new FormData(form);
 
-        // Apply mins on initial load if a start date is prefilled
-        applyMins();
-        form.dataset.dateBound = '1';
-    }
+                    // Common validation rules
+                    const alphaRegex = /^[A-Za-z\s]+$/;       // Letters + spaces
+                    const domainRegex = /^[A-Za-z0-9\s.,-]+$/; // Letters, numbers, spaces, dots, commas, hyphens
 
-    form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const formData = new FormData(form);
+                    // 1) Student Name Validation
+                    const nameInput = form.querySelector('[name$="StudentName"], [name="student_name"]');
+                    if (nameInput) {
+                        const value = nameInput.value.trim();
+                        if (!alphaRegex.test(value)) {
+                            showPopup('Only letters and spaces allowed in student name.', false);
+                            return;
+                        }
+                    }
 
-        // Common validation rules
-        const alphaRegex  = /^[A-Za-z\s]+$/;       // Letters + spaces
-        const domainRegex = /^[A-Za-z0-9\s.,-]+$/; // Letters, numbers, spaces, dots, commas, hyphens
+                    // 2) Location Validation
+                    const locationInput = form.querySelector('[name$="Location"], [name="location"]');
+                    if (locationInput) {
+                        const value = locationInput.value.trim();
+                        if (value && !alphaRegex.test(value)) {
+                            showPopup('Only letters and spaces allowed in location field.', false);
+                            return;
+                        }
+                    }
 
-        // 1) Student Name Validation
-        const nameInput = form.querySelector('[name$="StudentName"], [name="student_name"]');
-        if (nameInput) {
-            const value = nameInput.value.trim();
-            if (!alphaRegex.test(value)) {
-                showPopup('Only letters and spaces allowed in student name.', false);
-                return;
-            }
-        }
+                    // 3) Department Validation (support both your old and new names)
+                    const departmentInput = form.querySelector('[name$="Department"], [name="student_department"], [name="department"]');
+                    if (departmentInput) {
+                        const value = departmentInput.value.trim();
+                        if (!alphaRegex.test(value)) {
+                            showPopup('Only letters and spaces allowed in department field.', false);
+                            return;
+                        }
+                    }
 
-        // 2) Location Validation
-        const locationInput = form.querySelector('[name$="Location"], [name="location"]');
-        if (locationInput) {
-            const value = locationInput.value.trim();
-            if (value && !alphaRegex.test(value)) {
-                showPopup('Only letters and spaces allowed in location field.', false);
-                return;
-            }
-        }
+                    // NEW: Date validations before submit
+                    const startInput = form.querySelector('[name$="StartDate"], [name="start_date"]');
+                    const endInput = form.querySelector('[name$="EndDate"],   [name="end_date"]');
+                    const issueInput = form.querySelector('[name$="IssueDate"], [name="issue_date"]');
 
-        // 3) Department Validation (support both your old and new names)
-        const departmentInput = form.querySelector('[name$="Department"], [name="student_department"], [name="department"]');
-        if (departmentInput) {
-            const value = departmentInput.value.trim();
-            if (!alphaRegex.test(value)) {
-                showPopup('Only letters and spaces allowed in department field.', false);
-                return;
-            }
-        }
+                    if (startInput && endInput) {
+                        if (endInput.value && endInput.value < startInput.value) {
+                            showPopup('End date must be on or after Start date.', false);
+                            return;
+                        }
+                    }
+                    if (startInput && issueInput) {
+                        if (issueInput.value && issueInput.value < startInput.value) {
+                            showPopup('Issue date must be on or after Start date.', false);
+                            return;
+                        }
+                    }
 
-        // NEW: Date validations before submit
-        const startInput = form.querySelector('[name$="StartDate"], [name="start_date"]');
-        const endInput   = form.querySelector('[name$="EndDate"],   [name="end_date"]');
-        const issueInput = form.querySelector('[name$="IssueDate"], [name="issue_date"]');
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken'),
+                            'X-Requested-With': 'XMLHttpRequest' // helps Django know it’s AJAX
+                        },
+                        body: formData
+                    })
+                        .then(response => {
+                            if (!response.ok) throw new Error('Server error. Please check the form.');
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.status === 'success') {
+                                addCertificateToTable(
+                                    data.student,
+                                    data.course,
+                                    data.date,
+                                    data.certificate_number || 'CERT-' + Math.floor(100000 + Math.random() * 900000),
+                                    type,
+                                    data.download_url || ''
+                                );
+                                showPopup(data.message, true);
+                                form.reset();
+                                hideAllForms();
 
-        if (startInput && endInput) {
-            if (endInput.value && endInput.value < startInput.value) {
-                showPopup('End date must be on or after Start date.', false);
-                return;
-            }
-        }
-        if (startInput && issueInput) {
-            if (issueInput.value && issueInput.value < startInput.value) {
-                showPopup('Issue date must be on or after Start date.', false);
-                return;
-            }
-        }
+                                document.querySelectorAll('.signature-preview').forEach(el => {
+                                    el.style.display = 'none';
+                                });
 
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'X-Requested-With': 'XMLHttpRequest' // helps Django know it’s AJAX
-            },
-            body: formData
-        })
-        .then(response => {
-            if (!response.ok) throw new Error('Server error. Please check the form.');
-            return response.json();
-        })
-        .then(data => {
-            if (data.status === 'success') {
-                addCertificateToTable(
-                    data.student,
-                    data.course,
-                    data.date,
-                    data.certificate_number || 'CERT-' + Math.floor(100000 + Math.random() * 900000),
-                    type,
-                    data.download_url || ''
-                );
-                showPopup(data.message, true);
-                form.reset();
-                hideAllForms();
-
-                document.querySelectorAll('.signature-preview').forEach(el => {
-                    el.style.display = 'none';
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 1500);
+                            } else {
+                                showPopup(data.message || 'Failed to generate certificate.', false);
+                            }
+                        })
+                        .catch(err => {
+                            showPopup(err.message, false);
+                        });
                 });
-
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1500);
-            } else {
-                showPopup(data.message || 'Failed to generate certificate.', false);
             }
-        })
-        .catch(err => {
-            showPopup(err.message, false);
-        });
-    });
-}
 
             document.getElementById('bulkOfferUploadForm')?.addEventListener('submit', function (e) {
                 e.preventDefault();
@@ -3120,7 +3142,7 @@
             `;
             document.head.appendChild(style);
         }
-        
+
 
         // Initialize dashboard
         function initializeDashboard() {
@@ -3246,7 +3268,7 @@
             showAlert(`Downloading ${type} certificate ID: ${id}`, 'success');
         }
 
-        
+
 
         function addCertificate(type) {
             const fields = type === 'internship' ? [
@@ -3777,7 +3799,7 @@
             handleAjaxFormSubmit('#studentForm', 'student');
             handleAjaxFormSubmit('#adminForm', 'admin');
         });
-        
+
     </script>
 </body>
 <!-- Success/Error Popup -->

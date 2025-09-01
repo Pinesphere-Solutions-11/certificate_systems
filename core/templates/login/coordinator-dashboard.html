@@ -1038,8 +1038,17 @@
                             </div>
                             <div class="form-group">
                                 <label for="completionCourseName">Course/Domain</label>
-                                <input type="text" id="completionCourseName" name="completionCourseName" required>
+                                <select type="text" id="completionCourseName" name="completionCourseName" required>
+                                    <option value="">Select Course</option>
+                                    <option value="Python Full Stack Development">Python Full Stack Development</option>
+                                    <option value="Generative AI">Generative AI</option>
+                                    <option value="Java Full Stack Development">Java Full Stack Development</option>
+                                    <option value="Frontend Development">Frontend Development</option>
+                                    <option value="Backend Development">Backend Development</option>
+                                    <option value="UI/UX">UI/UX</option>
+                                </select>
                             </div>
+                            
                         </div>
 
                         <div class="form-row">
@@ -1048,8 +1057,10 @@
                                 <input type="text" id="completionProject" name="completionProject"
                                     placeholder="e.g., Online Portfolio System">
                             </div>
+                                                        
                         </div>
 
+                        
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="completionStartDate">Start Date</label>
@@ -1065,6 +1076,7 @@
                                     placeholder="e.g., 2 weeks">
                             </div>
                         </div>
+                        
 
                         <div class="form-row">
                             <div class="form-group">
@@ -1153,7 +1165,19 @@
                             </div>
                             <div class="form-group">
                                 <label for="offerCourseName">Domain</label>
-                                <input type="text" id="offerCourseName" name="offerCourseName" required>
+                                <select type="text" id="offerCourseName" name="offerCourseName"
+                                required>
+                                    <option value="">Select Course</option>
+                                    <option value="Python Full Stack Development">Python Full Stack
+                                        Development</option>
+                                    <option value="Generative AI">Generative AI</option>
+                                    <option value="Java Full Stack Development">Java Full Stack
+                                        Development</option>
+                                    <option value="Frontend Development">Frontend Development
+                                    </option>
+                                    <option value="Backend Development">Backend Development</option>
+                                    <option value="UI/UX">UI/UX</option>
+                            </select>
                             </div>
                         </div>
 
@@ -1455,41 +1479,50 @@
         const departmentData = {
             "B.E": [
                 "Computer Science and Engineering", "AI & DS",
-                "Mechanical Engineering", "Electrical Engineering",
-                "Civil Engineering", "Electronics and Communication",
-                "Electronics and Instrumentation Engineering",
-                "Mechatronics", "Automobile Engineering",
-                "Robotics and Automation", "Aeronautical Engineering",
-                "Marine Engineering", "Mining Engineering",
-                "Production Engineering", "Biomedical Engineering"
+                "Mechanical Engineering",
+                "Electrical Engineering",
+                "Civil Engineering",
+                "Electronics and Communication Engineering",
+                "Mechatronics",
+                "Automobile Engineering",
+                "Aeronautical Engineering"
             ],
             "B.Tech": [
-                "Information Technology", "AI & DS", "Biotechnology",
-                "Chemical Engineering", "Food Technology",
-                "Petroleum Engineering", "Textile Technology",
-                "Agricultural Engineering", "Nanotechnology",
-                "Cyber Security", "Data Science",
+                "Information Technology",
+                "AI & DS",
+                "Biotechnology",
+                "Petroleum Engineering",
+                "Cyber Security",
+                "Data Science",
                 "Artificial Intelligence and Machine Learning"
             ],
             "B.Sc": [
-                "Computer Science", "Mathematics", "Physics",
-                "Chemistry", "Biochemistry", "Botany", "Zoology",
-                "Microbiology", "Biotechnology", "Information Technology", "Electronics"
+                "Computer Science",
+                "Mathematics",
+                "Physics",
+                "Chemistry",
+                "Information Technology"
             ],
             "B.A": [
-                "English Literature", "History", "Economics",
-                "Sociology", "Political Science", "Psychology",
-                "Tamil Literature", "Public Administration",
-                "Philosophy", "Visual Communication",
-                "Journalism and Mass Communication"
+                "English Literature",
+                "History",
+                "Economics",
+                "Sociology",
+                "Political Science",
+                "Tamil Literature"
             ],
             "MBA": [
-                "Finance", "Marketing", "Human Resource Management",
-                "Operations Management", "International Business"
+                "Finance",
+                "Marketing",
+                "Human Resource Management",
+                "Operations Management",
+                "International Business"
             ],
             "Diploma": [
-                "Computer Engineering", "Mechanical Engineering",
-                "Civil Engineering", "Electrical and Electronics Engineering",
+                "Computer Engineering",
+                "Mechanical Engineering",
+                "Civil Engineering",
+                "Electrical and Electronics Engineering",
                 "Electronics and Communication Engineering"
             ]
         };

@@ -5,6 +5,8 @@ from django.conf import settings
 import qrcode
 from io import BytesIO
 from django.core.files import File
+import random
+import string
 
 class User(AbstractUser):
     ROLE_CHOICES = (
@@ -102,28 +104,25 @@ class Certificate(models.Model):
                 num = 1
             self.certificate_number = f"PS{num:03d}"
 
+        # ✅ Generate 16-char credential ID (PS + 14 random mixed-case alphanumeric)
         if not self.credential_id:
-            self.credential_id = uuid.uuid4().hex[:16]
+            prefix = "PS"
+            chars = string.ascii_letters + string.digits   # A-Z + a-z + 0-9
+            random_part = ''.join(random.choices(chars, k=14))
+            self.credential_id = prefix + random_part   # Example: "PSa9KX7LmN2Q8rT"
 
-        # --- Build QR content with student details ---
-        qr_data = {
-            "credential_id": self.credential_id,
-            "certificate_number": self.certificate_number,
-            "student_name": self.student_name,
-            "student_id": self.student_id,
-            "course_name": self.course_name,
-            "certificate_type": self.certificate_type,
-            "issue_date": self.issue_date.strftime("%Y-%m-%d") if self.issue_date else None,
-        }
+        # --- Build QR verification URL ---
+        verify_url = f"http://127.0.0.1:8000/verify/?id={self.credential_id}"
 
         qr = qrcode.QRCode(box_size=6, border=2)
-        qr.add_data(json.dumps(qr_data))   # Encode details as JSON
+        qr.add_data(verify_url)   # ✅ direct verification link
         qr.make(fit=True)
         img = qr.make_image(fill='black', back_color='white')
 
         buffer = BytesIO()
         img.save(buffer, format='PNG')
         self.qr_code_path.save(f"{self.certificate_number}_qr.png", File(buffer), save=False)
+
 
         super().save(*args, **kwargs)
 
