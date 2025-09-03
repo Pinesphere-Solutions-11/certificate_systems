@@ -13,7 +13,7 @@ from django.core.files.base import File
 from django.conf import settings
 from datetime import datetime
 from .forms import CoordinatorForm, StudentForm, AdminUserForm
-from .models import ContactMessage, Certificate, Coordinator, Student, User
+from .models import ContactMessage, Certificate, Coordinator, Student, TemplateSetting, User
 from datetime import datetime
 from django.http import JsonResponse
 from .models import Certificate
@@ -33,7 +33,7 @@ from django.views.decorators.cache import cache_control, never_cache
 from dateutil import parser
 import pandas as pd
 import io
-
+from .utils import get_template_for_certificate
 # Function for admin only login
 def is_admin(user):
     return user.is_authenticated and user.role == 'admin'
@@ -303,7 +303,7 @@ from accounts.models import Certificate, Student, Coordinator, AdminUser, User
 @never_cache
 def admin_dashboard(request):
     
-    certificates = Certificate.objects.all().order_by('-created_at')
+    certificates = Certificate.objects.all().order_by('id')
     
     admins = AdminUser.objects.select_related('user').all()
     coordinators = Coordinator.objects.select_related('user').all()
@@ -681,6 +681,7 @@ def create_completion_certificate(request):
 
         cert = Certificate(
             certificate_type='completion',
+            template_choice=data.get('completionTemplate', 'default'),  # ✅ save selection
             title=data.get('completionTitle'),
             student_name=data.get('completionStudentName'),
             student_id=data.get('completionRegisterNumber'),
@@ -700,8 +701,8 @@ def create_completion_certificate(request):
         )
         cert.save()
 
-        # ONLY pass the default template name
-        generate_certificate_pdf(cert, 'login/internship_completion.html')
+        template_name = get_template_for_certificate("completion")
+        generate_certificate_pdf(cert, template_name)
 
         return JsonResponse({
             'status': 'success',
@@ -817,13 +818,31 @@ def bulk_completion_upload(request):
                 director_name=row['Director Name'],
                 created_by=request.user
             )
-            generate_certificate_pdf(cert, 'login/internship_completion.html')
+            template_name = get_template_for_certificate("completion")
+            generate_certificate_pdf(cert, template_name)
             created.append(cert.pk)
 
         return JsonResponse({'status': 'success', 'created': created}, status=200)
 
     return JsonResponse({'status': 'error', 'message': 'CSV/Excel file not found'}, status=400)
 
+# views.py
+@csrf_exempt
+@login_required
+@user_passes_test(is_admin)  # only admins allowed
+def save_template_choice(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        cert_type = data.get("certificate_type")
+        template = data.get("selected_template")
+
+        obj, _ = TemplateSetting.objects.update_or_create(
+            certificate_type=cert_type,
+            defaults={"selected_template": template}
+        )
+        return JsonResponse({"status": "success", "selected": obj.selected_template})
+
+    return JsonResponse({"status": "error"}, status=400)
 
 
 def download_certificate(request, cert_id):

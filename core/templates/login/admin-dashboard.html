@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -1399,6 +1401,232 @@
             border-color: var(--primary-color);
             font-weight: 600;
         }
+        /* Template Preview Styles */
+.template-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.template-card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    border: 2px solid var(--border-color);
+    transition: var(--transition);
+    overflow: hidden;
+    position: relative;
+}
+
+.template-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+}
+
+.template-card.selected {
+    border-color: var(--success-color);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.template-preview {
+    position: relative;
+    height: 250px;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    overflow: hidden;
+}
+
+.img-preview {
+    width: 100%;
+    height: 100%; 
+    object-fit: contain;  /* keeps aspect ratio */
+    display: block;       /* ensure images show */
+    background: white;
+    border: none;
+}
+/* put this once, after other CSS */
+.template-preview { position: relative; height: 250px; overflow: hidden; }
+.img-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;   /* keeps aspect ratio */
+  display: block;        /* make sure it's visible */
+  background: #fff;
+  border: none;
+}
+
+
+.template-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    color: var(--text-dark);
+}
+
+.template-icon {
+    font-size: 4rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    opacity: 0.8;
+}
+
+.template-overlay p {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-light);
+}
+
+.template-info {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.template-info h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.template-info p {
+    margin: 0;
+    color: var(--text-light);
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+.select-btn {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    background: linear-gradient(135deg, var(--success-color), #059669);
+    color: white;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.select-btn:hover {
+    background: linear-gradient(135deg, #059669, #047857);
+    transform: translateY(-2px);
+}
+
+.select-btn.selected {
+    background: linear-gradient(135deg, var(--danger-color), #dc2626);
+}
+
+.select-btn.selected:hover {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+}
+
+.selected-template-info {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+    border-radius: var(--border-radius-sm);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.selected-template-info .alert {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+}
+
+.selected-template-info i {
+    color: var(--success-color);
+    font-size: 1.25rem;
+}
+
+.selected-template-info span {
+    color: var(--success-color);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+    .template-card {
+        background: #1e293b;
+        border-color: #334155;
+    }
+    
+    .template-preview {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+    
+    .template-info h4 {
+        color: #f1f5f9;
+    }
+    
+    .template-info p {
+        color: #94a3b8;
+    }
+    
+    .template-overlay {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+        color: #f1f5f9;
+    }
+    
+    .template-overlay p {
+        color: #e2e8f0;
+    }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .template-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .template-preview {
+        height: 200px;
+    }
+    
+    .template-icon {
+        font-size: 3rem;
+    }
+}
+
+/* Animation for template cards */
+@keyframes templateFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.template-card {
+    animation: templateFadeIn 0.6s ease-out forwards;
+}
+
+.template-card:nth-child(1) { animation-delay: 0.1s; }
+.template-card:nth-child(2) { animation-delay: 0.2s; }
+.template-card:nth-child(3) { animation-delay: 0.3s; }
+.template-card:nth-child(4) { animation-delay: 0.4s; }
     </style>
 </head>
 
@@ -1431,6 +1659,11 @@
                     <a href="#" class="menu-item" data-section="completion-certificates">
                         <i class="fas fa-medal"></i> Completion Certificates
                     </a>
+                    
+                    <a href="#" class="menu-item" data-section="certificate-template-preview">
+                        <i class="fas fa-eye"></i> Template Preview
+                    </a>
+
                     <!-- <a href="#" class="menu-item" data-section="bulk-uploads">
                         <i class="fas fa-cloud-upload-alt"></i> Bulk Uploads
                     </a> -->
@@ -1580,7 +1813,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% if offer_certificates %}
+                                        
                                         {% for cert in offer_certificates %}
                                         <tr>
                                             <td>{{ cert.student_name }}</td>
@@ -1613,7 +1846,7 @@
                                             </td>
                                         </tr>
                                         {% endfor %}
-                                        {% endif %}
+                                        
                                     </tbody>
 
                                 </table>
@@ -1843,6 +2076,8 @@
                         <div class="data-section">
                             <h3>Generate Completion Certificate</h3>
                             <form id="createCompletionForm">
+                                <input type="hidden" id="completionTemplate" name="completionTemplate" value="default">
+
                                 <!-- Title, Name and Register Number -->
                                 <div class="form-row">
                                     <div class="form-group">
@@ -2305,23 +2540,87 @@
                         </div>
                     </div>
                 </section>
-                <!-- certificate-editor -->
-                <section id="certificates-template" class="content-section">
-                    <div class="dashboard-card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-editor"></i>Certificate Editor page</h3>
-                            <!-- <p style="display: flex-end; flex-wrap:wrap;">{{ total_certificates }}</p>  -->
-                            <div class="">
-                                <button class="action-btn"><a href="{% url 'create_certificate_template' %}"
-                                        target="_blank" style="color: white; text-decoration: none;"
-                                        data-section="certificates-template"
-                                        onclick="window.open(this.href, '_blank'); return false;">
-                                        <i class="fas fa-edit"></i> Certificate Template
-                                    </a></button>
-                            </div>
-                        </div>
+          
+                <section id="certificate-template-preview" class="content-section">
+  <div class="dashboard-card">
+    <div class="card-header">
+      <h3><i class="fas fa-eye"></i> Certificate Template Preview</h3>
+      <div class="action-buttons">
+        <button class="action-btn" onclick="refreshTemplates()">
+          <i class="fas fa-sync-alt"></i> Refresh Templates
+        </button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="template-grid">
 
-                </section>
+        <!-- Offer Letter -->
+        <div class="template-card">
+          <div class="template-preview">
+            <img class="img-preview" src="{% static 'images/Preview_reference_offer-1.png' %}"       alt="Template Preview">
+          </div>
+          <div class="template-info">
+            <h4>Offer Letter</h4>
+          </div>
+          <!-- <button class="select-btn" data-template="offer" onclick="toggleSelection(this)">
+            <i class="fas fa-check"></i> Select
+          </button> -->
+        </div>
+
+        <!-- Completion Certificate -->
+        <div class="template-card">
+          <div class="template-preview">
+            <img class="img-preview" src="{% static 'images/Preview_reference_completion-1.png' %}"  alt="Template Preview">
+
+          </div>
+          <div class="template-info">
+            <h4>Completion Certificate</h4>
+          </div>
+          <button class="select-btn" data-template="completion" onclick="toggleSelection(this)">
+            <i class="fas fa-check"></i> Select
+          </button>
+        </div>
+
+        <!-- Landscape Template 1 -->
+        <div class="template-card">
+          <div class="template-preview">
+            <img class="img-preview" src="{% static 'images/Preview_reference_completion-01-1.png' %}" alt="Template Preview">
+
+          </div>
+          <div class="template-info">
+            <h4>Landscape Certificate 1</h4>
+          </div>
+          <button class="select-btn" data-template="landscape1" onclick="toggleSelection(this)">
+            <i class="fas fa-check"></i> Select
+          </button>
+        </div>
+
+        <!-- Landscape Template 2 -->
+        <div class="template-card">
+          <div class="template-preview">
+            <img class="img-preview" src="{% static 'images/Preview_reference_completion-02-1.png' %}" alt="Template Preview">
+          </div>
+          <div class="template-info">
+            <h4>Landscape Certificate 2</h4>
+          </div>
+          <button class="select-btn" data-template="landscape2" onclick="toggleSelection(this)">
+            <i class="fas fa-check"></i> Select
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Selected Template Info -->
+      <div class="selected-template-info" id="selectedTemplateInfo" style="display: none;">
+        <div class="alert alert-success">
+          <i class="fas fa-check-circle"></i>
+          <span id="selectedTemplateName">No template selected</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
                 <!-- Query management -->
                 <section id="query-management" class="content-section">
                     <div class="dashboard-card">
@@ -2358,6 +2657,97 @@
 
 
     <script>
+ // Template selection functionality
+let selectedTemplate = null;
+
+function toggleSelection(button) {
+    const templateId = button.getAttribute('data-template');
+    const templateCard = button.closest('.template-card');
+    const allCards = document.querySelectorAll('.template-card');
+    const allButtons = document.querySelectorAll('.select-btn');
+    const selectedInfo = document.getElementById('selectedTemplateInfo');
+    const selectedName = document.getElementById('selectedTemplateName');
+
+    if (selectedTemplate === templateId) {
+        // Deselect
+        selectedTemplate = null;
+        document.getElementById('completionTemplate').value = "default";  // ✅ reset to default
+        templateCard.classList.remove('selected');
+        button.classList.remove('selected');
+        button.style.background = 'linear-gradient(135deg, var(--success-color), #059669)';
+        button.innerHTML = '<i class="fas fa-check"></i> Select';
+        selectedInfo.style.display = 'none';
+        showPopup('Template deselected (default applied)', true);
+
+        // ✅ Save reset to default in backend
+        saveTemplateChoice("default", "completion");
+
+    } else {
+        // Clear previous selections
+        allCards.forEach(card => card.classList.remove('selected'));
+        allButtons.forEach(btn => {
+            btn.classList.remove('selected');
+            btn.style.background = 'linear-gradient(135deg, var(--success-color), #059669)';
+            btn.innerHTML = '<i class="fas fa-check"></i> Select';
+        });
+
+        // Select current template
+        selectedTemplate = templateId;
+        document.getElementById('completionTemplate').value = templateId;  // ✅ save template choice
+        templateCard.classList.add('selected');
+        button.classList.add('selected');
+        button.style.background = 'linear-gradient(135deg, var(--danger-color), #dc2626)';
+        button.innerHTML = '<i class="fas fa-times"></i> Selected';
+
+        // Update info
+        const templateName = templateCard.querySelector('.template-info h4').textContent;
+        selectedName.textContent = `Selected: ${templateName}`;
+        selectedInfo.style.display = 'block';
+
+        showPopup(`Template "${templateName}" selected`, true);
+
+        // ✅ Save to backend
+        saveTemplateChoice(templateId, "completion");
+    }
+}
+
+// Save choice to backend via AJAX
+function saveTemplateChoice(templateId, certType) {
+    fetch("/admin/save-template-choice/", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": getCookie("csrftoken"),
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            certificate_type: certType,
+            selected_template: templateId
+        })
+    }).then(res => res.json())
+      .then(data => {
+          if (data.status === "success") {
+              showPopup(`Template for ${certType} updated to "${templateId}"`, true);
+          }
+      });
+}
+
+// Helper to get CSRF token from cookie
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
         document.addEventListener("DOMContentLoaded", function () {
             const tableBody = document.querySelector("#queriesTable tbody");
 

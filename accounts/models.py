@@ -65,8 +65,18 @@ class Certificate(models.Model):
         ('offer', 'Internship Offer Letter'),
         ('completion', 'Internship Completion Certificate'),
     ]
-
+    TEMPLATE_CHOICES = [
+        ('default', 'Default Template'),
+        ('landscape1', 'Landscape Template 1'),
+        ('landscape2', 'Landscape Template 2'),
+    ]
+    
     certificate_type = models.CharField(max_length=20, choices=CERTIFICATE_TYPES)
+    template_choice = models.CharField(
+        max_length=20,
+        choices=TEMPLATE_CHOICES,
+        default='default'
+    )
     certificate_number = models.CharField(max_length=10, unique=True, blank=True)
 
     title = models.CharField(max_length=10)
@@ -165,3 +175,16 @@ class StudentQuery(models.Model):
 
     def __str__(self):
         return f"{self.student_name} - {self.subject}"
+
+class TemplateSetting(models.Model):
+    TEMPLATE_CHOICES = [
+        ('default', 'Default Template'),
+        ('landscape1', 'Landscape Template 1'),
+        ('landscape2', 'Landscape Template 2'),
+    ]
+
+    certificate_type = models.CharField(max_length=20, choices=Certificate.CERTIFICATE_TYPES, unique=True)
+    selected_template = models.CharField(max_length=20, choices=TEMPLATE_CHOICES, default='default')
+
+    def __str__(self):
+        return f"{self.get_certificate_type_display()} → {self.get_selected_template_display()}"

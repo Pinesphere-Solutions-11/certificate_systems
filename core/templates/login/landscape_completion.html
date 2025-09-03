@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    @page {
+      size: A4 landscape;
+      margin: 0;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background: url("{{ base_url }}/images/internship_landscape.png") no-repeat;
+      background-size: cover;
+      color: #000;
+      position: relative;
+      text-align: center;
+      width: 250mm;
+      height: 203mm;
+      overflow: hidden;
+    }
+    
+    .title {
+      position: absolute;
+      top: 60px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 32px;
+      font-weight: bold;
+      color: #000;
+      letter-spacing: 8px;
+      text-transform: uppercase;
+    }
+    
+    .subtitle {
+      position: absolute;
+      top: 100px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 16px;
+      color: #000;
+      font-style: italic;
+    }
+    
+    .student-name {
+      position: absolute;
+      top: 320px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 48px;
+      font-weight: bold;
+      color: #162180;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      padding-left: 130px;
+      box-sizing: border-box;
+    }
+    
+    .content {
+      position: absolute;
+      top: 380px;
+      left: 50%;
+      padding-left: 140px;
+      transform: translateX(-50%);
+      width: 250mm;
+      font-size: 18px;
+      line-height: 1.8;
+      text-align: center;
+      color: #000;
+      box-sizing: border-box;
+    }
+    
+    .footer-container {
+      position: absolute;
+      bottom: 40px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 0 80px;
+    }
+    
+    .signature-section {
+      text-align: left;
+      flex: 1;
+    }
+    
+    .signature-img {
+      height: 60px;
+      width: auto;
+      margin-bottom: 10px;
+      display: block;
+      max-width: 150px;
+    }
+    
+    .director-name {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 5px 0;
+      color: #000;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .designation {
+      font-size: 14px;
+      color: #666;
+      margin: 0;
+    }
+    
+    .qr-section {
+      text-align: center;
+      flex: 0 0 auto;
+      padding-left: 100px;
+    }
+    
+    .qr-img {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 10px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .certificate-info {
+      font-size: 12px;
+      color: #000;
+      line-height: 1.4;
+    }
+    
+    .certificate-info p {
+      margin: 3px 0;
+    }
+    
+    .credential-id {
+      font-weight: bold;
+    }
+    
+    .issue-date {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="title"></div>
+  <div class="subtitle"></div>
+  
+  <div class="student-name">{{ certificate.student_name }}</div>
+  
+  <div class="content">
+    <strong>{{ certificate.title }} {{ certificate.student_name }}</strong>
+    (Reg no: <strong>{{ certificate.student_id }}</strong>), student of <strong>{{ certificate.degree }}</strong>
+    <strong>{{ certificate.department }}</strong> from
+    <strong>{{ certificate.college }}</strong> has successfully completed their internship on
+    <strong>{{ certificate.course_name }}</strong> in our concern from <strong>{{ certificate.start_date|date:"d M Y" }}</strong>
+    to <strong>{{ certificate.end_date|date:"d M Y" }}</strong>.
+  </div>
+  
+  <div class="footer-container">
+    <div class="signature-section">
+      {% if certificate.director_name == "Mr. Surendiran S" %}
+        <img src="{{ base_url }}/images/signatures/surendar_s.png" class="signature-img" alt="Signature">
+        <div class="director-name">{{ certificate.director_name }}</div>
+        <div class="designation">Director</div>
+      {% else %}
+        <img src="{{ base_url }}/images/signatures/vasanth_nagarajan.png" class="signature-img" alt="Signature">
+        <div class="director-name">{{ certificate.director_name }}</div>
+        <div class="designation">CTO & Co-Founder</div>
+      {% endif %}
+    </div>
+    
+    <div class="qr-section">
+      {% if certificate.qr_code_path %}
+        <img src="{{ base_media_url }}/{{ certificate.qr_code_path.name }}" alt="QR Code" class="qr-img">
+      {% endif %}
+      <div class="certificate-info">
+        <p class="credential-id">Certificate ID: {{ certificate.credential_id }}</p>
+        <p class="issue-date">Date of issue: {{ certificate.issue_date|date:"d M Y" }}</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
