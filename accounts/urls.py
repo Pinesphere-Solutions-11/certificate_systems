@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.conf import settings
 from . import views
 from .views import (
-    add_student, save_template_choice, student_login_view, verification_view, contact_view, download_certificate,
+    add_student, update_template_setting, student_login_view, verification_view, contact_view, download_certificate,
     login_view, logout_view, dashboard_redirect,
     admin_dashboard, coordinator_dashboard, student_dashboard,
     create_offer_letter, create_completion_certificate, delete_certificate
@@ -102,7 +102,7 @@ urlpatterns = [
     path("queries/resolve/<int:pk>/", views.resolve_query, name="resolve_query"),
     path("queries/delete/<int:pk>/", views.delete_query, name="delete_query"),
     
-    path("admin/save-template-choice/", save_template_choice, name="save_template_choice"),       #save template based on admin choice
+    path("update-template-setting/", views.update_template_setting, name="update_template_setting"),       #save template based on admin choice
 
 
 ]

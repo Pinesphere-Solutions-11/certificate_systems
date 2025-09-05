@@ -2546,13 +2546,13 @@
     <div class="card-header">
       <h3><i class="fas fa-eye"></i> Certificate Template Preview</h3>
       <div class="action-buttons">
-        <button class="action-btn" onclick="refreshTemplates()">
-          <i class="fas fa-sync-alt"></i> Refresh Templates
-        </button>
+        
       </div>
     </div>
     <div class="card-body">
       <div class="template-grid">
+        <input type="hidden" id="completionTemplate" value="default">
+
 
         <!-- Offer Letter -->
         <div class="template-card">
@@ -2576,7 +2576,7 @@
           <div class="template-info">
             <h4>Completion Certificate</h4>
           </div>
-          <button class="select-btn" data-template="completion" onclick="toggleSelection(this)">
+          <button class="select-btn" data-certtype="completion" data-template="completion" onclick="toggleSelection(this)">
             <i class="fas fa-check"></i> Select
           </button>
         </div>
@@ -2590,7 +2590,7 @@
           <div class="template-info">
             <h4>Landscape Certificate 1</h4>
           </div>
-          <button class="select-btn" data-template="landscape1" onclick="toggleSelection(this)">
+          <button class="select-btn" data-certtype="completion" data-template="landscape1" onclick="toggleSelection(this)">
             <i class="fas fa-check"></i> Select
           </button>
         </div>
@@ -2603,7 +2603,7 @@
           <div class="template-info">
             <h4>Landscape Certificate 2</h4>
           </div>
-          <button class="select-btn" data-template="landscape2" onclick="toggleSelection(this)">
+          <button class="select-btn" data-certtype="completion" data-template="landscape2" onclick="toggleSelection(this)">
             <i class="fas fa-check"></i> Select
           </button>
         </div>
@@ -2657,11 +2657,22 @@
 
 
     <script>
- // Template selection functionality
-let selectedTemplate = null;
+        document.addEventListener("DOMContentLoaded", function () {
+    const currentTemplate = "{{ current_template }}";  // value from DB
 
+    if (currentTemplate) {
+        const button = document.querySelector(`[data-template="${currentTemplate}"]`);
+        if (button) {
+            toggleSelection(button);  // ✅ trigger selection styling + backend sync
+        }
+    }
+});
+
+        let selectedTemplate = null; 
 function toggleSelection(button) {
     const templateId = button.getAttribute('data-template');
+    const certType   = button.getAttribute('data-certtype') || "completion"; // <== dynamic
+
     const templateCard = button.closest('.template-card');
     const allCards = document.querySelectorAll('.template-card');
     const allButtons = document.querySelectorAll('.select-btn');
@@ -2669,9 +2680,8 @@ function toggleSelection(button) {
     const selectedName = document.getElementById('selectedTemplateName');
 
     if (selectedTemplate === templateId) {
-        // Deselect
         selectedTemplate = null;
-        document.getElementById('completionTemplate').value = "default";  // ✅ reset to default
+        document.getElementById('completionTemplate').value = "default";
         templateCard.classList.remove('selected');
         button.classList.remove('selected');
         button.style.background = 'linear-gradient(135deg, var(--success-color), #059669)';
@@ -2679,11 +2689,8 @@ function toggleSelection(button) {
         selectedInfo.style.display = 'none';
         showPopup('Template deselected (default applied)', true);
 
-        // ✅ Save reset to default in backend
-        saveTemplateChoice("default", "completion");
-
+        saveTemplateChoice("default", certType);
     } else {
-        // Clear previous selections
         allCards.forEach(card => card.classList.remove('selected'));
         allButtons.forEach(btn => {
             btn.classList.remove('selected');
@@ -2691,44 +2698,37 @@ function toggleSelection(button) {
             btn.innerHTML = '<i class="fas fa-check"></i> Select';
         });
 
-        // Select current template
         selectedTemplate = templateId;
-        document.getElementById('completionTemplate').value = templateId;  // ✅ save template choice
+        document.getElementById('completionTemplate').value = templateId;
         templateCard.classList.add('selected');
         button.classList.add('selected');
         button.style.background = 'linear-gradient(135deg, var(--danger-color), #dc2626)';
         button.innerHTML = '<i class="fas fa-times"></i> Selected';
 
-        // Update info
         const templateName = templateCard.querySelector('.template-info h4').textContent;
         selectedName.textContent = `Selected: ${templateName}`;
         selectedInfo.style.display = 'block';
-
         showPopup(`Template "${templateName}" selected`, true);
 
-        // ✅ Save to backend
-        saveTemplateChoice(templateId, "completion");
+        saveTemplateChoice(templateId, certType);
     }
 }
 
-// Save choice to backend via AJAX
 function saveTemplateChoice(templateId, certType) {
-    fetch("/admin/save-template-choice/", {
+    fetch("/accounts/update-template-setting/", {
         method: "POST",
-        headers: {
-            "X-CSRFToken": getCookie("csrftoken"),
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
+        headers: { "X-CSRFToken": getCookie("csrftoken") },
+        body: new URLSearchParams({
             certificate_type: certType,
-            selected_template: templateId
+            template_choice: templateId
         })
-    }).then(res => res.json())
-      .then(data => {
-          if (data.status === "success") {
-              showPopup(`Template for ${certType} updated to "${templateId}"`, true);
-          }
-      });
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            showPopup(`Template updated to ${templateId}`, true);
+        }
+    });
 }
 
 // Helper to get CSRF token from cookie

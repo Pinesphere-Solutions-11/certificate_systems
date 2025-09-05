@@ -312,8 +312,7 @@ def admin_dashboard(request):
     offer_certificates = Certificate.objects.filter(certificate_type='offer')
     completion_certificates = Certificate.objects.filter(certificate_type='completion')
     
-
-    # === Filter Parameters from GET ===
+        # === Filter Parameters from GET ===
     cert_type = request.GET.get('type', '')
     student_name = request.GET.get('student_name', '')
     course_name = request.GET.get('course_name', '')
@@ -421,6 +420,14 @@ def admin_dashboard(request):
         else:
             return JsonResponse({'status': 'error', 'message': form.errors.as_json()}, status=400)
 
+    try:
+        setting = TemplateSetting.objects.get(certificate_type="completion")
+        current_template = setting.selected_template
+    except TemplateSetting.DoesNotExist:
+        current_template = "default"
+
+    
+    
     context = {
         "completion_certificates": page_obj.object_list,  # only current page records
         "offer_certificates": page_obj.object_list,
@@ -429,6 +436,7 @@ def admin_dashboard(request):
         'page_obj': page_obj,
         'cert_type': cert_type,
         'student_name': student_name,
+        "current_template": current_template,
         'course_name': course_name,
         'coordinator_count': Coordinator.objects.count(),
         'student_count': Student.objects.count(),
@@ -826,23 +834,25 @@ def bulk_completion_upload(request):
 
     return JsonResponse({'status': 'error', 'message': 'CSV/Excel file not found'}, status=400)
 
-# views.py
-@csrf_exempt
 @login_required
-@user_passes_test(is_admin)  # only admins allowed
-def save_template_choice(request):
+@user_passes_test(is_admin)
+def update_template_setting(request):
     if request.method == "POST":
-        data = json.loads(request.body)
-        cert_type = data.get("certificate_type")
-        template = data.get("selected_template")
+        cert_type = request.POST.get("certificate_type")
+        template = request.POST.get("template_choice")
 
-        obj, _ = TemplateSetting.objects.update_or_create(
+        if not cert_type or not template:
+            return JsonResponse({"status": "error", "message": "Missing parameters"}, status=400)
+
+        setting, _ = TemplateSetting.objects.update_or_create(
             certificate_type=cert_type,
             defaults={"selected_template": template}
         )
-        return JsonResponse({"status": "success", "selected": obj.selected_template})
 
-    return JsonResponse({"status": "error"}, status=400)
+        return JsonResponse({"status": "success", "selected": template})
+
+    return JsonResponse({"status": "error", "message": "Invalid request"}, status=400)
+
 
 
 def download_certificate(request, cert_id):
