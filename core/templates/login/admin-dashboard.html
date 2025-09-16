@@ -34,7 +34,7 @@
             --sidebar-hover: rgba(255, 255, 255, 0.05);
 
             /* Content colors */
-            --content-bg: #f8fafc;
+            --content-bg: #b1b7bd;
             --card-bg: #ffffff;
             --text-dark: #0f172a;
             --text-light: #64748b;
@@ -1627,6 +1627,172 @@
 .template-card:nth-child(2) { animation-delay: 0.2s; }
 .template-card:nth-child(3) { animation-delay: 0.3s; }
 .template-card:nth-child(4) { animation-delay: 0.4s; }
+
+/* Enhanced Search Styles - Add these to your existing CSS */
+.section-search-container {
+    position: relative;
+    max-width: 50%;
+    margin-bottom: 2rem;
+    margin-left: auto;   /* pushes container to the right */
+}
+.section-header {
+    display: flex;
+    justify-content: space-between; /* left + right alignment */
+    align-items: center;
+}
+
+.section-search-input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    background: var(--sidebar-bg);
+    font-size: 0.875rem;
+    color: var(--content-bg);
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+}
+
+.section-search-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    transform: translateY(-1px);
+}
+
+.section-search-input::placeholder {
+    color: white;
+}
+
+.section-search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    font-size: 1.1rem;
+    pointer-events: none;
+}
+
+.search-clear-btn {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: var(--transition-fast);
+    display: none;
+}
+
+.search-clear-btn:hover {
+    color: var(--danger-color);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.search-results-info {
+    margin: 1rem 0;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+    border-radius: var(--border-radius-sm);
+    border-left: 4px solid var(--primary-color);
+    font-size: 0.875rem;
+    color: var(--primary-color);
+    display: none;
+}
+
+.no-results {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-light);
+    font-size: 1rem;
+    background: var(--card-bg);
+    border-radius: var(--border-radius-sm);
+    margin: 1rem 0;
+    display: none;
+    border: 2px dashed var(--border-color);
+}
+
+.no-results i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--text-muted);
+}
+
+/* Table row animations */
+.data-table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.data-table tbody tr.hidden {
+    opacity: 0;
+    transform: scale(0.95);
+    pointer-events: none;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+
+.data-table tbody tr.hidden td {
+    padding: 0;
+    border: none;
+    height: 0;
+    overflow: hidden;
+}
+
+/* Search highlight */
+.search-highlight {
+    background: linear-gradient(120deg, #fef08a 0%, #facc15 100%);
+    padding: 0.1rem 0.2rem;
+    border-radius: 3px;
+    font-weight: 600;
+    color: #92400e;
+}
+
+/* Loading animation */
+.search-loading {
+    position: absolute;
+    right: 3rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border-color);
+    border-top: 2px solid var(--primary-color);
+    border-radius: 50%;
+    animation: searchSpin 1s linear infinite;
+    display: none;
+}
+
+@keyframes searchSpin {
+    0% { transform: translateY(-50%) rotate(0deg); }
+    100% { transform: translateY(-50%) rotate(360deg); }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+    .section-search-input {
+        background: #1e293b;
+        color: #f1f5f9;
+        border-color: #334155;
+    }
+    
+    .no-results {
+        background: #1e293b;
+        border-color: #334155;
+    }
+    
+    .search-results-info {
+        background: rgba(59, 130, 246, 0.15);
+        color: #60a5fa;
+    }
+}
     </style>
 </head>
 
@@ -1670,10 +1836,6 @@
                     <a href="#" class="menu-item" data-section="query-management">
                         <i class="fas fa-question-circle"></i> Student Queries
                     </a>
-                    <!-- <a href="{% url 'create_certificate_template' %}" target="_blank" class="menu-item"
-                        data-section="certificates-template" onclick="window.open(this.href, '_blank'); return false;">
-                        <i class="fas fa-edit"></i> Certificate Template
-                    </a> -->
                 </div>
 
                 <div class="menu-section">
@@ -1800,8 +1962,30 @@
                             </div>
                         </div>
                         <div class="card-body">
+                            <!-- Search Bar -->
+            <div class="section-search-container">
+                <i class="fas fa-search section-search-icon"></i>
+                <input 
+                    type="text" 
+                    class="section-search-input" 
+                    id="internshipSearch"
+                    placeholder="Search by Student Name, ID, or Course Name..."
+                    data-target="internshipTable"
+                >
+                <div class="search-loading" id="internshipSearchLoading"></div>
+                <button class="search-clear-btn" id="internshipSearchClear">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="search-results-info" id="internshipResultsInfo"></div>
+            <div class="no-results" id="internshipNoResults">
+                <i class="fas fa-search"></i>
+                <h4>No results found</h4>
+                
+            </div>
                             <div class="table-container">
-                                <table class="data-table">
+                                <table class="data-table" id="internshipTable">
                                     <thead>
                                         <tr>
                                             <th>Student Name</th>
@@ -1815,7 +1999,11 @@
                                     <tbody>
                                         
                                         {% for cert in offer_certificates %}
-                                        <tr>
+                                        <tr 
+    data-student_name="{{ cert.student_name }}" 
+    data-student_id="{{ cert.student_id }}" 
+    data-course_name="{{ cert.course_name }}"
+>
                                             <td>{{ cert.student_name }}</td>
                                             <td>{{ cert.student_id }}</td>
                                             <td>{{ cert.course_name }}</td>
@@ -1998,8 +2186,30 @@
                             <!-- <p style="display: flex-end;">{{ completion_count }}</p> -->
                         </div>
                         <div class="card-body">
+                            <!-- Search Bar -->
+            <div class="section-search-container">
+                <i class="fas fa-search section-search-icon"></i>
+                <input 
+                    type="text" 
+                    class="section-search-input" 
+                    id="completionSearch"
+                    placeholder="Search by Student Name, ID, or Course Name..."
+                    data-target="completionTable"
+                >
+                <div class="search-loading" id="completionSearchLoading"></div>
+                <button class="search-clear-btn" id="completionSearchClear">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="search-results-info" id="completionResultsInfo"></div>
+            <div class="no-results" id="completionNoResults">
+                <i class="fas fa-search"></i>
+                <h4>No results found</h4>
+            </div>
+
                             <div class="table-container">
-                                <table class="data-table">
+                                <table class="data-table" id="completionTable">
                                     <thead>
                                         <tr>
                                             <th>Student Name</th>
@@ -2012,7 +2222,11 @@
                                     </thead>
                                     <tbody>
                                         {% for cert in completion_certificates %}
-                                        <tr>
+                                        <tr 
+    data-student_name="{{ cert.student_name }}" 
+    data-student_id="{{ cert.student_id }}" 
+    data-course_name="{{ cert.course_name }}"
+>
                                             <td>{{ cert.student_name }}</td>
                                             <td>{{ cert.student_id }}</td>
                                             <td>{{ cert.course_name }}</td>
@@ -2048,28 +2262,7 @@
                             </div>
 
                         </div>
-                        <!-- Pagination
-                                     {% if page_obj.has_other_pages %}
-                {% with query_params=request.GET.urlencode %}
-                <div class="pagination">
-                    {% if page_obj.has_previous %}
-                    <a href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ page_obj.previous_page_number }}">
-                        <i class="fas fa-angle-left"></i> Previous
-                    </a>
-                    {% endif %}
-
-                    <span class="current">
-                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-                    </span>
-
-                    {% if page_obj.has_next %}
-                    <a href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ page_obj.next_page_number }}">
-                        Next <i class="fas fa-angle-right"></i>
-                    </a>
-                    {% endif %}
-                </div>
-                {% endwith %}
-                {% endif %} -->
+                        
                     </div>
                     <!-- Completion Certificate Form -->
                     <div class="certificate-form" id="completionForm">
@@ -2459,8 +2652,30 @@
                             </div>
                         </div>
                         <div class="card-body">
+                            <!-- Search Bar -->
+            <div class="section-search-container">
+                <i class="fas fa-search section-search-icon"></i>
+                <input 
+                    type="text" 
+                    class="section-search-input" 
+                    id="studentSearch"
+                    placeholder="Search by Student Name, ID, Course Name..."
+                    data-target="studentTable"
+                >
+                <div class="search-loading" id="studentSearchLoading"></div>
+                <button class="search-clear-btn" id="studentSearchClear">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="search-results-info" id="studentResultsInfo"></div>
+            <div class="no-results" id="studentNoResults">
+                <i class="fas fa-search"></i>
+                <h4>No results found</h4>
+                </div>
+
                             <div class="table-container">
-                                <table class="data-table">
+                                <table class="data-table" id="studentTable">
                                     <thead>
                                         <tr>
                                             <th>Name</th>
@@ -2474,7 +2689,11 @@
                                     </thead>
                                     <tbody>
                                         {% for cert in certificates %}
-                                        <tr>
+                                        <tr 
+    data-student_name="{{ cert.student_name }}" 
+    data-student_id="{{ cert.student_id }}" 
+    data-course_name="{{ cert.course_name }}"
+>
                                             <td>{{ cert.student_name }}</td>
                                             <td>{{ cert.student_id }}</td>
                                             <td>{{ cert.course_name }}</td>
@@ -2657,6 +2876,200 @@
 
 
     <script>
+        // Enhanced Search Functionality
+        class DynamicSearch {
+            constructor(searchInputId, targetTableId, searchFields) {
+                this.searchInput = document.getElementById(searchInputId);
+                this.targetTable = document.getElementById(targetTableId);
+                this.searchFields = searchFields;
+                this.clearBtn = document.getElementById(searchInputId.replace('Search', 'SearchClear'));
+                this.loadingIndicator = document.getElementById(searchInputId.replace('Search', 'SearchLoading'));
+                this.resultsInfo = document.getElementById(searchInputId.replace('Search', 'ResultsInfo'));
+                this.noResults = document.getElementById(searchInputId.replace('Search', 'NoResults'));
+                this.searchTimeout = null;
+                
+                this.init();
+            }
+
+            init() {
+                // Real-time search with debouncing
+                this.searchInput.addEventListener('input', (e) => {
+                    clearTimeout(this.searchTimeout);
+                    const searchTerm = e.target.value.trim();
+                    
+                    // Show/hide clear button
+                    this.clearBtn.style.display = searchTerm ? 'block' : 'none';
+                    
+                    // Show loading indicator
+                    if (searchTerm) {
+                        this.loadingIndicator.style.display = 'block';
+                    }
+                    
+                    // Debounce search for better performance
+                    this.searchTimeout = setTimeout(() => {
+                        this.performSearch(searchTerm);
+                        this.loadingIndicator.style.display = 'none';
+                    }, 300);
+                });
+
+                // Clear search functionality
+                this.clearBtn.addEventListener('click', () => {
+                    this.searchInput.value = '';
+                    this.clearBtn.style.display = 'none';
+                    this.performSearch('');
+                    this.searchInput.focus();
+                });
+
+                // Enter key handling
+                this.searchInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        clearTimeout(this.searchTimeout);
+                        this.performSearch(this.searchInput.value.trim());
+                        this.loadingIndicator.style.display = 'none';
+                    }
+                });
+            }
+
+            performSearch(searchTerm) {
+    const tbody = this.targetTable.getElementsByTagName('tbody')[0];
+    const rows = Array.from(tbody.getElementsByTagName('tr'));
+
+    let visibleRows = [];
+    let hiddenRows = [];
+
+    // Clear previous highlights
+    this.clearHighlights();
+
+    for (let row of rows) {
+        let isMatch = false;
+
+        if (!searchTerm) {
+            // Show all rows when search is empty
+            isMatch = true;
+        } else {
+            // Search in specified fields
+            for (let field of this.searchFields) {
+                const fieldValue = row.getAttribute(`data-${field}`) || '';
+                if (fieldValue.toLowerCase().includes(searchTerm.toLowerCase())) {
+                    isMatch = true;
+                    // Highlight matching text in visible cells
+                    this.highlightText(row, searchTerm, field);
+                    break;
+                }
+            }
+        }
+
+        if (isMatch) {
+            row.classList.remove('hidden');
+            visibleRows.push(row);
+        } else {
+            row.classList.add('hidden');
+            hiddenRows.push(row);
+        }
+    }
+
+    // ✅ Reorder: move matched rows to top, keep hidden at bottom
+    tbody.innerHTML = "";
+    visibleRows.forEach(r => tbody.appendChild(r));
+    hiddenRows.forEach(r => tbody.appendChild(r));
+
+    // Update search results info
+    this.updateSearchInfo(searchTerm, visibleRows.length, rows.length);
+}
+
+
+            highlightText(row, searchTerm, field) {
+                const cells = row.getElementsByTagName('td');
+                const fieldIndex = this.getFieldIndex(field);
+                
+                if (fieldIndex >= 0 && fieldIndex < cells.length) {
+                    const cell = cells[fieldIndex];
+                    const originalText = cell.textContent;
+                    const regex = new RegExp(`(${this.escapeRegex(searchTerm)})`, 'gi');
+                    const highlightedText = originalText.replace(regex, '<span class="search-highlight">$1</span>');
+                    cell.innerHTML = highlightedText;
+                }
+            }
+
+            clearHighlights() {
+                const highlights = this.targetTable.querySelectorAll('.search-highlight');
+                highlights.forEach(highlight => {
+                    const parent = highlight.parentNode;
+                    parent.textContent = parent.textContent; // This removes HTML and keeps text
+                });
+            }
+
+            getFieldIndex(field) {
+                // Map data attributes to column indices
+                const fieldMap = {
+                    'student_name': 0,
+                    'student_id': 1,
+                    'course_name': 2,
+                    'college': 3
+                };
+                return fieldMap[field] !== undefined ? fieldMap[field] : -1;
+            }
+
+            escapeRegex(string) {
+                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
+
+            updateSearchInfo(searchTerm, visibleCount, totalCount) {
+                if (!searchTerm) {
+                    this.resultsInfo.style.display = 'none';
+                    this.noResults.style.display = 'none';
+                } else if (visibleCount === 0) {
+                    this.resultsInfo.style.display = 'none';
+                    this.noResults.style.display = 'block';
+                } else {
+                    this.resultsInfo.style.display = 'block';
+                    this.noResults.style.display = 'none';
+                    this.resultsInfo.innerHTML = `
+                        <i class="fas fa-info-circle"></i>
+                        Found ${visibleCount} result${visibleCount !== 1 ? 's' : ''} 
+                        ${visibleCount < totalCount ? `out of ${totalCount}` : ''} 
+                        for "${searchTerm}"
+                    `;
+                }
+            }
+        }
+
+        // Initialize search for all three sections
+        document.addEventListener('DOMContentLoaded', function() {
+            // Internship Certificates Search
+            new DynamicSearch(
+                'internshipSearch', 
+                'internshipTable', 
+                ['student_name', 'student_id', 'course_name']
+            );
+
+            // Completion Certificates Search
+            new DynamicSearch(
+                'completionSearch', 
+                'completionTable', 
+                ['student_name', 'student_id', 'course_name']
+            );
+
+            // Student Management Search
+            new DynamicSearch(
+                'studentSearch', 
+                'studentTable', 
+                ['student_name', 'student_id', 'course_name', 'college']
+            );
+
+            // Add some interactive feedback
+            document.querySelectorAll('.section-search-input').forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentNode.style.transform = 'scale(1.02)';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentNode.style.transform = 'scale(1)';
+                });
+            });
+        });
+
         document.addEventListener("DOMContentLoaded", function () {
     const currentTemplate = "{{ current_template }}";  // value from DB
 
@@ -4059,10 +4472,7 @@ function getCookie(name) {
             }
         });
 
-        console.log('🚀 Modern Admin Dashboard initialized successfully!');
-
-
-
+        
         setInterval(() => {
             fetch('/accounts/ping/').catch(() => console.warn("Ping failed"));
         }, 5 * 60 * 1000);

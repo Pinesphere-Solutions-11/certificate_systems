@@ -39,8 +39,7 @@ urlpatterns = [
      
     # 📝 Manual Certificate Creation
      
-    path('certificate/offer/create/', create_offer_letter, name='create_offer_letter'),                           # Create offer letter manually
-    path('admin/create-template/', views.template_editor, name='create_certificate_template'),    
+    path('certificate/offer/create/', create_offer_letter, name='create_offer_letter'),                
     path('certificate/completion/create/', create_completion_certificate, name='create_completion_certificate'), # Create completion cert manually
     
      
@@ -64,14 +63,6 @@ urlpatterns = [
     # path('accounts/ping/', views.ping_session, name='ping_session'),        # AJAX ping to keep session alive
     path('ping/', views.ping_session, name='ping_session'),
 
-     
-    # 🎨 Certificate Template Management (Admin Only)
-     
-    path('admin/create-template/', views.template_editor, name='create_certificate_template'),
-      # Template editor UI
-    path('admin/template-editor/save/', views.save_template, name='save_template'),                # Save template via POST
-    # path('admin/create-template/', views.create_certificate_template, name='create_certificate_template'),  # Admin creates template
-    path('admin/save-template/', views.save_certificate_template, name='save_certificate_template'),
      
     # 🗑️ Certificate Deletion (Admin only)
      

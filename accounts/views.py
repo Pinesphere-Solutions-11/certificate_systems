@@ -1,18 +1,16 @@
 import csv
 from io import BytesIO
 import json
-from string import Template
-from uuid import uuid4
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
-from django.http import Http404, HttpResponse, HttpResponseBadRequest, JsonResponse, FileResponse
+from django.http import Http404, HttpResponse, JsonResponse, FileResponse
 from weasyprint import HTML
 from django.core.files.base import File
 from django.conf import settings
 from datetime import datetime
-from .forms import CoordinatorForm, StudentForm, AdminUserForm
+from .forms import StudentForm
 from .models import ContactMessage, Certificate, Coordinator, Student, TemplateSetting, User
 from datetime import datetime
 from django.http import JsonResponse
@@ -38,107 +36,6 @@ from .utils import get_template_for_certificate
 def is_admin(user):
     return user.is_authenticated and user.role == 'admin'
 
- 
-@login_required
-@user_passes_test(is_admin)
-def template_editor(request):
-    return render(request, 'admin/certificate_editor.html')
-
-@login_required
-@user_passes_test(is_admin)
-def template_editor(request):
-    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-        return render(request, "admin/certificate.html")
-    return render(request, "admin/certificate.html") 
-
-@login_required
-@user_passes_test(is_admin)
-@csrf_exempt
-def save_certificate_template(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            certificate_type = data.get("certificate_type")
-            html_content = data.get("html_content")
-
-            if not certificate_type or not html_content:
-                return JsonResponse({"status": "error", "message": "Missing template data"}, status=400)
-
-            CertificateTemplate.objects.update_or_create(
-                template_type=certificate_type,
-                defaults={"html_content": html_content}
-            )
-
-            return JsonResponse({"status": "success", "message": "Template saved successfully!"})
-
-        except Exception as e:
-            return JsonResponse({"status": "error", "message": str(e)}, status=500)
-
-    return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
-
-@login_required
-@user_passes_test(is_admin)
-def save_template(request):
-    if request.method == 'POST':
-        try:
-            name = request.POST.get('template_name')
-            certificate_type = request.POST.get('certificate_type')
-            html_content = request.POST.get('html_content', '')
-            css_content = request.POST.get('css_content', '')
-            background_image = request.FILES.get('background_image')
-
-            #  Replace placeholders with real Django template tags
-            PLACEHOLDER_MAP = {
-                "[[student_name]]": "{{ certificate.student_name }}",
-                "[[student_id]]": "{{ certificate.student_id }}",
-                "[[course_name]]": "{{ certificate.course_name }}",
-                "[[start_date]]": "{{ certificate.start_date|date:'d M Y' }}",
-                "[[end_date]]": "{{ certificate.end_date|date:'d M Y' }}",
-                "[[director_name]]": "{{ certificate.director_name }}",
-                "[[signature]]": "{% if certificate.signature %}<img src='{{ base_media_url }}/{{ certificate.signature.name }}' class='signature-img'>{% endif %}",
-                "[[qr_code]]": "{% if certificate.qr_code_path %}<img src='{{ base_media_url }}/{{ certificate.qr_code_path.name }}' class='qr-img'>{% endif %}",
-                "[[credential_id]]": "{{ certificate.credential_id }}",
-                "[[issue_date]]": "{{ certificate.issue_date|date:'d M Y' }}",
-            }
-            for placeholder, tag in PLACEHOLDER_MAP.items():
-                html_content = html_content.replace(placeholder, tag)
-
-            #  Add CSS content if provided
-            if css_content:
-                html_content = f"<style>{css_content}</style>{html_content}"
-
-            #  Add background if uploaded
-            if background_image:
-                # NOTE: we don’t hardcode file path; instead we rely on template rendering later
-                style_block = """
-                <style>
-                    body {
-                        background: url('{{ base_media_url }}/{{ certificate_template.background_image.name }}') no-repeat center center;
-                        background-size: cover;
-                    }
-                </style>
-                """
-                html_content = style_block + html_content
-
-            #  Save or update template
-            template, created = CertificateTemplate.objects.update_or_create(
-                template_type=certificate_type,
-                defaults={
-                    'html_content': html_content,
-                    'background_image': background_image if background_image else None,
-                }
-            )
-
-            return JsonResponse({
-                'status': 'success',
-                'message': 'Template saved successfully',
-                'template_id': template.id
-            })
-
-        except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)})
-
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 
 
 @login_required
@@ -291,7 +188,6 @@ from django.db.models import Q
 from .models import Certificate, Coordinator, Student, AdminUser
 from .forms import  StudentForm, AdminUserForm, CoordinatorForm
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth.hashers import make_password
 from django.core.paginator import Paginator
 from accounts.models import Certificate, Student, Coordinator, AdminUser, User 
 
