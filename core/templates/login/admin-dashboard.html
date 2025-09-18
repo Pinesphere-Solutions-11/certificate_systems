@@ -1793,6 +1793,95 @@
         color: #60a5fa;
     }
 }
+/* Add red star to all labels of required fields */
+form label:has(+ input[required]),
+form label:has(+ select[required]),
+form label:has(+ textarea[required]) {
+    position: relative;
+}
+
+form label:has(+ input[required])::after,
+form label:has(+ select[required])::after,
+form label:has(+ textarea[required])::after {
+    content: " *";
+    color: rgb(231, 49, 49);
+    font-weight: bold;
+}
+.popup-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: none; /* hide by default */
+  align-items: center; 
+  justify-content: center;
+  z-index: 2000;
+}
+
+.popup-content {
+  background: #fff;
+  color: #333;
+  padding: 20px 25px;
+  border-radius: 10px;
+  width: 650px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  animation: popupFadeIn 0.3s ease-in-out;
+}
+
+.popup-content h3 {
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  color: #444;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 8px;
+}
+
+.popup-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+
+.popup-content th, 
+.popup-content td {
+  border: 1px solid #ddd;
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.popup-content th {
+  background: #f8f9fa;
+  font-weight: 600;
+}
+
+.popup-content td {
+  font-size: 0.9rem;
+}
+
+.popup-content .btn {
+  padding: 6px 12px;
+  border-radius: 4px;
+}
+
+.popup-content .btn-primary {
+  background: #007bff;
+  border: none;
+  color: white;
+}
+
+.popup-content .btn-secondary {
+  background: #6c757d;
+  border: none;
+  color: white;
+}
+
+@keyframes popupFadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
     </style>
 </head>
 
@@ -1892,7 +1981,7 @@
                         <div class="stat-card">
                             <div class="stat-card-header">
                                 <div class="stat-card-content">
-                                    <div class="stat-card-number">{{ total_certificates }}</div>
+                                    <div class="stat-card-number">{{ offer_count }}</div>
                                     <div class="stat-card-label">Total Students</div>
                                     <div class="stat-card-change positive">
 
@@ -2011,6 +2100,11 @@
 
                                             <td><span class="status-badge status-active">Active</span></td>
                                             <td>
+                                                <a href="/accounts/certificate/generate-completion/{{ cert.id }}/" 
+   class="btn btn-success btn-sm">
+   <i class="fas fa-file"></i>
+</a>
+
                                                 {% if cert.generated_pdf %}
                                                 <button class="btn btn-info btn-sm"
                                                     onclick="previewCertificate('{{ cert.generated_pdf.url }}')">
@@ -2852,6 +2946,7 @@
                                     <thead>
                                         <tr>
                                             <th>ID</th>
+                                            <th>Type</th>
                                             <th>Student</th>
                                             <th>Subject</th>
                                             <th>Query</th>
@@ -2869,6 +2964,27 @@
                     </div>
                 </section>
 
+                <!-- Certificate selection popup -->
+<div id="certificatePopup" class="popup-overlay" style="display:none;">
+  <div class="popup-content">
+    <h3 id="popupTitle">Certificates</h3>
+    <table class="table table-bordered">
+      <thead>
+  <tr>
+    <th>Type</th>
+    <th>Student ID</th>
+    <th>Course</th>
+    <th>Issue Date</th>
+    <th>Action</th>
+  </tr>
+</thead>
+      <tbody id="popupCertificates"></tbody>
+    </table>
+    <button onclick="closeCertificatesPopup()" class="btn btn-secondary">Close</button>
+  </div>
+</div>
+
+
             </div>
         </main>
     </div>
@@ -2876,6 +2992,47 @@
 
 
     <script>
+
+       function openCertificatesPopup(studentId, studentNameEnc) {
+  const studentName = decodeURIComponent(studentNameEnc);
+  document.getElementById("popupTitle").innerText = `Certificates for ${studentName}`;
+
+  fetch(`/accounts/certificates/${studentId}/?student_name=${encodeURIComponent(studentName)}`)
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.getElementById("popupCertificates");
+      tbody.innerHTML = "";
+
+      if (!data.certificates || data.certificates.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4">No certificates found</td></tr>`;
+      } else {
+        data.certificates.forEach(cert => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+  <td>${cert.certificate_type}</td>
+  <td>${cert.student_id}</td>
+  <td>${cert.course_name || "-"}</td>
+  <td>${cert.issue_date || "-"}</td>
+  <td>
+    <a href="/accounts/certificate/edit/${cert.id}/" class="btn btn-primary btn-sm">
+        Edit
+    </a>
+  </td>
+`;
+
+          tbody.appendChild(row);
+        });
+      }
+
+      document.getElementById("certificatePopup").style.display = "flex";
+    })
+    .catch(err => console.error("Error fetching certificates:", err));
+}
+
+function closeCertificatesPopup() {
+  document.getElementById("certificatePopup").style.display = "none";
+}
+
         // Enhanced Search Functionality
         class DynamicSearch {
             constructor(searchInputId, targetTableId, searchFields) {
@@ -3188,34 +3345,78 @@ function getCookie(name) {
                 }).format(date);
             }
 
-            function fetchQueries() {
-                fetch("/accounts/queries/list/")
-                    .then(res => res.json())
-                    .then(data => {
-                        tableBody.innerHTML = "";
-                        data.queries.forEach(q => {
-                            const row = document.createElement("tr");
-                            row.innerHTML = `
-                        <td>${q.id}</td>
-                        <td>${q.student}</td>
-                        <td>${q.subject}</td>
-                        <td>${q.query_text}</td>
-                        <td>${formatDate(q.created_at)}</td>
-                        <td>
-                            <span class="status-badge status-active ${q.resolved ? "status-resolved" : "status-pending"}">
-                              ${q.resolved ? "Completed" : "Pending"}
-                            </span>
-                        </td>
-                        <td>
-                            ${q.resolved ? "" : `<button class="btn btn-success btn-sm" onclick="resolveQuery(${q.id})"><i class="fas fa-check"></i></button>`}
-                            <button class="btn btn-danger btn-sm" onclick="deleteQuery(${q.id})"><i class="fas fa-trash"></i></button>
-                        </td>
-                    `;
-                            tableBody.appendChild(row);
-                        });
-                    })
-                    .catch(err => console.error("Error fetching queries:", err));
-            }
+            function isResolved(val) {
+  // Normalize possible server values (boolean true, "true", "True", 1, "1")
+  return val === true || val === 'true' || val === 'True' || val === 1 || val === '1';
+}
+
+function fetchQueries() {
+  fetch("/accounts/queries/list/")
+    .then(res => res.json())
+    .then(data => {
+      // debug tip: uncomment to inspect what the server returns
+      // console.log("queries payload:", data.queries);
+
+      tableBody.innerHTML = "";
+
+      data.queries.forEach(q => {
+        const row = document.createElement("tr");
+
+        const resolved = isResolved(q.resolved);
+        const actions = [];
+
+        // show EDIT only if there is a certificate and query is NOT resolved
+        if (!resolved) {
+ actions.push(`
+  <button class="btn btn-warning btn-sm"
+          onclick="openCertificatesPopup('${q.student_id}', '${encodeURIComponent(q.student)}')"
+          title="Select Certificate">
+    <i class="fas fa-edit"></i>
+  </button>
+`);
+
+}
+
+
+        // show RESOLVE only if not resolved
+        if (!resolved) {
+          actions.push(`
+            <button class="btn btn-success btn-sm" onclick="resolveQuery(${q.id})" title="Resolve Query">
+              <i class="fas fa-check"></i>
+            </button>
+          `);
+        }
+
+        // always show DELETE
+        actions.push(`
+          <button class="btn btn-danger btn-sm" onclick="deleteQuery(${q.id})" title="Delete Query">
+            <i class="fas fa-trash"></i>
+          </button>
+        `);
+
+        row.innerHTML = `
+          <td>${q.id}</td>
+          <td>${q.certificate_type}</td>
+          <td>${q.student}</td>
+          <td>${q.subject}</td>
+          <td>${q.query_text}</td>
+          <td>${formatDate(q.created_at)}</td>
+          <td>
+            <span class="status-badge status-active ${resolved ? "status-resolved" : "status-pending"}">
+              ${resolved ? "Completed" : "Pending"}
+            </span>
+          </td>
+          <td>
+            ${actions.join(' ')}
+          </td>
+        `;
+
+        tableBody.appendChild(row);
+      });
+    })
+    .catch(err => console.error("Error fetching queries:", err));
+}
+
 
             window.resolveQuery = function (id) {
                 fetch(`/accounts/queries/resolve/${id}/`, {
@@ -4602,6 +4803,7 @@ function getCookie(name) {
 
     </script>
 </body>
+
 <!-- Success/Error Popup -->
 <div id="popupNotification" style="
     position: fixed;

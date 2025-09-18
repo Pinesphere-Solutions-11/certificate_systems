@@ -974,6 +974,21 @@
         color: #60a5fa;
     }
 }
+
+/* Add red star to all labels of required fields */
+form label:has(+ input[required]),
+form label:has(+ select[required]),
+form label:has(+ textarea[required]) {
+    position: relative;
+}
+
+form label:has(+ input[required])::after,
+form label:has(+ select[required])::after,
+form label:has(+ textarea[required])::after {
+    content: " *";
+    color: rgb(231, 49, 49);
+    font-weight: bold;
+}
     </style>
 </head>
 
@@ -1721,34 +1736,73 @@
                 }).format(date);
             }
 
-            function fetchQueries() {
-                fetch("/accounts/queries/list/")
-                    .then(res => res.json())
-                    .then(data => {
-                        tableBody.innerHTML = "";
-                        data.queries.forEach(q => {
-                            const row = document.createElement("tr");
-                            row.innerHTML = `
-                        <td>${q.id}</td>
-                        <td>${q.student}</td>
-                        <td>${q.subject}</td>
-                        <td>${q.query_text}</td>
-                        <td>${formatDate(q.created_at)}</td>
-                        <td>
-                            <span class="status-badge status-active ${q.resolved ? "status-resolved" : "status-pending"}">
-                              ${q.resolved ? "Completed" : "Pending"}
-                            </span>
-                        </td>
-                        <td>
-                            ${q.resolved ? "" : `<button class="btn btn-success btn-sm" onclick="resolveQuery(${q.id})"><i class="fas fa-check"></i></button>`}
-                            <button class="btn btn-danger btn-sm" onclick="deleteQuery(${q.id})"><i class="fas fa-trash"></i></button>
-                        </td>
-                    `;
-                            tableBody.appendChild(row);
-                        });
-                    })
-                    .catch(err => console.error("Error fetching queries:", err));
-            }
+                       function isResolved(val) {
+  // Normalize possible server values (boolean true, "true", "True", 1, "1")
+  return val === true || val === 'true' || val === 'True' || val === 1 || val === '1';
+}
+
+function fetchQueries() {
+  fetch("/accounts/queries/list/")
+    .then(res => res.json())
+    .then(data => {
+      // debug tip: uncomment to inspect what the server returns
+      // console.log("queries payload:", data.queries);
+
+      tableBody.innerHTML = "";
+
+      data.queries.forEach(q => {
+        const row = document.createElement("tr");
+
+        const resolved = isResolved(q.resolved);
+        const actions = [];
+
+        // show EDIT only if there is a certificate and query is NOT resolved
+        if (q.certificate_id && !resolved) {
+          actions.push(`
+            <a href="/accounts/certificate/edit/${q.certificate_id}/" 
+               class="btn btn-warning btn-sm" title="Edit Certificate">
+               <i class="fas fa-edit"></i>
+            </a>
+          `);
+        }
+
+        // show RESOLVE only if not resolved
+        if (!resolved) {
+          actions.push(`
+            <button class="btn btn-success btn-sm" onclick="resolveQuery(${q.id})" title="Resolve Query">
+              <i class="fas fa-check"></i>
+            </button>
+          `);
+        }
+
+        // always show DELETE
+        actions.push(`
+          <button class="btn btn-danger btn-sm" onclick="deleteQuery(${q.id})" title="Delete Query">
+            <i class="fas fa-trash"></i>
+          </button>
+        `);
+
+        row.innerHTML = `
+          <td>${q.id}</td>
+          <td>${q.student}</td>
+          <td>${q.subject}</td>
+          <td>${q.query_text}</td>
+          <td>${formatDate(q.created_at)}</td>
+          <td>
+            <span class="status-badge status-active ${resolved ? "status-resolved" : "status-pending"}">
+              ${resolved ? "Completed" : "Pending"}
+            </span>
+          </td>
+          <td>
+            ${actions.join(' ')}
+          </td>
+        `;
+
+        tableBody.appendChild(row);
+      });
+    })
+    .catch(err => console.error("Error fetching queries:", err));
+}
 
             window.resolveQuery = function (id) {
                 fetch(`/accounts/queries/resolve/${id}/`, {

@@ -691,6 +691,21 @@
             color: var(--danger-color);
             border: 1px solid rgba(239, 68, 68, 0.2);
         }
+
+        /* Add red star to all labels of required fields */
+form label:has(+ input[required]),
+form label:has(+ select[required]),
+form label:has(+ textarea[required]) {
+    position: relative;
+}
+
+form label:has(+ input[required])::after,
+form label:has(+ select[required])::after,
+form label:has(+ textarea[required])::after {
+    content: " *";
+    color: rgb(231, 49, 49);
+    font-weight: bold;
+}
     </style>
 </head>
 
@@ -768,6 +783,17 @@
                     </h3>
                     <form id="studentQueryForm">
                       {% csrf_token %}
+                      <div class="form-row">
+                      <div class="form-group">
+  <label for="certificateType">Certificate Type</label>
+  <select id="certificateType" name="certificateType" required>
+    <option value="">-- Select Certificate Type --</option>
+    <option value="offer">Internship Offer Letter</option>
+    <option value="completion">Completion Certificate</option>
+  </select>
+</div>
+</div>
+
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="subject">Subject</label>
@@ -777,9 +803,10 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="query">Query Details</label>
-                                <textarea name="query" id="query" placeholder="Please describe your query in detail..."></textarea>
+                                <textarea name="query" id="query" placeholder="Please describe your query in detail..." required></textarea>
                             </div>
                         </div>
+
                         <div class="form-actions">
                             <button type="button" class="btn-outline" id="cancelQuery">
                                 <i class="fas fa-times"></i>

@@ -256,6 +256,20 @@
         .container {
             animation: float 6s ease-in-out infinite;
         }
+        /* Add red star to all labels of required fields */
+form label:has(+ input[required]),
+form label:has(+ select[required]),
+form label:has(+ textarea[required]) {
+    position: relative;
+}
+
+form label:has(+ input[required])::after,
+form label:has(+ select[required])::after,
+form label:has(+ textarea[required])::after {
+    content: " *";
+    color: rgb(231, 49, 49);
+    font-weight: bold;
+}
     </style>
 </head>
 <body>

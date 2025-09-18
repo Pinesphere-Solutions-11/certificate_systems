@@ -82,8 +82,19 @@ urlpatterns = [
      
     path('coordinator/edit/<int:pk>/', views.edit_coordinator, name='edit_coordinator'),
     path('coordinator/delete/<int:pk>/', views.delete_coordinator, name='delete_coordinator'),
+    
+    # Certificate Edit page
+    path('certificate/edit/<int:pk>/', views.edit_certificate, name='edit_certificate'),
+    
+    path("certificates/<str:student_id>/", views.certificates_by_student, name="certificates_by_student"),
+    
+    # Generate completion certificate with offer letter data
+    path("certificate/generate-completion/<int:pk>/", views.generate_completion, name="generate_completion"),
+   
 
-     
+    path("accounts/certificates/<int:pk>/", views.certificate_detail, name="certificate_detail"),
+
+    
     # 🗑️ Student Deletion (Admin only)
      
     path('certificate/delete/<int:cert_id>/', delete_certificate, name='delete_certificate'),

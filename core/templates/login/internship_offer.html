@@ -45,7 +45,6 @@
 
         .signature-img {
             height: 60px;
-            margin-bottom: 5px;
         }
 
         .issue-details {
@@ -90,11 +89,11 @@
             <div class="signature-block">
                 {% if certificate.director_name == "Mr. Surendiran S" %}
                 <img src="{{ base_url }}/images/signatures/surendar_s.png" class="signature-img">
-                {{ certificate.director_name }}<br>
+                {{ certificate.director_name }}
                 <strong>Director</strong>
                 {% else %}
                 <img src="{{ base_url }}/images/signatures/vasanth_nagarajan.png" class="signature-img">
-                {{ certificate.director_name }}<br>
+                {{ certificate.director_name }}
                 <strong>CTO & Co-Founder</strong>
                 {% endif %}
             </div>

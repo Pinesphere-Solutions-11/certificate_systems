@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Certificate</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary: #6c5ce7;
+            --primary-dark: #5649c0;
+            --secondary: #00cec9;
+            --danger: #ff7675;
+            --light: #f8f9fa;
+            --dark: #2d3436;
+            --gray: #dfe6e9;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: gradientShift 15s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2.5rem;
+            transform: translateY(0);
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        h2 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            font-size: 2rem;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--secondary);
+            border-radius: 2px;
+            animation: lineExpand 0.8s ease-out;
+        }
+
+        @keyframes lineExpand {
+            from {
+                width: 0;
+            }
+
+            to {
+                width: 80px;
+            }
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: calc(33.33% - 1rem);
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+            color: var(--dark);
+            transform: translateY(0);
+            transition: var(--transition);
+        }
+
+        .form-group:focus-within label {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid var(--gray);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.2);
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.9rem 2rem;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            border: none;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.6s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4);
+        }
+
+        .cancel-btn {
+            background: white;
+            color: var(--danger);
+            border: 2px solid var(--danger);
+            box-shadow: 0 4px 15px rgba(255, 118, 117, 0.1);
+        }
+
+        .cancel-btn:hover {
+            background: var(--danger);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 118, 117, 0.3);
+        }
+
+        .btn i {
+            margin-right: 10px;
+            transition: var(--transition);
+        }
+
+        .btn:hover i {
+            transform: scale(1.2);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .form-group {
+                min-width: 100%;
+            }
+
+            .form-actions {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* Floating animation for form */
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .container {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .data-section h3 {
+            color: var(--primary-dark);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+        }
+        /* Add red star to all labels of required fields */
+form label:has(+ input[required]),
+form label:has(+ select[required]),
+form label:has(+ textarea[required]) {
+    position: relative;
+}
+
+form label:has(+ input[required])::after,
+form label:has(+ select[required])::after,
+form label:has(+ textarea[required])::after {
+    content: " *";
+    color: rgb(231, 49, 49);
+    font-weight: bold;
+}
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Edit Certificate</h2>
+        <div class="certificate-form" id="offerForm">
+            <div class="data-section">
+                <h3>Edit Offer Letter</h3>
+                <form id="editOfferForm" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <!-- Title, Name and Register Number in one line -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="offerTitle">Title</label>
+                            <select id="offerTitle" name="offerTitle" required>
+                                <option value="">Select Title</option>
+                                <option value="Mr" {% if certificate.title == "Mr" %}selected{% endif %}>Mr</option>
+                                <option value="Ms" {% if certificate.title == "Ms" %}selected{% endif %}>Ms</option>
+                                <option value="Mrs" {% if certificate.title == "Mrs" %}selected{% endif %}>Mrs</option>
+                                <option value="Dr" {% if certificate.title == "Dr" %}selected{% endif %}>Dr</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="offerStudentName">Student Name</label>
+                            <input type="text" id="offerStudentName" name="offerStudentName"
+                                   value="{{ certificate.student_name }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="offerRegisterNumber">Register Number</label>
+                            <input type="text" id="offerRegisterNumber" name="offerRegisterNumber"
+                                   value="{{ certificate.student_id }}" required>
+                        </div>
+                    </div>
+
+                    <!-- Degree, Department and College in one line -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="offerDegree">Degree</label>
+                            <select id="offerDegree" name="offerDegree" required
+                                    onchange="populateDepartments('offerDegree', 'offerDepartment')">
+                                <option value="">Select Degree</option>
+                                <option value="B.E" {% if certificate.degree == "B.E" %}selected{% endif %}>Bachelor's of Engineering</option>
+                                <option value="B.Tech" {% if certificate.degree == "B.Tech" %}selected{% endif %}>B Tech</option>
+                                <option value="B.Sc" {% if certificate.degree == "B.Sc" %}selected{% endif %}>B.Sc (Science)</option>
+                                <option value="B.A" {% if certificate.degree == "B.A" %}selected{% endif %}>B.A (Arts)</option>
+                                <option value="MBA" {% if certificate.degree == "MBA" %}selected{% endif %}>MBA</option>
+                                <option value="Diploma" {% if certificate.degree == "Diploma" %}selected{% endif %}>Diploma</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="offerDepartment">Department</label>
+                            <select id="offerDepartment" name="offerDepartment" required>
+                                <option value="{{ certificate.department }}" selected>{{ certificate.department }}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="offerCollege">College</label>
+                            <input type="text" id="offerCollege" name="offerCollege"
+                                   value="{{ certificate.college }}" required>
+                        </div>
+                    </div>
+
+                    <!-- Location and Domain in one line -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="offerLocation">Location</label>
+                            <input type="text" id="offerLocation" name="offerLocation"
+                                   value="{{ certificate.location }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="offerCourseName">Domain</label>
+                            <select id="offerCourseName" name="offerCourseName" required>
+                                <option value="">Select Course</option>
+                                <option value="Python Full Stack Development" {% if certificate.course_name == "Python Full Stack Development" %}selected{% endif %}>Python Full Stack Development</option>
+                                <option value="Generative AI" {% if certificate.course_name == "Generative AI" %}selected{% endif %}>Generative AI</option>
+                                <option value="Java Full Stack Development" {% if certificate.course_name == "Java Full Stack Development" %}selected{% endif %}>Java Full Stack Development</option>
+                                <option value="Frontend Development" {% if certificate.course_name == "Frontend Development" %}selected{% endif %}>Frontend Development</option>
+                                <option value="Backend Development" {% if certificate.course_name == "Backend Development" %}selected{% endif %}>Backend Development</option>
+                                <option value="UI/UX" {% if certificate.course_name == "UI/UX" %}selected{% endif %}>UI/UX</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Start Date, End Date and Duration in one line -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="offerStartDate">Start Date</label>
+                            <input type="date" id="offerStartDate" name="offerStartDate"
+                                   value="{{ certificate.start_date|date:'Y-m-d' }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="offerEndDate">End Date</label>
+                            <input type="date" id="offerEndDate" name="offerEndDate"
+                                   value="{{ certificate.end_date|date:'Y-m-d' }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="offerDuration">Duration</label>
+                            <input type="text" id="offerDuration" name="offerDuration"
+                                   value="{{ certificate.duration }}" placeholder="e.g., 6 months">
+                        </div>
+                    </div>
+
+                    <!-- Director Name and Issue Date in one line -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="offerDirector">Director Name</label>
+                            <select id="offerDirector" name="offerDirector" required>
+                                <option value="">Select Director</option>
+                                <option value="Mr. Surendiran S" {% if certificate.director_name == "Mr. Surendiran S" %}selected{% endif %}>Mr. Surendiran S</option>
+                                <option value="Mr. Vasanth Nagarajan" {% if certificate.director_name == "Mr. Vasanth Nagarajan" %}selected{% endif %}>Mr. Vasanth Nagarajan</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="offerIssueDate">Date of Issue</label>
+                            <input type="date" id="offerIssueDate" name="offerIssueDate"
+                                   value="{{ certificate.issue_date|date:'Y-m-d' }}" required>
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="form-actions">
+                        <button type="button" class="btn cancel-btn">
+                            <a href="{% url 'admin_dashboard' %}" style="text-decoration: none; color:black;">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+                        </button>
+                        <button type="submit" class="btn action-btn">
+                            <i class="fas fa-save"></i> Update Certificate
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const departmentData = {
+            "B.E": [
+                "Computer Science and Engineering", "AI & DS",
+                "Mechanical Engineering",
+                "Electrical Engineering",
+                "Civil Engineering",
+                "Electronics and Communication Engineering",
+                "Mechatronics",
+                "Automobile Engineering",
+                "Aeronautical Engineering"
+            ],
+            "B.Tech": [
+                "Information Technology",
+                "AI & DS",
+                "Biotechnology",
+                "Petroleum Engineering",
+                "Cyber Security",
+                "Data Science",
+                "Artificial Intelligence and Machine Learning"
+            ],
+            "B.Sc": [
+                "Computer Science",
+                "Mathematics",
+                "Physics",
+                "Chemistry",
+                "Information Technology"
+            ],
+            "B.A": [
+                "English Literature",
+                "History",
+                "Economics",
+                "Sociology",
+                "Political Science",
+                "Tamil Literature"
+            ],
+            "MBA": [
+                "Finance",
+                "Marketing",
+                "Human Resource Management",
+                "Operations Management",
+                "International Business"
+            ],
+            "Diploma": [
+                "Computer Engineering",
+                "Mechanical Engineering",
+                "Civil Engineering",
+                "Electrical and Electronics Engineering",
+                "Electronics and Communication Engineering"
+            ]
+        };
+
+        function populateDepartments(degreeId, departmentId) {
+            const degree = document.getElementById(degreeId).value;
+            const department = document.getElementById(departmentId);
+            
+            // Clear existing options except the first one
+            while (department.options.length > 1) {
+                department.remove(1);
+            }
+            
+            if (departmentData[degree]) {
+                departmentData[degree].forEach(opt => {
+                    const option = document.createElement("option");
+                    option.value = opt;
+                    option.textContent = opt;
+                    department.appendChild(option);
+                });
+                
+                // If we're editing an existing certificate, select the saved department
+                const savedDepartment = "{{ certificate.department|default:'' }}";
+                if (savedDepartment) {
+                    department.value = savedDepartment;
+                }
+            }
+        }
+
+        // Auto-populate department when editing
+        document.addEventListener("DOMContentLoaded", function () {
+            const degreeSelect = document.getElementById("offerDegree");
+            if (degreeSelect && degreeSelect.value) {
+                populateDepartments("offerDegree", "offerDepartment");
+            }
+        });
+    </script>
+</body>
+
+</html>

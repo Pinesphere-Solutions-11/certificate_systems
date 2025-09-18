@@ -585,7 +585,7 @@ def create_completion_certificate(request):
 
         cert = Certificate(
             certificate_type='completion',
-            template_choice=data.get('completionTemplate', 'default'),  # ✅ save selection
+            template_choice=data.get('completionTemplate', 'default'),  # save selection
             title=data.get('completionTitle'),
             student_name=data.get('completionStudentName'),
             student_id=data.get('completionRegisterNumber'),
@@ -1009,6 +1009,7 @@ def delete_certificate(request, cert_id):
 from .models import StudentQuery
 
 def submit_query(request):
+    
     if request.method == "POST":
         # check if student is logged in
         student_id = request.session.get("student_id")
@@ -1022,19 +1023,25 @@ def submit_query(request):
 
         subject = request.POST.get("subject")
         query_text = request.POST.get("query")
+        certificate_type = request.POST.get("certificateType")  # ✅ new field
+        
 
         if not subject or not query_text:
             return JsonResponse(
                 {"status": "error", "message": "All fields are required."},
                 status=400
             )
+            
+        cert = Certificate.objects.filter(student_id=student_id, certificate_type=certificate_type).last()
 
         # Save query
         StudentQuery.objects.create(
             student_id=student_id,
             student_name=student_name,
             subject=subject,
-            query=query_text
+            query=query_text,
+            certificate=cert,
+            certificate_type=certificate_type
         )
 
         return JsonResponse(
@@ -1069,6 +1076,9 @@ def query_list(request):
             "query_text": q.query,
             "resolved": q.resolved,
             "student": q.student_name,
+            "student_id": q.student_id,
+            "certificate_type": q.certificate_type,
+            "certificate_id": q.certificate.id if q.certificate else None, 
             "created_at": q.created_at.strftime("%Y-%m-%d %H:%M"),
         }
         for q in queries
@@ -1076,8 +1086,7 @@ def query_list(request):
     return JsonResponse({"queries": data})
 
 
-
-@user_passes_test(lambda u: u.role in ("admin", "coordinator"))
+@user_passes_test(is_admin_or_coordinator)
 def resolve_query(request, pk):
     try:
         query = StudentQuery.objects.get(pk=pk)
@@ -1089,7 +1098,7 @@ def resolve_query(request, pk):
 
 
 
-@user_passes_test(lambda u: u.role in ("admin", "coordinator"))
+@user_passes_test(is_admin_or_coordinator)
 def delete_query(request, pk):
     try:
         query = StudentQuery.objects.get(pk=pk)
@@ -1097,3 +1106,167 @@ def delete_query(request, pk):
         return JsonResponse({"status": "success", "message": "Query deleted"})
     except StudentQuery.DoesNotExist:
         return JsonResponse({"status": "error", "message": "Query not found"}, status=404)
+
+@login_required
+@user_passes_test(is_admin_or_coordinator)
+def edit_certificate(request, pk):
+    certificate = get_object_or_404(Certificate, pk=pk)
+
+    if request.method == 'POST':
+        data = request.POST
+        signature_file = request.FILES.get('offerSignature') or certificate.signature
+
+        try:
+            start_date = datetime.strptime(data.get('offerStartDate'), '%Y-%m-%d').date()
+            end_date   = datetime.strptime(data.get('offerEndDate'),   '%Y-%m-%d').date()
+            issue_date = datetime.strptime(data.get('offerIssueDate'), '%Y-%m-%d').date()
+        except Exception:
+            return JsonResponse({'status': 'error', 'message': 'Invalid date format'}, status=400)
+
+        # 🔹 Update fields
+        certificate.title = data.get('offerTitle')
+        certificate.student_name = data.get('offerStudentName')
+        certificate.student_id = data.get('offerRegisterNumber')
+        certificate.degree = data.get('offerDegree')
+        certificate.department = data.get('offerDepartment')
+        certificate.college = data.get('offerCollege')
+        certificate.location = data.get('offerLocation')
+        certificate.course_name = data.get('offerCourseName')
+        certificate.duration = data.get('offerDuration')
+        certificate.start_date = start_date
+        certificate.end_date = end_date
+        certificate.issue_date = issue_date
+        certificate.director_name = data.get('offerDirector')
+        certificate.signature = signature_file
+
+        # 🔹 Delete old PDF if exists
+        if certificate.generated_pdf:
+            old_pdf_path = certificate.generated_pdf.path
+            if os.path.exists(old_pdf_path):
+                os.remove(old_pdf_path)
+            certificate.generated_pdf.delete(save=False)
+
+        # 🔹 Save first so regeneration attaches to this cert
+        certificate.save()
+
+        # 🔹 Decide template depending on type
+        if certificate.certificate_type == "offer":
+            template_name = "login/internship_offer.html"
+        else:
+            template_name = get_template_for_certificate("completion")
+
+        # 🔹 Regenerate new PDF
+        generate_certificate_pdf(certificate, template_name)
+        
+        # 🔹 Auto-resolve related query
+        StudentQuery.objects.filter(certificate=certificate, resolved=False).update(resolved=True)
+
+        messages.success(request, "Certificate updated and regenerated successfully!")
+        return redirect('admin_dashboard')
+
+    # ✅ Prefill form with certificate data
+    return render(request, 'login/edit-certificate.html', {'certificate': certificate})
+
+from django.views.decorators.http import require_GET
+
+@require_GET
+def certificates_by_student(request, student_id):
+    student_name = request.GET.get("student_name", "").strip()
+    if not student_name:
+        return JsonResponse({"status": "error", "message": "Student name required"}, status=400)
+
+    certificates = Certificate.objects.filter(
+        student_id=student_id.strip(),
+        student_name=student_name.strip()
+    ).order_by("-issue_date")
+
+    data = [
+        {
+            "id": c.id,
+            "certificate_type": c.certificate_type,
+            "student_name": c.student_name,
+            "student_id": c.student_id,
+            "course_name" : c.course_name,
+            "issue_date": c.issue_date.strftime("%Y-%m-%d") if c.issue_date else None,
+        }
+        for c in certificates
+    ]
+
+    return JsonResponse({"status": "success", "certificates": data})
+
+@require_GET
+def certificate_detail(request, pk):
+    try:
+        c = Certificate.objects.get(pk=pk)
+    except Certificate.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "Certificate not found"}, status=404)
+
+    data = {
+        "id": c.id,
+        "title": c.title,
+        "student_name": c.student_name,
+        "student_id": c.student_id,
+        "degree": c.degree,
+        "department": c.department,
+        "college": c.college,
+        "location": c.location,
+        "course_name": c.course_name,
+        "duration": c.duration,
+        "start_date": c.start_date.strftime("%Y-%m-%d") if c.start_date else "",
+        "end_date": c.end_date.strftime("%Y-%m-%d") if c.end_date else "",
+        "issue_date": c.issue_date.strftime("%Y-%m-%d") if c.issue_date else "",
+        "director_name": c.director_name,
+    }
+    return JsonResponse({"status": "success", "certificate": data})
+@login_required
+@user_passes_test(is_admin_or_coordinator)
+def generate_completion(request, pk):
+    # Fetch the offer certificate first
+    offer_cert = get_object_or_404(Certificate, pk=pk, certificate_type="offer")
+
+    if request.method == "POST":
+        data = request.POST
+        signature_file = request.FILES.get("completionSignature")
+
+        try:
+            start_date = datetime.strptime(data.get("completionStartDate"), "%Y-%m-%d").date()
+            end_date   = datetime.strptime(data.get("completionEndDate"), "%Y-%m-%d").date()
+            issue_date = datetime.strptime(data.get("completionIssueDate"), "%Y-%m-%d").date()
+        except Exception:
+            messages.error(request, "Invalid date format")
+            return redirect("admin_dashboard")
+
+        # Create a new Completion Certificate
+        completion_cert = Certificate.objects.create(
+            certificate_type="completion",
+            template_choice=data.get("completionTemplate", "default"),
+            title=data.get("completionTitle") or f"Completion of {offer_cert.course_name}",
+            student_name=offer_cert.student_name,
+            student_id=offer_cert.student_id,
+            degree=offer_cert.degree,
+            department=offer_cert.department,
+            college=offer_cert.college,
+            location=offer_cert.location,
+            course_name=offer_cert.course_name,
+            duration=offer_cert.duration,
+            start_date=start_date,
+            end_date=end_date,
+            completion_date=issue_date,
+            issue_date=issue_date,
+            director_name=data.get("completionDirector") or offer_cert.director_name,
+            signature=signature_file or offer_cert.signature,
+            created_by=request.user,
+        )
+
+        # Generate PDF for the new certificate
+        template_name = get_template_for_certificate("completion")
+        generate_certificate_pdf(completion_cert, template_name)
+
+        # Show success on admin dashboard
+        messages.success(request, f"Completion Certificate generated successfully for {completion_cert.student_name}!")
+        return redirect("admin_dashboard")
+
+    # If GET → show the prefilled form (like edit-certificate)
+    return render(request, "login/generate_completion.html", {"certificate": offer_cert})
+
+
