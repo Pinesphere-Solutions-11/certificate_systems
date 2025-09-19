@@ -91,6 +91,9 @@ urlpatterns = [
     # Generate completion certificate with offer letter data
     path("certificate/generate-completion/<int:pk>/", views.generate_completion, name="generate_completion"),
    
+    # Preview function
+    path("certificate/<int:pk>/preview/", views.preview_certificate, name="preview_certificate"),
+
 
     path("accounts/certificates/<int:pk>/", views.certificate_detail, name="certificate_detail"),
 

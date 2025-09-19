@@ -622,54 +622,110 @@ def create_completion_certificate(request):
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
 
+# views.py (replace existing bulk_offer_upload)
 @csrf_exempt
 @login_required
 @user_passes_test(is_coordinator)
 def bulk_offer_upload(request):
+    """
+    Flow:
+    - Parse file into list of row dicts (reader_list)
+    - Detect duplicates (in-file and in DB)
+    - If duplicates found and action != 'skip' -> return 409 + duplicate details
+    - If action == 'skip' or no duplicates -> create certificates skipping duplicates
+    """
     if request.method == 'POST' and request.FILES.get('csvFile'):
+        action = request.POST.get('action')  # None | 'skip' | 'cancel' | 'reupload'
         file_obj = request.FILES['csvFile']
         file_name = file_obj.name.lower()
+
+        # parse file into a list for two-pass processing
+        try:
+            if file_name.endswith('.csv'):
+                try:
+                    decoded = file_obj.read().decode('utf-8').splitlines()
+                except UnicodeDecodeError:
+                    file_obj.seek(0)
+                    decoded = file_obj.read().decode('latin-1').splitlines()
+                reader_list = list(csv.DictReader(decoded))
+            elif file_name.endswith(('.xls', '.xlsx')):
+                df = pd.read_excel(file_obj)
+                reader_list = df.to_dict(orient='records')
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Unsupported file type'}, status=400)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': f'Failed to parse file: {str(e)}'}, status=400)
+
+        # duplicate detection
+        duplicates = []
+        seen_ids = set()
+        for idx, row in enumerate(reader_list):
+            sid = str(row.get('Student ID', '')).strip()
+            sname = str(row.get('Student Name', '')).strip()
+            # missing id -> mark as invalid row (optional)
+            if not sid:
+                duplicates.append({'row': idx + 1, 'student_id': sid, 'student_name': sname,
+                                   'course': row.get('Course Name', ''), 'reason': 'missing_student_id'})
+                continue
+
+            # duplicate in uploaded file (keep first occurrence)
+            if sid in seen_ids:
+                duplicates.append({'row': idx + 1, 'student_id': sid, 'student_name': sname,
+                                   'course': row.get('Course Name', ''), 'reason': 'duplicate_in_file'})
+                continue
+
+            # duplicate in DB: student_id + student_name match
+            if Certificate.objects.filter(student_id=sid, student_name__iexact=sname).exists():
+                duplicates.append({'row': idx + 1, 'student_id': sid, 'student_name': sname,
+                                   'course': row.get('Course Name', ''), 'reason': 'exists_in_db'})
+            seen_ids.add(sid)
+
+        # If duplicates found and user hasn't chosen to skip, return 409 with details
+        if duplicates and action != 'skip':
+            return JsonResponse({'status': 'conflict', 'message': 'Duplicates detected', 'duplicates': duplicates}, status=409)
+
+        # Otherwise create certificates (skip duplicates):
         created = []
+        seen_ids = set()
+        for idx, row in enumerate(reader_list):
+            sid = str(row.get('Student ID', '')).strip()
+            sname = str(row.get('Student Name', '')).strip()
 
-        # --- Handle CSV ---
-        if file_name.endswith('.csv'):
+            if not sid:
+                continue  # skip invalid rows
+            if sid in seen_ids:
+                continue  # skip duplicate_in_file (keep first only)
+            if Certificate.objects.filter(student_id=sid, student_name__iexact=sname).exists():
+                if action == 'skip':
+                    seen_ids.add(sid)
+                    continue
+
+            # create certificate (use your existing mapping and parser)
             try:
-                decoded = file_obj.read().decode('utf-8').splitlines()
-            except UnicodeDecodeError:
-                file_obj.seek(0)
-                decoded = file_obj.read().decode('latin-1').splitlines()
-            reader = csv.DictReader(decoded)
-
-        # --- Handle Excel ---
-        elif file_name.endswith(('.xls', '.xlsx')):
-            df = pd.read_excel(file_obj)
-            reader = df.to_dict(orient='records')
-
-        else:
-            return JsonResponse({'status': 'error', 'message': 'Unsupported file type'}, status=400)
-
-        # --- Create Certificates ---
-        for row in reader:
-            cert = Certificate.objects.create(
-                certificate_type='offer',
-                title=row['Title'],
-                student_name=row['Student Name'],
-                student_id=row['Student ID'],
-                department=row['Department'],
-                degree=row['Degree'],
-                college=row['College'],
-                location=row['Location'],
-                course_name=row['Course Name'],
-                duration=row['Duration'],
-                start_date=parser.parse(str(row['Start Date'])),
-                end_date=parser.parse(str(row['End Date'])),
-                completion_date=parser.parse(str(row['Issue Date'])),
-                issue_date=parser.parse(str(row['Issue Date'])),
-                director_name=row['Director Name'],
-                created_by=request.user
-            )
-            generate_certificate_pdf(cert, 'login/internship_offer.html')
-            created.append(cert.pk)
+                cert = Certificate.objects.create(
+                    certificate_type='offer',
+                    title=row.get('Title', '') or '',
+                    student_name=sname,
+                    student_id=sid,
+                    department=row.get('Department', ''),
+                    degree=row.get('Degree', ''),
+                    college=row.get('College', ''),
+                    location=row.get('Location', ''),
+                    course_name=row.get('Course Name', ''),
+                    duration=row.get('Duration', ''),
+                    start_date=parser.parse(str(row.get('Start Date'))) if row.get('Start Date') else None,
+                    end_date=parser.parse(str(row.get('End Date'))) if row.get('End Date') else None,
+                    completion_date=parser.parse(str(row.get('Issue Date'))) if row.get('Issue Date') else None,
+                    issue_date=parser.parse(str(row.get('Issue Date'))) if row.get('Issue Date') else None,
+                    director_name=row.get('Director Name', ''),
+                    created_by=request.user
+                )
+                generate_certificate_pdf(cert, 'login/internship_offer.html')
+                created.append(cert.pk)
+                seen_ids.add(sid)
+            except Exception as e:
+                # If you want, log the row/index error; continue so other rows still process
+                continue
 
         return JsonResponse({'status': 'success', 'created': created}, status=200)
 
@@ -680,51 +736,87 @@ def bulk_offer_upload(request):
 @login_required
 @user_passes_test(is_coordinator)
 def bulk_completion_upload(request):
+    action = request.POST.get('action')  # None | 'skip'
     if request.method == 'POST' and request.FILES.get('csvFile'):
         file_obj = request.FILES['csvFile']
         file_name = file_obj.name.lower()
+
+        try:
+            if file_name.endswith('.csv'):
+                try:
+                    decoded = file_obj.read().decode('utf-8').splitlines()
+                except UnicodeDecodeError:
+                    file_obj.seek(0)
+                    decoded = file_obj.read().decode('latin-1').splitlines()
+                reader_list = list(csv.DictReader(decoded))
+            elif file_name.endswith(('.xls', '.xlsx')):
+                df = pd.read_excel(file_obj)
+                reader_list = df.to_dict(orient='records')
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Unsupported file type'}, status=400)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': f'Failed to parse file: {str(e)}'}, status=400)
+
+        # duplicate detection
+        duplicates = []
+        seen_ids = set()
+        for idx, row in enumerate(reader_list):
+            sid = str(row.get('Student ID', '')).strip()
+            sname = str(row.get('Student Name', '')).strip()
+            if not sid:
+                duplicates.append({'row': idx + 1, 'student_id': sid, 'student_name': sname,
+                                   'course': row.get('Course Name', ''), 'reason': 'missing_student_id'})
+                continue
+            if sid in seen_ids:
+                duplicates.append({'row': idx + 1, 'student_id': sid, 'student_name': sname,
+                                   'course': row.get('Course Name', ''), 'reason': 'duplicate_in_file'})
+                continue
+            if Certificate.objects.filter(student_id=sid, student_name__iexact=sname).exists():
+                duplicates.append({'row': idx + 1, 'student_id': sid, 'student_name': sname,
+                                   'course': row.get('Course Name', ''), 'reason': 'exists_in_db'})
+            seen_ids.add(sid)
+
+        if duplicates and action != 'skip':
+            return JsonResponse({'status': 'conflict', 'message': 'Duplicates detected', 'duplicates': duplicates}, status=409)
+
         created = []
-
-        # --- Handle CSV ---
-        if file_name.endswith('.csv'):
+        seen_ids = set()
+        for idx, row in enumerate(reader_list):
+            sid = str(row.get('Student ID', '')).strip()
+            sname = str(row.get('Student Name', '')).strip()
+            if not sid:
+                continue
+            if sid in seen_ids:
+                continue
+            if Certificate.objects.filter(student_id=sid, student_name__iexact=sname).exists():
+                if action == 'skip':
+                    seen_ids.add(sid)
+                    continue
             try:
-                decoded = file_obj.read().decode('utf-8').splitlines()
-            except UnicodeDecodeError:
-                file_obj.seek(0)
-                decoded = file_obj.read().decode('latin-1').splitlines()
-            reader = csv.DictReader(decoded)
-
-        # --- Handle Excel ---
-        elif file_name.endswith(('.xls', '.xlsx')):
-            df = pd.read_excel(file_obj)
-            reader = df.to_dict(orient='records')
-
-        else:
-            return JsonResponse({'status': 'error', 'message': 'Unsupported file type'}, status=400)
-
-        # --- Create Certificates ---
-        for row in reader:
-            cert = Certificate.objects.create(
-                certificate_type='completion',
-                title=row['Title'],
-                student_name=row['Student Name'],
-                student_id=row['Student ID'],
-                department=row['Department'],
-                degree=row['Degree'],
-                college=row['College'],
-                location=row['Location'],
-                course_name=row['Course Name'],
-                duration=row['Duration'],
-                start_date=parser.parse(str(row['Start Date'])),
-                end_date=parser.parse(str(row['End Date'])),
-                completion_date=parser.parse(str(row['Issue Date'])),
-                issue_date=parser.parse(str(row['Issue Date'])),
-                director_name=row['Director Name'],
-                created_by=request.user
-            )
-            template_name = get_template_for_certificate("completion")
-            generate_certificate_pdf(cert, template_name)
-            created.append(cert.pk)
+                cert = Certificate.objects.create(
+                    certificate_type='completion',
+                    title=row.get('Title', '') or '',
+                    student_name=sname,
+                    student_id=sid,
+                    department=row.get('Department', ''),
+                    degree=row.get('Degree', ''),
+                    college=row.get('College', ''),
+                    location=row.get('Location', ''),
+                    course_name=row.get('Course Name', ''),
+                    duration=row.get('Duration', ''),
+                    start_date=parser.parse(str(row.get('Start Date'))) if row.get('Start Date') else None,
+                    end_date=parser.parse(str(row.get('End Date'))) if row.get('End Date') else None,
+                    completion_date=parser.parse(str(row.get('Issue Date'))) if row.get('Issue Date') else None,
+                    issue_date=parser.parse(str(row.get('Issue Date'))) if row.get('Issue Date') else None,
+                    director_name=row.get('Director Name', ''),
+                    created_by=request.user
+                )
+                template_name = get_template_for_certificate("completion")
+                generate_certificate_pdf(cert, template_name)
+                created.append(cert.pk)
+                seen_ids.add(sid)
+            except Exception:
+                continue
 
         return JsonResponse({'status': 'success', 'created': created}, status=200)
 
@@ -1108,7 +1200,7 @@ def delete_query(request, pk):
         return JsonResponse({"status": "error", "message": "Query not found"}, status=404)
 
 @login_required
-@user_passes_test(is_admin_or_coordinator)
+@user_passes_test(is_admin)
 def edit_certificate(request, pk):
     certificate = get_object_or_404(Certificate, pk=pk)
 
@@ -1167,6 +1259,68 @@ def edit_certificate(request, pk):
     # ✅ Prefill form with certificate data
     return render(request, 'login/edit-certificate.html', {'certificate': certificate})
 
+
+@login_required
+@user_passes_test(is_coordinator)
+def edit_certificate(request, pk):
+    certificate = get_object_or_404(Certificate, pk=pk)
+
+    if request.method == 'POST':
+        data = request.POST
+        signature_file = request.FILES.get('offerSignature') or certificate.signature
+
+        try:
+            start_date = datetime.strptime(data.get('offerStartDate'), '%Y-%m-%d').date()
+            end_date   = datetime.strptime(data.get('offerEndDate'),   '%Y-%m-%d').date()
+            issue_date = datetime.strptime(data.get('offerIssueDate'), '%Y-%m-%d').date()
+        except Exception:
+            return JsonResponse({'status': 'error', 'message': 'Invalid date format'}, status=400)
+
+        # 🔹 Update fields
+        certificate.title = data.get('offerTitle')
+        certificate.student_name = data.get('offerStudentName')
+        certificate.student_id = data.get('offerRegisterNumber')
+        certificate.degree = data.get('offerDegree')
+        certificate.department = data.get('offerDepartment')
+        certificate.college = data.get('offerCollege')
+        certificate.location = data.get('offerLocation')
+        certificate.course_name = data.get('offerCourseName')
+        certificate.duration = data.get('offerDuration')
+        certificate.start_date = start_date
+        certificate.end_date = end_date
+        certificate.issue_date = issue_date
+        certificate.director_name = data.get('offerDirector')
+        certificate.signature = signature_file
+
+        # 🔹 Delete old PDF if exists
+        if certificate.generated_pdf:
+            old_pdf_path = certificate.generated_pdf.path
+            if os.path.exists(old_pdf_path):
+                os.remove(old_pdf_path)
+            certificate.generated_pdf.delete(save=False)
+
+        # 🔹 Save first so regeneration attaches to this cert
+        certificate.save()
+
+        # 🔹 Decide template depending on type
+        if certificate.certificate_type == "offer":
+            template_name = "login/internship_offer.html"
+        else:
+            template_name = get_template_for_certificate("completion")
+
+        # 🔹 Regenerate new PDF
+        generate_certificate_pdf(certificate, template_name)
+        
+        # 🔹 Auto-resolve related query
+        StudentQuery.objects.filter(certificate=certificate, resolved=False).update(resolved=True)
+
+        messages.success(request, "Certificate updated and regenerated successfully!")
+        return redirect('coordinator_dashboard')
+
+    # ✅ Prefill form with certificate data
+    return render(request, 'login/edit-certificate.html', {'certificate': certificate})
+
+
 from django.views.decorators.http import require_GET
 
 @require_GET
@@ -1219,7 +1373,7 @@ def certificate_detail(request, pk):
     }
     return JsonResponse({"status": "success", "certificate": data})
 @login_required
-@user_passes_test(is_admin_or_coordinator)
+@user_passes_test(is_admin)
 def generate_completion(request, pk):
     # Fetch the offer certificate first
     offer_cert = get_object_or_404(Certificate, pk=pk, certificate_type="offer")
@@ -1268,5 +1422,80 @@ def generate_completion(request, pk):
 
     # If GET → show the prefilled form (like edit-certificate)
     return render(request, "login/generate_completion.html", {"certificate": offer_cert})
+
+@login_required
+@user_passes_test(is_coordinator)
+def generate_completion(request, pk):
+    # Fetch the offer certificate first
+    offer_cert = get_object_or_404(Certificate, pk=pk, certificate_type="offer")
+
+    if request.method == "POST":
+        data = request.POST
+        signature_file = request.FILES.get("completionSignature")
+
+        try:
+            start_date = datetime.strptime(data.get("completionStartDate"), "%Y-%m-%d").date()
+            end_date   = datetime.strptime(data.get("completionEndDate"), "%Y-%m-%d").date()
+            issue_date = datetime.strptime(data.get("completionIssueDate"), "%Y-%m-%d").date()
+        except Exception:
+            messages.error(request, "Invalid date format")
+            return redirect("admin_dashboard")
+
+        # Create a new Completion Certificate
+        completion_cert = Certificate.objects.create(
+            certificate_type="completion",
+            template_choice=data.get("completionTemplate", "default"),
+            title=data.get("completionTitle") or f"Completion of {offer_cert.course_name}",
+            student_name=offer_cert.student_name,
+            student_id=offer_cert.student_id,
+            degree=offer_cert.degree,
+            department=offer_cert.department,
+            college=offer_cert.college,
+            location=offer_cert.location,
+            course_name=offer_cert.course_name,
+            duration=offer_cert.duration,
+            start_date=start_date,
+            end_date=end_date,
+            completion_date=issue_date,
+            issue_date=issue_date,
+            director_name=data.get("completionDirector") or offer_cert.director_name,
+            signature=signature_file or offer_cert.signature,
+            created_by=request.user,
+        )
+
+        # Generate PDF for the new certificate
+        template_name = get_template_for_certificate("completion")
+        generate_certificate_pdf(completion_cert, template_name)
+
+        # Show success on admin dashboard
+        messages.success(request, f"Completion Certificate generated successfully for {completion_cert.student_name}!")
+        return redirect("coordinator_dashboard")
+
+    # If GET → show the prefilled form (like edit-certificate)
+    return render(request, "login/generate_completion.html", {"certificate": offer_cert})
+
+
+from django.http import FileResponse
+import mimetypes
+
+def preview_certificate(request, pk):
+    cert = get_object_or_404(Certificate, pk=pk)
+
+    # Ensure PDF is generated
+    if not cert.generated_pdf:
+        if cert.certificate_type == "offer":
+            template_name = "login/internship_offer.html"
+        else:
+            template_name = get_template_for_certificate("completion")
+        generate_certificate_pdf(cert, template_name)
+
+    # Serve PDF inline
+    pdf_path = cert.generated_pdf.path
+    pdf_file = open(pdf_path, "rb")
+
+    mime_type, _ = mimetypes.guess_type(pdf_path)
+    response = FileResponse(pdf_file, content_type=mime_type or "application/pdf")
+    response["Content-Disposition"] = f'inline; filename="{cert.certificate_number}.pdf"'
+    return response
 
 

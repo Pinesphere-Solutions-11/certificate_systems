@@ -2100,10 +2100,9 @@ form label:has(+ textarea[required])::after {
 
                                             <td><span class="status-badge status-active">Active</span></td>
                                             <td>
-                                                <a href="/accounts/certificate/generate-completion/{{ cert.id }}/" 
-   class="btn btn-success btn-sm">
-   <i class="fas fa-file"></i>
-</a>
+                                                <a href="{% url 'generate_completion' cert.id %}" class="btn btn-success btn-sm">
+                                <i class="fas fa-file-signature"></i>
+                            </a>
 
                                                 {% if cert.generated_pdf %}
                                                 <button class="btn btn-info btn-sm"
@@ -3376,8 +3375,6 @@ function fetchQueries() {
 `);
 
 }
-
-
         // show RESOLVE only if not resolved
         if (!resolved) {
           actions.push(`

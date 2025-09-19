@@ -350,6 +350,24 @@
             font-size: 0.875rem;
         }
 
+        #certificateType {
+ width: 50%;
+            padding: 0.875rem 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius-sm);
+            font-family: inherit;
+            font-size: 0.875rem;
+            transition: var(--transition);
+            color: var(--content-bg);
+            background: rgba(255, 255, 255, 0.05);
+            resize: vertical;
+}
+
+#certificateType option {
+  background-color: rgba(255, 255, 255, 0.05); /* option background */
+  color: black; /* text inside dropdown */
+}
+
         .form-group input,
         .form-group textarea {
             width: 100%;
@@ -363,6 +381,7 @@
             background: rgba(255, 255, 255, 0.05);
             resize: vertical;
         }
+        
 
         .form-group textarea {
             min-height: 120px;
@@ -402,6 +421,26 @@
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
         }
+        .cancel-btn {
+            background: transparent;
+            color: var(--content-bg);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            padding: 0.875rem 2rem;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .cancel-btn:hover {
+            background: rgba(240, 39, 39, 0.836);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
 
         .btn-outline {
             background: transparent;
@@ -512,7 +551,7 @@
         .download-btn {
             background: linear-gradient(135deg, var(--success-color), #059669);
             color: white;
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 0.5rem;
             border-radius: var(--border-radius-sm);
             text-decoration: none;
             font-size: 0.75rem;
@@ -706,6 +745,86 @@ form label:has(+ textarea[required])::after {
     color: rgb(231, 49, 49);
     font-weight: bold;
 }
+/* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.75rem;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            font-size: 0.875rem;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning-color), #d97706);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, var(--info-color), #0891b2);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border-color);
+            color: var(--text-dark);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .btn-sm {
+            padding: 0.525rem;
+            font-size: 0.75rem;
+        }
+
     </style>
 </head>
 
@@ -808,7 +927,7 @@ form label:has(+ textarea[required])::after {
                         </div>
 
                         <div class="form-actions">
-                            <button type="button" class="btn-outline" id="cancelQuery">
+                            <button type="button" class="cancel-btn" id="cancelQuery">
                                 <i class="fas fa-times"></i>
                                 Cancel
                             </button>
@@ -877,8 +996,12 @@ form label:has(+ textarea[required])::after {
                             <td>
                                 <a href="{% url 'download_certificate' cert.id %}" class="download-btn">
                                     <i class="fas fa-download"></i>
-                                    Download
+                                    
                                 </a>
+                                <a href="{% url 'preview_certificate' cert.id %}" 
+   class="btn btn-info btn-sm" target="_blank">
+   <i class="fas fa-eye"></i>
+</a>
                             </td>
                         </tr>
                         {% endfor %}

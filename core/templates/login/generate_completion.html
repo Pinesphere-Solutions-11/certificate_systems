@@ -366,7 +366,7 @@ form label:has(+ textarea[required])::after {
                         <!-- Department -->
                         <div class="form-group">
                             <label for="completionDepartment">Department</label>
-                            <select id="completionDepartment" name="completionDepartment">
+                            <select id="completionDepartment" name="completionDepartment" required>
                                 <option value="">Select Department</option>
                                 {% if certificate.department %}
                                 <option value="{{ certificate.department }}" selected>{{ certificate.department }}</option>

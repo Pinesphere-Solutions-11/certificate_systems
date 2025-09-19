@@ -453,9 +453,10 @@
         }
 
         .data-table td {
-            padding: 1rem 1.5rem;
+            padding: 1.5rem 1.5rem;
             border-bottom: 1px solid var(--border-color);
             font-size: 0.875rem;
+            
         }
 
         .empty-state {
@@ -651,7 +652,7 @@
         .download-btn {
             background: linear-gradient(135deg, var(--success-color), #059669);
             color: white;
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 0.5rem;
             border-radius: var(--border-radius-sm);
             text-decoration: none;
             font-size: 0.75rem;
@@ -989,6 +990,89 @@ form label:has(+ textarea[required])::after {
     color: rgb(231, 49, 49);
     font-weight: bold;
 }
+.popup-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: none; /* hide by default */
+  align-items: center; 
+  justify-content: center;
+  z-index: 2000;
+}
+
+.popup-content {
+  background: #fff;
+  color: #333;
+  padding: 20px 25px;
+  border-radius: 10px;
+  width: 650px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  animation: popupFadeIn 0.3s ease-in-out;
+}
+
+.popup-content h3 {
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  color: #444;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 8px;
+}
+
+.popup-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+
+.popup-content th, 
+.popup-content td {
+  border: 1px solid #ddd;
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.popup-content th {
+  background: #f8f9fa;
+  font-weight: 600;
+}
+
+.popup-content td {
+  font-size: 0.9rem;
+}
+
+.popup-content .btn {
+  padding: 6px 12px;
+  border-radius: 4px;
+}
+
+.popup-content .btn-primary {
+  background: #007bff;
+  border: none;
+  color: white;
+}
+
+.popup-content .btn-secondary {
+  background: #6c757d;
+  border: none;
+  color: white;
+}
+
+@keyframes popupFadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* Simple modal style — tweak to match your theme */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:3000}
+.modal-box{background:#fff;color:#000;border-radius:8px;padding:18px;width:760px;max-width:95%;max-height:80vh;overflow:auto;box-shadow:0 8px 24px rgba(0,0,0,0.2)}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+#duplicateTable{width:100%;border-collapse:collapse}
+#duplicateTable th, #duplicateTable td{padding:8px;border:1px solid #eee;text-align:left;font-size:13px}
+
     </style>
 </head>
 
@@ -1081,6 +1165,7 @@ form label:has(+ textarea[required])::after {
                         <thead>
                             <tr>
                                 <th>ID</th>
+                                <th>TYPE</th>
                                 <th>Student</th>
                                 <th>Subject</th>
                                 <th>Query</th>
@@ -1413,6 +1498,27 @@ form label:has(+ textarea[required])::after {
                     </div>
                 </div>
             </div>
+            <!-- Duplicate modal (add once on the page, e.g. near end of body) -->
+<div id="duplicateModal" style="display:none;">
+  <div id="duplicateModalOverlay" class="modal-overlay">
+    <div class="modal-box">
+      <h3>Duplicates detected</h3>
+      <p>The uploader found duplicate rows. Choose an action:</p>
+      <div id="duplicateListWrapper">
+        <table id="duplicateTable" class="table">
+          <thead><tr><th>Row</th><th>Student ID</th><th>Student Name</th><th>Course</th><th>Reason</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="modal-actions">
+        <button id="dupSkip" class="btn btn-primary">Skip duplicates & continue</button>
+        <button id="dupReupload" class="btn btn-secondary">Re-upload</button>
+        <button id="dupCancel" class="btn btn-danger">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
             <!-- Certificates Table -->
             <div class="data-section">
@@ -1471,14 +1577,26 @@ form label:has(+ textarea[required])::after {
                             <td>{{ cert.certificate_number }}</td>
                             <td>{{ cert.get_certificate_type_display }}</td>
                             <td>
+
+                                {% if cert.certificate_type == "offer" %}
+                            <!-- Only show generate completion if this is an offer certificate -->
+                            <a href="{% url 'generate_completion' cert.id %}" class="btn btn-success btn-sm">
+                                <i class="fas fa-file-signature"></i>
+                            </a>
+                        {% endif %}
+                        <a href="{% url 'preview_certificate' cert.id %}" 
+   class="btn btn-info btn-sm" target="_blank">
+   <i class="fas fa-eye"></i>
+</a>
                                 {% if cert.generated_pdf %}
                                 <a href="{{ cert.generated_pdf.url }}" class="download-btn" download>
                                     <i class="fas fa-download"></i>
-                                    Download
+
                                 </a>
                                 {% else %}
                                 <span class="download-btn disabled">N/A</span>
                                 {% endif %}
+                                
                             </td>
                         </tr>
                         {% endfor %}
@@ -1519,6 +1637,26 @@ form label:has(+ textarea[required])::after {
                 {% endif %}
             </div>
         </div>
+         <!-- Certificate selection popup -->
+<div id="certificatePopup" class="popup-overlay" style="display:none;">
+  <div class="popup-content">
+    <h3 id="popupTitle">Certificates</h3>
+    <table class="table table-bordered">
+      <thead>
+  <tr>
+    <th>Type</th>
+    <th>Student ID</th>
+    <th>Course</th>
+    <th>Issue Date</th>
+    <th>Action</th>
+  </tr>
+</thead>
+      <tbody id="popupCertificates"></tbody>
+    </table>
+    <button onclick="closeCertificatesPopup()" class="btn btn-secondary">Close</button>
+  </div>
+</div>
+
 
 
     </div>
@@ -1527,6 +1665,45 @@ form label:has(+ textarea[required])::after {
     <div id="popupNotification"></div>
 
     <script>
+        function openCertificatesPopup(studentId, studentNameEnc) {
+  const studentName = decodeURIComponent(studentNameEnc);
+  document.getElementById("popupTitle").innerText = `Certificates for ${studentName}`;
+
+  fetch(`/accounts/certificates/${studentId}/?student_name=${encodeURIComponent(studentName)}`)
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.getElementById("popupCertificates");
+      tbody.innerHTML = "";
+
+      if (!data.certificates || data.certificates.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4">No certificates found</td></tr>`;
+      } else {
+        data.certificates.forEach(cert => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+  <td>${cert.certificate_type}</td>
+  <td>${cert.student_id}</td>
+  <td>${cert.course_name || "-"}</td>
+  <td>${cert.issue_date || "-"}</td>
+  <td>
+    <a href="/accounts/certificate/edit/${cert.id}/" class="btn btn-primary btn-sm">
+        Edit
+    </a>
+  </td>
+`;
+
+          tbody.appendChild(row);
+        });
+      }
+
+      document.getElementById("certificatePopup").style.display = "flex";
+    })
+    .catch(err => console.error("Error fetching certificates:", err));
+}
+
+function closeCertificatesPopup() {
+  document.getElementById("certificatePopup").style.display = "none";
+}
 
         // Enhanced Search Functionality
         class DynamicSearch {
@@ -1736,7 +1913,7 @@ form label:has(+ textarea[required])::after {
                 }).format(date);
             }
 
-                       function isResolved(val) {
+   function isResolved(val) {
   // Normalize possible server values (boolean true, "true", "True", 1, "1")
   return val === true || val === 'true' || val === 'True' || val === 1 || val === '1';
 }
@@ -1757,15 +1934,16 @@ function fetchQueries() {
         const actions = [];
 
         // show EDIT only if there is a certificate and query is NOT resolved
-        if (q.certificate_id && !resolved) {
-          actions.push(`
-            <a href="/accounts/certificate/edit/${q.certificate_id}/" 
-               class="btn btn-warning btn-sm" title="Edit Certificate">
-               <i class="fas fa-edit"></i>
-            </a>
-          `);
-        }
+        if (!resolved) {
+ actions.push(`
+  <button class="btn btn-warning btn-sm"
+          onclick="openCertificatesPopup('${q.student_id}', '${encodeURIComponent(q.student)}')"
+          title="Select Certificate">
+    <i class="fas fa-edit"></i>
+  </button>
+`);
 
+}
         // show RESOLVE only if not resolved
         if (!resolved) {
           actions.push(`
@@ -1784,6 +1962,7 @@ function fetchQueries() {
 
         row.innerHTML = `
           <td>${q.id}</td>
+          <td>${q.certificate_type}</td>
           <td>${q.student}</td>
           <td>${q.subject}</td>
           <td>${q.query_text}</td>
@@ -1924,6 +2103,29 @@ function fetchQueries() {
             popup.textContent = message;
             popup.style.display = 'block';
             setTimeout(() => { popup.style.display = 'none'; }, 3000);
+        }
+        function showPopup(message, success = true) {
+            let popup = document.getElementById('popupNotification');
+            if (!popup) {
+                popup = document.createElement('div');
+                popup.id = 'popupNotification';
+                Object.assign(popup.style, {
+                    position: 'fixed',
+                    top: '20px',
+                    right: '20px',
+                    zIndex: '9999',
+                    padding: '12px 20px',
+                    borderRadius: '6px',
+                    color: 'white',
+                    fontWeight: 'bold',
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+                });
+                document.body.appendChild(popup);
+            }
+            popup.style.backgroundColor = success ? '#10b981' : '#ef4444';
+            popup.textContent = message;
+            popup.style.display = 'block';
+            setTimeout(() => popup.style.display = 'none', 3000);
         }
 
         function getCookie(name) {
@@ -2141,60 +2343,130 @@ function fetchQueries() {
                 });
             }
 
-            // Bulk upload handlers
-            document.getElementById('bulkOfferUploadForm')?.addEventListener('submit', function (e) {
-                e.preventDefault();
-                const formData = new FormData(this);
-                fetch('/accounts/certificate/offer/bulk-upload/', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': getCookie('csrftoken')
-                    },
-                    body: formData
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.status === 'success') {
-                            showPopup(`Successfully generated ${data.created.length} offer certificates.`, true);
-                            this.reset();
-                            hideAllForms();
-                            document.querySelector('[href="#"]').classList.add('active');
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 1500);
-                        } else {
-                            showPopup(data.message || 'Bulk upload failed.', false);
-                        }
-                    })
-                    .catch(() => showPopup('Something went wrong!', false));
-            });
+            // --- helper to show the duplicate modal ---
+function showDuplicateModal(duplicates, formElement, endpoint) {
+    const modal = document.getElementById('duplicateModal');
+    const tbody = modal.querySelector('#duplicateTable tbody');
+    tbody.innerHTML = '';
 
-            document.getElementById('bulkCompletionUploadForm')?.addEventListener('submit', function (e) {
-                e.preventDefault();
-                const formData = new FormData(this);
-                fetch('/accounts/certificate/completion/bulk-upload/', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': getCookie('csrftoken')
-                    },
-                    body: formData
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.status === 'success') {
-                            showPopup(`Successfully generated ${data.created.length} completion certificates.`, true);
-                            this.reset();
-                            hideAllForms();
-                            document.querySelector('[href="#"]').classList.add('active');
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 1500);
-                        } else {
-                            showPopup(data.message || 'Bulk upload failed.', false);
-                        }
-                    })
-                    .catch(() => showPopup('Something went wrong!', false));
-            });
+    // populate rows
+    duplicates.forEach(d => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${d.row || '-'}</td>
+            <td>${d.student_id || '-'}</td>
+            <td>${d.student_name || '-'}</td>
+            <td>${d.course || '-'}</td>
+            <td>${d.reason || '-'}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    modal.style.display = 'block';
+
+    // handlers
+    const btnSkip = document.getElementById('dupSkip');
+    const btnReupload = document.getElementById('dupReupload');
+    const btnCancel = document.getElementById('dupCancel');
+
+    // remove previous handlers (safe re-open)
+    btnSkip.onclick = btnReupload.onclick = btnCancel.onclick = null;
+
+    btnSkip.onclick = function () {
+        // resubmit same file with action=skip
+        const fd = new FormData(formElement);
+        fd.append('action', 'skip');
+        fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: fd
+        })
+        .then(res => res.json())
+        .then(data => {
+            modal.style.display = 'none';
+            if (data.status === 'success') {
+                showPopup(`Generated ${data.created.length} certificates (duplicates skipped).`, true);
+                formElement.reset();
+                setTimeout(()=> window.location.reload(), 1000);
+            } else {
+                showPopup(data.message || 'Bulk upload failed after skipping duplicates.', false);
+            }
+        })
+        .catch(err => {
+            modal.style.display = 'none';
+            showPopup('Network error while continuing upload.', false);
+        });
+    };
+
+    btnReupload.onclick = function () {
+        modal.style.display = 'none';
+        // clear the file input so user can re-select
+        const input = formElement.querySelector('input[type=file]');
+        if (input) {
+            input.value = ''; // clear
+            input.click(); // open file dialog (browsers may block this in some contexts)
+        }
+    };
+
+    btnCancel.onclick = function () {
+        modal.style.display = 'none';
+        showPopup('Bulk upload canceled.', false);
+    };
+}
+
+// --- new (robust) fetch wrapper for bulk upload with duplicate handling ---
+function handleBulkUpload(formSelector, endpoint, successMessage) {
+    const form = document.getElementById(formSelector);
+    if (!form) return;
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const fileInput = form.querySelector('input[type=file]');
+        if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+            showPopup('Please select a file to upload.', false);
+            return;
+        }
+        const fd = new FormData(form);
+        fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: fd
+        })
+        .then(res => {
+            if (res.status === 409) {
+                // conflict -> duplicates; parse JSON and show modal
+                return res.json().then(data => {
+                    showDuplicateModal(data.duplicates || [], form, endpoint);
+                    // stop normal processing
+                    throw {handled: true};
+                }).catch(err => { throw err; });
+            }
+            return res.json();
+        })
+        .then(data => {
+            if (!data) return;
+            if (data.status === 'success') {
+                showPopup(successMessage.replace('{n}', data.created.length) || 'Generated successfully.', true);
+                form.reset();
+                setTimeout(()=> window.location.reload(), 800);
+            } else {
+                showPopup(data.message || 'Bulk upload failed.', false);
+            }
+        })
+        .catch(err => {
+            if (err && err.handled) return; // already shown modal
+            console.error(err);
+            showPopup('Something went wrong!', false);
+        });
+    });
+}
+
+// initialize
+handleBulkUpload('bulkOfferUploadForm', '/accounts/certificate/offer/bulk-upload/', 'Successfully generated {n} offer certificates.');
+handleBulkUpload('bulkCompletionUploadForm', '/accounts/certificate/completion/bulk-upload/', 'Successfully generated {n} completion certificates.');
 
             // Initialize form handlers
             handleCertificateSubmit('createOfferForm', '/accounts/certificate/offer/create/', 'Offer Letter');
