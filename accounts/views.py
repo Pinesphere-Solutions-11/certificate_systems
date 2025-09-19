@@ -1,3 +1,4 @@
+from audioop import reverse
 import csv
 from io import BytesIO
 import json
@@ -23,7 +24,7 @@ from django.core.mail import send_mail
 import threading
 from .models import User
 from .models import Student
-from .models import CertificateTemplate
+from django.db import IntegrityError
 from django.core.files.storage import default_storage
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import cache_control
@@ -177,20 +178,52 @@ def is_coordinator(user):
 def is_student(user):
     return user.is_authenticated and user.role == 'student'
 
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+
+def set_password(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is None or not default_token_generator.check_token(user, token):
+        messages.error(request, "The password set link is invalid or expired.")
+        return redirect('index')
+
+    if request.method == 'POST':
+        new_password = request.POST.get('new_password')
+        confirm = request.POST.get('confirm_password')
+        if not new_password or new_password != confirm:
+            messages.error(request, "Passwords do not match.")
+            return render(request, 'login/set_password.html', {'valid': True})
+        # Set the password and lock future changes
+        user.set_password(new_password)
+        user.must_set_password = False
+        user.password_locked = True
+        user.save()
+        messages.success(request, "Password set successfully. Please log in.")
+        return redirect('index')  # or appropriate login route
+    # GET -> render form
+    return render(request, 'login/set_password.html', {'valid': True})
+
+
 # =========================
 # 📊 ADMIN DASHBOARD
 # =========================
-from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
-from .models import Certificate, Coordinator, Student, AdminUser
-from .forms import  StudentForm, AdminUserForm, CoordinatorForm
+from .forms import  StudentForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
 from accounts.models import Certificate, Student, Coordinator, AdminUser, User 
-
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+from django.urls import reverse
 
 
 @login_required(login_url="index")
@@ -236,32 +269,68 @@ def admin_dashboard(request):
             phone = request.POST.get('phone', '')
 
             if not all([full_name, email, employment_id]):
-                return JsonResponse({'status': 'error', 'message': 'All fields except  designation and phone are required.'}, status=400)
+                return JsonResponse({'status': 'error', 'message': 'Full name, email, and employment ID are required.'}, status=400)
 
-            if User.objects.filter(username=email).exists():
+            # Only check Coordinator table (per your request)
+            if Coordinator.objects.filter(email=email).exists():
                 return JsonResponse({'status': 'error', 'message': 'Email already exists.'}, status=400)
 
-            # Create the user account
-            user = User.objects.create_user(
-                username=email,
-                email=email,
-                password=employment_id,
-                role='coordinator'
-            )
+            # Role priority mapping
+            role_priority = {'student': 1, 'coordinator': 2, 'admin': 3}
+            desired_role = 'coordinator'
 
-            # Create the Coordinator profile
-            Coordinator.objects.create(
-                user=user,
-                full_name=full_name,
-                email=email,
-                designation=designation,
-                employment_id=employment_id,
-                phone=phone
-            )
+            # Reuse existing User if present, otherwise create new user
+            user = User.objects.filter(Q(username=email) | Q(email=email)).first()
+            if user:
+                prev_role = getattr(user, 'role', 'student')
+                role_changed = False
+                # escalate role if desired has higher privilege
+                if role_priority.get(desired_role, 0) > role_priority.get(prev_role, 0):
+                    user.role = desired_role
+                    user.save()
+                    role_changed = True
+
+                # Send link if: user has no usable password OR must_set_password flagged OR role was escalated
+                send_link = (not user.has_usable_password()) or getattr(user, 'must_set_password', False) or role_changed
+            else:
+                # create new user and mark as must set password
+                user = User.objects.create_user(username=email, email=email)
+                user.set_unusable_password()
+                user.must_set_password = True
+                user.password_locked = False
+                user.role = desired_role
+                user.save()
+                send_link = True
+
+            # Create Coordinator profile
+            try:
+                Coordinator.objects.create(
+                    user=user,
+                    full_name=full_name,
+                    email=email,
+                    designation=designation,
+                    employment_id=employment_id,
+                    phone=phone
+                )
+            except IntegrityError:
+                # Profile conflict (unique email/employment_id) — report to UI
+                return JsonResponse({'status': 'error', 'message': 'Coordinator record conflicts (email/employment ID).'}, status=400)
+
+            # Send set-password link if required
+            if send_link:
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+                token = default_token_generator.make_token(user)
+                set_password_url = request.build_absolute_uri(
+                    reverse('set_password', kwargs={'uidb64': uid, 'token': token})
+                )
+
+                subject = "Set your account password"
+                message = f"Hello {full_name},\n\nPlease set your account password by clicking the link below:\n\n{set_password_url}\n\nThis link will expire soon."
+                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email], fail_silently=False)
 
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'status': 'success', 'message': 'Coordinator added successfully!'})
-            
+
             messages.success(request, 'Coordinator added successfully!')
             return redirect('admin_dashboard')
 
@@ -286,33 +355,68 @@ def admin_dashboard(request):
             if not all([full_name, email, employment_id]):
                 return JsonResponse({'status': 'error', 'message': 'Full name, email, and employment ID are required.'}, status=400)
 
-            if User.objects.filter(username=email):
+            # Only check AdminUser table (per your request)
+            if AdminUser.objects.filter(email=email).exists():
                 return JsonResponse({'status': 'error', 'message': 'Email already exists.'}, status=400)
 
-            # Create Django User for login
-            user = User.objects.create_user(
-                username=email,
-                email=email,
-                password=employment_id,
-                role='admin'
-            )
+            # Role priority mapping
+            role_priority = {'student': 1, 'coordinator': 2, 'admin': 3}
+            desired_role = 'admin'
 
-            # Create AdminUser profile
-            AdminUser.objects.create(
-                user=user,
-                full_name=full_name,
-                email=email,
-                designation=designation,
-                employment_id=employment_id,
-                phone=phone
-            )
+            # Reuse existing User if present, otherwise create new user
+            user = User.objects.filter(Q(username=email) | Q(email=email)).first()
+            if user:
+                prev_role = getattr(user, 'role', 'student')
+                role_changed = False
+                # escalate role if desired has higher privilege
+                if role_priority.get(desired_role, 0) > role_priority.get(prev_role, 0):
+                    user.role = desired_role
+                    user.save()
+                    role_changed = True
 
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                # Send link if: user has no usable password OR must_set_password flagged OR role was escalated
+                send_link = (not user.has_usable_password()) or getattr(user, 'must_set_password', False) or role_changed
+            else:
+                # create new user and mark as must set password
+                user = User.objects.create_user(username=email, email=email)
+                user.set_unusable_password()
+                user.must_set_password = True
+                user.password_locked = False
+                user.role = desired_role
+                user.save()
+                send_link = True
+
+            # Create Admin profile
+            try:
+                AdminUser.objects.create(
+                    user=user,
+                    full_name=full_name,
+                    email=email,
+                    designation=designation,
+                    employment_id=employment_id,
+                    phone=phone
+                )
+            except IntegrityError:
+                return JsonResponse({'status': 'error', 'message': 'Admin record conflicts (email/employment ID).'}, status=400)
+
+            # Send set-password link if required
+            if send_link:
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+                token = default_token_generator.make_token(user)
+                set_password_url = request.build_absolute_uri(
+                    reverse('set_password', kwargs={'uidb64': uid, 'token': token})
+                )
+
+                subject = "Set your account password"
+                message = f"Hello {full_name},\n\nPlease set your account password by clicking the link below:\n\n{set_password_url}\n\nThis link will expire soon."
+                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email], fail_silently=False)
+
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'status': 'success', 'message': 'Admin added successfully!'})
-            
+
             messages.success(request, 'Admin added successfully!')
             return redirect('admin_dashboard')
-
+                
         else:
             return JsonResponse({'status': 'error', 'message': form.errors.as_json()}, status=400)
 
@@ -553,7 +657,7 @@ def create_offer_letter(request):
         # ONLY pass the default template name; the function will prefer a DB template if present.
         generate_certificate_pdf(cert, 'login/internship_offer.html')
 
-        return JsonResponse({
+        return JsonResponse({  
             'status': 'success',
             'message': 'Offer Letter created successfully!',
             'certificate_number': cert.certificate_number,
