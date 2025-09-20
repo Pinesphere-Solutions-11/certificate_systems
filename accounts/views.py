@@ -271,62 +271,38 @@ def admin_dashboard(request):
             if not all([full_name, email, employment_id]):
                 return JsonResponse({'status': 'error', 'message': 'Full name, email, and employment ID are required.'}, status=400)
 
-            # Only check Coordinator table (per your request)
+            # Check only Coordinator table
             if Coordinator.objects.filter(email=email).exists():
                 return JsonResponse({'status': 'error', 'message': 'Email already exists.'}, status=400)
 
-            # Role priority mapping
-            role_priority = {'student': 1, 'coordinator': 2, 'admin': 3}
-            desired_role = 'coordinator'
-
-            # Reuse existing User if present, otherwise create new user
-            user = User.objects.filter(Q(username=email) | Q(email=email)).first()
-            if user:
-                prev_role = getattr(user, 'role', 'student')
-                role_changed = False
-                # escalate role if desired has higher privilege
-                if role_priority.get(desired_role, 0) > role_priority.get(prev_role, 0):
-                    user.role = desired_role
-                    user.save()
-                    role_changed = True
-
-                # Send link if: user has no usable password OR must_set_password flagged OR role was escalated
-                send_link = (not user.has_usable_password()) or getattr(user, 'must_set_password', False) or role_changed
-            else:
-                # create new user and mark as must set password
-                user = User.objects.create_user(username=email, email=email)
-                user.set_unusable_password()
-                user.must_set_password = True
-                user.password_locked = False
-                user.role = desired_role
-                user.save()
-                send_link = True
+            # Reuse or create User
+            user, created = User.objects.get_or_create(username=email, defaults={"email": email})
+            user.role = "coordinator"   # ensure role is set
+            user.must_set_password = True
+            user.password_locked = False
+            user.set_unusable_password()
+            user.save()
 
             # Create Coordinator profile
-            try:
-                Coordinator.objects.create(
-                    user=user,
-                    full_name=full_name,
-                    email=email,
-                    designation=designation,
-                    employment_id=employment_id,
-                    phone=phone
-                )
-            except IntegrityError:
-                # Profile conflict (unique email/employment_id) — report to UI
-                return JsonResponse({'status': 'error', 'message': 'Coordinator record conflicts (email/employment ID).'}, status=400)
+            Coordinator.objects.create(
+                user=user,
+                full_name=full_name,
+                email=email,
+                designation=designation,
+                employment_id=employment_id,
+                phone=phone
+            )
 
-            # Send set-password link if required
-            if send_link:
-                uid = urlsafe_base64_encode(force_bytes(user.pk))
-                token = default_token_generator.make_token(user)
-                set_password_url = request.build_absolute_uri(
-                    reverse('set_password', kwargs={'uidb64': uid, 'token': token})
-                )
+            # Always send set-password email
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user)
+            set_password_url = request.build_absolute_uri(
+                reverse('set_password', kwargs={'uidb64': uid, 'token': token})
+            )
 
-                subject = "Set your account password"
-                message = f"Hello {full_name},\n\nPlease set your account password by clicking the link below:\n\n{set_password_url}\n\nThis link will expire soon."
-                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email], fail_silently=False)
+            subject = "Set your account password"
+            message = f"Hello {full_name},\n\nPlease set your account password by clicking the link below:\n\n{set_password_url}\n\nThis link will expire soon."
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email], fail_silently=False)
 
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'status': 'success', 'message': 'Coordinator added successfully!'})
@@ -355,61 +331,38 @@ def admin_dashboard(request):
             if not all([full_name, email, employment_id]):
                 return JsonResponse({'status': 'error', 'message': 'Full name, email, and employment ID are required.'}, status=400)
 
-            # Only check AdminUser table (per your request)
+            # Check only AdminUser table
             if AdminUser.objects.filter(email=email).exists():
                 return JsonResponse({'status': 'error', 'message': 'Email already exists.'}, status=400)
 
-            # Role priority mapping
-            role_priority = {'student': 1, 'coordinator': 2, 'admin': 3}
-            desired_role = 'admin'
-
-            # Reuse existing User if present, otherwise create new user
-            user = User.objects.filter(Q(username=email) | Q(email=email)).first()
-            if user:
-                prev_role = getattr(user, 'role', 'student')
-                role_changed = False
-                # escalate role if desired has higher privilege
-                if role_priority.get(desired_role, 0) > role_priority.get(prev_role, 0):
-                    user.role = desired_role
-                    user.save()
-                    role_changed = True
-
-                # Send link if: user has no usable password OR must_set_password flagged OR role was escalated
-                send_link = (not user.has_usable_password()) or getattr(user, 'must_set_password', False) or role_changed
-            else:
-                # create new user and mark as must set password
-                user = User.objects.create_user(username=email, email=email)
-                user.set_unusable_password()
-                user.must_set_password = True
-                user.password_locked = False
-                user.role = desired_role
-                user.save()
-                send_link = True
+            # Reuse or create User
+            user, created = User.objects.get_or_create(username=email, defaults={"email": email})
+            user.role = "admin"   # ensure role is set
+            user.must_set_password = True
+            user.password_locked = False
+            user.set_unusable_password()
+            user.save()
 
             # Create Admin profile
-            try:
-                AdminUser.objects.create(
-                    user=user,
-                    full_name=full_name,
-                    email=email,
-                    designation=designation,
-                    employment_id=employment_id,
-                    phone=phone
-                )
-            except IntegrityError:
-                return JsonResponse({'status': 'error', 'message': 'Admin record conflicts (email/employment ID).'}, status=400)
+            AdminUser.objects.create(
+                user=user,
+                full_name=full_name,
+                email=email,
+                designation=designation,
+                employment_id=employment_id,
+                phone=phone
+            )
 
-            # Send set-password link if required
-            if send_link:
-                uid = urlsafe_base64_encode(force_bytes(user.pk))
-                token = default_token_generator.make_token(user)
-                set_password_url = request.build_absolute_uri(
-                    reverse('set_password', kwargs={'uidb64': uid, 'token': token})
-                )
+            # Always send set-password email
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user)
+            set_password_url = request.build_absolute_uri(
+                reverse('set_password', kwargs={'uidb64': uid, 'token': token})
+            )
 
-                subject = "Set your account password"
-                message = f"Hello {full_name},\n\nPlease set your account password by clicking the link below:\n\n{set_password_url}\n\nThis link will expire soon."
-                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email], fail_silently=False)
+            subject = "Set your account password"
+            message = f"Hello {full_name},\n\nPlease set your account password by clicking the link below:\n\n{set_password_url}\n\nThis link will expire soon."
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email], fail_silently=False)
 
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'status': 'success', 'message': 'Admin added successfully!'})

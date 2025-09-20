@@ -1882,6 +1882,32 @@ form label:has(+ textarea[required])::after {
   to { opacity: 1; transform: translateY(0); }
 }
 
+.delete-modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.delete-modal-content {
+    color: black;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+.delete-modal-actions {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-around;
+}
+
+
     </style>
 </head>
 
@@ -2963,6 +2989,22 @@ form label:has(+ textarea[required])::after {
                     </div>
                 </section>
 
+                <!-- Delete Confirmation Modal -->
+<div id="deletePopup" class="delete-modal">
+  <div class="delete-modal-content">
+    <h3>Are you sure?</h3>
+    <p>Do you really want to delete this certificate?</p>
+    <label>
+      <input type="checkbox" id="dontShowAgain"> Don't show this again
+    </label>
+    <div class="delete-modal-actions">
+      <button id="confirmDelete" class="btn btn-danger">OK</button>
+      <button id="cancelDelete" class="btn btn-secondary">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
                 <!-- Certificate selection popup -->
 <div id="certificatePopup" class="popup-overlay" style="display:none;">
   <div class="popup-content">
@@ -3580,25 +3622,7 @@ function fetchQueries() {
                 window.location.href = `/certificates/${type}/${certId}/download/`;
             }
 
-            function deleteCertificate(certId, type) {
-                if (confirm('Are you sure you want to delete this certificate?')) {
-                    fetch(`/certificates/${type}/${certId}/delete/`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRFToken': getCookie('csrftoken')
-                        }
-                    })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.status === 'success') {
-                                showPopup('Certificate deleted successfully', true);
-                                location.reload();
-                            } else {
-                                showPopup('Error deleting certificate', false);
-                            }
-                        });
-                }
-            }
+
             // Helper function to show popup notifications
             function showPopup(message, success = true) {
                 const popup = document.getElementById('popupNotification');
@@ -4457,24 +4481,53 @@ function fetchQueries() {
             document.body.removeChild(link);
         }
 
-        function deleteCertificate(certId) {
-            if (confirm("Are you sure you want to delete this certificate?")) {
-                fetch(`/accounts/certificate/${certId}/delete/`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': getCSRFToken()
-                    }
-                })
-                    .then(response => {
-                        if (response.ok) {
-                            showPopup('Certificate Deleted', true);
-                            location.reload();
-                        } else {
-                            showPopup('Failed to delete!', false);
-                        }
-                    });
-            }
+        let deleteCertId = null;
+
+function deleteCertificate(certId) {
+    // Check sessionStorage for "dontShowDeletePopup"
+    if (sessionStorage.getItem("dontShowDeletePopup") === "true") {
+        performDelete(certId);
+        return;
+    }
+
+    deleteCertId = certId;
+    document.getElementById("deletePopup").style.display = "flex";
+}
+
+document.getElementById("confirmDelete").addEventListener("click", function () {
+    const dontShowAgain = document.getElementById("dontShowAgain").checked;
+    if (dontShowAgain) {
+        sessionStorage.setItem("dontShowDeletePopup", "true");
+    }
+    performDelete(deleteCertId);
+    closeDeletePopup();
+});
+
+document.getElementById("cancelDelete").addEventListener("click", function () {
+    closeDeletePopup();
+});
+
+function closeDeletePopup() {
+    document.getElementById("deletePopup").style.display = "none";
+    deleteCertId = null;
+}
+
+function performDelete(certId) {
+    fetch(`/accounts/certificate/${certId}/delete/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCSRFToken()
         }
+    })
+        .then(response => {
+            if (response.ok) {
+                showPopup('Certificate Deleted', true);
+                location.reload();
+            } else {
+                showPopup('Failed to delete!', false);
+            }
+        });
+}
 
         // Helper to get CSRF token from cookies
         function getCSRFToken() {

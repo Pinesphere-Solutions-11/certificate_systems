@@ -94,7 +94,7 @@ urlpatterns = [
     # Preview function
     path("certificate/<int:pk>/preview/", views.preview_certificate, name="preview_certificate"),
     
-    path('accounts/set-password/<uidb64>/<token>/', views.set_password, name='set_password'),
+    path('user/set-password/<uidb64>/<token>/', views.set_password, name='set_password'),
 
 
 
