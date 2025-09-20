@@ -1883,30 +1883,36 @@ form label:has(+ textarea[required])::after {
 }
 
 .delete-modal {
-  display: none;
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-.delete-modal-content {
-    color: black;
-  background: #fff;
-  padding: 20px;
-  border-radius: 12px;
-  max-width: 400px;
-  text-align: center;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-.delete-modal-actions {
-  margin-top: 15px;
-  display: flex;
-  justify-content: space-around;
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
 }
 
+.delete-modal-content {
+    background-color: #fff;
+    margin: 15% auto;
+    color: black;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    text-align: center;
+}
+
+.delete-modal-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+#dontShowAgain {
+    margin-top: 10px;
+}
 
     </style>
 </head>
@@ -2007,7 +2013,7 @@ form label:has(+ textarea[required])::after {
                         <div class="stat-card">
                             <div class="stat-card-header">
                                 <div class="stat-card-content">
-                                    <div class="stat-card-number">{{ offer_count }}</div>
+                                    <div class="stat-card-number">{{ total_certificates }}</div>
                                     <div class="stat-card-label">Total Students</div>
                                     <div class="stat-card-change positive">
 
@@ -2601,10 +2607,13 @@ form label:has(+ textarea[required])::after {
                                                 <form action="{% url 'delete_admin' admin.id %}" method="post"
                                                     style="display:inline;">
                                                     {% csrf_token %}
-                                                    <button type="submit" class="btn btn-danger btn-sm"
-                                                        onclick="return confirm('Delete this admin?');">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
+                                                    <!-- Admin delete -->
+<button type="button"
+        class="btn btn-danger btn-sm delete-user-btn"
+        data-url="{% url 'delete_admin' admin.id %}"
+        data-type="admin">
+    <i class="fas fa-trash"></i>
+</button>
                                                 </form>
                                             </td>
 
@@ -2699,11 +2708,13 @@ form label:has(+ textarea[required])::after {
                                                     class="btn btn-warning btn-sm">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <a href="{% url 'delete_coordinator' coordinator.id %}"
-                                                    class="btn btn-danger btn-sm"
-                                                    onclick="return confirm('Are you sure you want to delete this coordinator?');">
-                                                    <i class="fas fa-trash"></i>
-                                                </a>
+                                                <!-- Coordinator delete -->
+<button type="button"
+        class="btn btn-danger btn-sm delete-user-btn"
+        data-url="{% url 'delete_coordinator' coordinator.id %}"
+        data-type="coordinator">
+    <i class="fas fa-trash"></i>
+</button>
                                             </td>
                                         </tr>
                                         {% empty %}
@@ -2821,11 +2832,10 @@ form label:has(+ textarea[required])::after {
                                             <td><span class="status-badge status-active">Active</span></td>
                                             <td>
 
-                                                <a href="{% url 'delete_certificate' cert.id %}"
-                                                    class="btn btn-danger btn-sm"
-                                                    onclick="return confirm('Are you sure you want to delete this student’s certificate?');">
-                                                    <i class="fas fa-trash"></i>
-                                                </a>
+                                                <!-- Certificate delete -->
+<button type="button" class="btn btn-danger btn-sm delete-user-btn" data-url="{% url 'delete_certificate' cert.id %}" data-type="student">
+    <i class="fas fa-trash"></i>
+</button>
 
                                             </td>
 
@@ -2989,6 +2999,22 @@ form label:has(+ textarea[required])::after {
                     </div>
                 </section>
 
+                <!-- User Delete Confirmation Modal -->
+<div id="deleteUserPopup" class="delete-modal">
+  <div class="delete-modal-content">
+    <h3>Are you sure?</h3>
+    <p>Do you really want to delete this user?</p>
+    <label>
+      <input type="checkbox" id="dontShowUserAgain"> Don't show this again
+    </label>
+    <div class="delete-modal-actions">
+      <button id="confirmDeleteUser" class="btn btn-danger">OK</button>
+      <button id="cancelDeleteUser" class="btn btn-secondary">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
                 <!-- Delete Confirmation Modal -->
 <div id="deletePopup" class="delete-modal">
   <div class="delete-modal-content">
@@ -3033,6 +3059,58 @@ form label:has(+ textarea[required])::after {
 
 
     <script>
+
+        document.addEventListener("DOMContentLoaded", function() {
+    const deleteModal = document.getElementById("deleteUserPopup");
+    const confirmBtn = document.getElementById("confirmDeleteUser");
+    const cancelBtn = document.getElementById("cancelDeleteUser");
+    const dontShowCheckbox = document.getElementById("dontShowUserAgain");
+
+    let deleteUrl = "";
+
+    // Attach click event to all user delete buttons
+    document.querySelectorAll(".delete-user-btn").forEach(button => {
+        button.addEventListener("click", function(e) {
+            e.preventDefault(); // prevent default navigation
+
+            deleteUrl = this.getAttribute("data-url");
+            const type = this.getAttribute("data-type") || "user"; // fallback
+
+            // Skip modal if user checked "Don't show again"
+            if (sessionStorage.getItem("skipUserDeletePopup") === "true") {
+                window.location.href = deleteUrl;
+                return;
+            }
+
+            // Update modal text dynamically
+            deleteModal.querySelector("h3").textContent = `Are you sure you want to delete this ${type}?`;
+            deleteModal.querySelector("p").textContent = `This action will permanently delete the ${type}.`;
+
+            // Show modal
+            deleteModal.style.display = "block";
+        });
+    });
+
+    // Confirm delete
+    confirmBtn.addEventListener("click", function() {
+        if (dontShowCheckbox.checked) {
+            sessionStorage.setItem("skipUserDeletePopup", "true");
+        }
+        window.location.href = deleteUrl;
+    });
+
+    // Cancel delete
+    cancelBtn.addEventListener("click", function() {
+        deleteModal.style.display = "none";
+    });
+
+    // Close modal if clicked outside
+    window.addEventListener("click", function(event) {
+        if (event.target === deleteModal) {
+            deleteModal.style.display = "none";
+        }
+    });
+});
 
        function openCertificatesPopup(studentId, studentNameEnc) {
   const studentName = decodeURIComponent(studentNameEnc);
@@ -3476,8 +3554,13 @@ function fetchQueries() {
                 })
                     .then(res => res.json())
                     .then(data => {
+
                         showPopup(data.message);
                         fetchQueries();
+                        
+                         setTimeout(() => {
+                            window.location.reload();
+                         }, 1500);
                     });
             };
 

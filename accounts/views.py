@@ -1084,18 +1084,19 @@ User = get_user_model()
 
 def delete_admin(request, admin_id):
     admin = get_object_or_404(AdminUser, id=admin_id)
+
     try:
-        # Delete related User first
         user = User.objects.get(username=admin.email)
-        user.delete()
+        # Check if this User is linked to any Coordinator
+        if not Coordinator.objects.filter(user=user).exists():
+            user.delete()  # safe to delete
     except User.DoesNotExist:
         pass
 
-    # Delete the AdminUser profile
     admin.delete()
-
     messages.success(request, "Admin deleted successfully.")
     return redirect('admin_dashboard')
+
 
 
     # ======================
@@ -1138,10 +1139,14 @@ def delete_coordinator(request, pk):
     user = coordinator.user  # linked auth user
 
     coordinator.delete()  # remove coordinator profile
-    user.delete()         # remove login access
+
+    # Delete User only if not linked to any Admin
+    if not AdminUser.objects.filter(email=user.username).exists():
+        user.delete()
 
     messages.success(request, "Coordinator deleted successfully!")
     return redirect('admin_dashboard')
+
 
    # ======================
     # 🗑️ Student Deletion (Admin only)
