@@ -32,6 +32,7 @@ from django.views.decorators.cache import cache_control, never_cache
 from dateutil import parser
 import pandas as pd
 import io
+import re
 from .utils import get_template_for_certificate
 # Function for admin only login
 def is_admin(user):
@@ -570,7 +571,7 @@ from datetime import datetime, date
 def is_admin_or_coordinator(user):
     return user.is_authenticated and user.role in ('admin', 'coordinator')
 
-# Admin certificate creation
+# Admin and coordinator certificate creation
 
 @login_required
 @user_passes_test(is_admin_or_coordinator)
@@ -579,22 +580,58 @@ def create_offer_letter(request):
         data = request.POST
         signature_file = request.FILES.get('offerSignature')
 
+        # Regex rules
+        alpha_special_regex = re.compile(r'^[A-Za-z\s\.\-]+$')   # letters, spaces, dot, dash
+        alnum_special_regex = re.compile(r'^[A-Za-z0-9\s\.\-_/]+$')  # alphanumeric + specials
+
+        # --- 1) Student Name ---
+        student_name = data.get('offerStudentName', '').strip()
+        if not alpha_special_regex.match(student_name) or student_name.isdigit():
+            return JsonResponse({'status': 'error',
+                                 'message': 'Student name can only contain letters and special characters, not only numbers.'},
+                                status=400)
+
+        # --- 2) College ---
+        college = data.get('offerCollege', '').strip()
+        if college.isdigit():
+            return JsonResponse({'status': 'error',
+                                 'message': 'College name cannot be numbers only.'},
+                                status=400)
+
+        # --- 3) Location ---
+        location = data.get('offerLocation', '').strip()
+        if location.isdigit():
+            return JsonResponse({'status': 'error',
+                                 'message': 'Location cannot be numbers only.'},
+                                status=400)
+
+        # --- 4) Date validation ---
         try:
             start_date = datetime.strptime(data.get('offerStartDate'), '%Y-%m-%d').date()
-            end_date   = datetime.strptime(data.get('offerEndDate'),   '%Y-%m-%d').date()
+            end_date   = datetime.strptime(data.get('offerEndDate'), '%Y-%m-%d').date()
             issue_date = datetime.strptime(data.get('offerIssueDate'), '%Y-%m-%d').date()
         except Exception:
-            return JsonResponse({'status': 'error', 'message': 'Invalid date format'}, status=400)
+            return JsonResponse({'status': 'error',
+                                 'message': 'Invalid date format'}, status=400)
 
+        if end_date < start_date:
+            return JsonResponse({'status': 'error',
+                                 'message': 'End date must be on or after Start date.'}, status=400)
+
+        if issue_date < start_date:
+            return JsonResponse({'status': 'error',
+                                 'message': 'Issue date must be on or after Start date.'}, status=400)
+
+        # --- Save certificate ---
         cert = Certificate(
             certificate_type='offer',
             title=data.get('offerTitle'),
-            student_name=data.get('offerStudentName'),
+            student_name=student_name,
             student_id=data.get('offerRegisterNumber'),
             degree=data.get('offerDegree'),
             department=data.get('offerDepartment'),
-            college=data.get('offerCollege'),
-            location=data.get('offerLocation'),
+            college=college,
+            location=location,
             course_name=data.get('offerCourseName'),
             duration=data.get('offerDuration'),
             start_date=start_date,
@@ -607,10 +644,10 @@ def create_offer_letter(request):
         )
         cert.save()
 
-        # ONLY pass the default template name; the function will prefer a DB template if present.
+        # Generate certificate PDF
         generate_certificate_pdf(cert, 'login/internship_offer.html')
 
-        return JsonResponse({  
+        return JsonResponse({
             'status': 'success',
             'message': 'Offer Letter created successfully!',
             'certificate_number': cert.certificate_number,
@@ -621,10 +658,16 @@ def create_offer_letter(request):
             'download_url': cert.generated_pdf.url if cert.generated_pdf else ''
         }, status=200)
 
-    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+    return JsonResponse({'status': 'error',
+                                 'message': 'Invalid request'}, status=400)
 
 # Completion Letter Generation #
 from datetime import datetime
+
+import re
+from datetime import datetime
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 @login_required
 @user_passes_test(is_admin_or_coordinator)
@@ -633,6 +676,32 @@ def create_completion_certificate(request):
         data = request.POST
         signature_file = request.FILES.get('completionSignature')
 
+        # Regex rules
+        alpha_special_regex = re.compile(r'^[A-Za-z\s\.\-]+$')   # letters, spaces, dot, dash
+        alnum_special_regex = re.compile(r'^[A-Za-z0-9\s\.\-_/]+$')  # alphanumeric + specials
+
+        # --- 1) Student Name ---
+        student_name = data.get('completionStudentName', '').strip()
+        if not alpha_special_regex.match(student_name) or student_name.isdigit():
+            return JsonResponse({'status': 'error',
+                                 'message': 'Student name can only contain letters and special characters, not only numbers.'},
+                                status=400)
+
+        # --- 2) College ---
+        college = data.get('completionCollege', '').strip()
+        if college.isdigit():
+            return JsonResponse({'status': 'error',
+                                 'message': 'College name cannot be numbers only.'},
+                                status=400)
+
+        # --- 3) Location ---
+        location = data.get('completionLocation', '').strip()
+        if location.isdigit():
+            return JsonResponse({'status': 'error',
+                                 'message': 'Location cannot be numbers only.'},
+                                status=400)
+
+        # --- 5) Date validation ---
         try:
             start_date = datetime.strptime(data.get('completionStartDate'), '%Y-%m-%d').date()
             end_date   = datetime.strptime(data.get('completionEndDate'),   '%Y-%m-%d').date()
@@ -640,16 +709,23 @@ def create_completion_certificate(request):
         except (ValueError, TypeError):
             return JsonResponse({'status': 'error', 'message': 'Invalid or missing date(s)'}, status=400)
 
+        if end_date < start_date:
+            return JsonResponse({'status': 'error', 'message': 'End date must be on or after Start date.'}, status=400)
+
+        if issue_date < start_date:
+            return JsonResponse({'status': 'error', 'message': 'Issue date must be on or after Start date.'}, status=400)
+
+        # --- Save certificate ---
         cert = Certificate(
             certificate_type='completion',
-            template_choice=data.get('completionTemplate', 'default'),  # save selection
+            template_choice=data.get('completionTemplate', 'default'),
             title=data.get('completionTitle'),
-            student_name=data.get('completionStudentName'),
+            student_name=student_name,
             student_id=data.get('completionRegisterNumber'),
             degree=data.get('completionDegree'),
             department=data.get('completionDepartment'),
-            college=data.get('completionCollege'),
-            location=data.get('completionLocation'),
+            college=college,
+            location=location,
             course_name=data.get('completionCourseName'),
             duration=data.get('completionDuration'),
             start_date=start_date,
@@ -662,6 +738,7 @@ def create_completion_certificate(request):
         )
         cert.save()
 
+        # Use dynamic template if exists
         template_name = get_template_for_certificate("completion")
         generate_certificate_pdf(cert, template_name)
 
@@ -1240,7 +1317,6 @@ def query_list(request):
     return JsonResponse({"queries": data})
 
 
-@user_passes_test(is_admin_or_coordinator)
 def resolve_query(request, pk):
     try:
         query = StudentQuery.objects.get(pk=pk)
@@ -1251,8 +1327,6 @@ def resolve_query(request, pk):
         return JsonResponse({"status": "error", "message": "Query not found"}, status=404)
 
 
-
-@user_passes_test(is_admin_or_coordinator)
 def delete_query(request, pk):
     try:
         query = StudentQuery.objects.get(pk=pk)
@@ -1262,7 +1336,6 @@ def delete_query(request, pk):
         return JsonResponse({"status": "error", "message": "Query not found"}, status=404)
 
 @login_required
-@user_passes_test(is_admin)
 def edit_certificate(request, pk):
     certificate = get_object_or_404(Certificate, pk=pk)
 
@@ -1303,7 +1376,7 @@ def edit_certificate(request, pk):
         # 🔹 Save first so regeneration attaches to this cert
         certificate.save()
 
-        # 🔹 Decide template depending on type
+        # 🔹 Decide template depend ing on type
         if certificate.certificate_type == "offer":
             template_name = "login/internship_offer.html"
         else:
@@ -1316,71 +1389,14 @@ def edit_certificate(request, pk):
         StudentQuery.objects.filter(certificate=certificate, resolved=False).update(resolved=True)
 
         messages.success(request, "Certificate updated and regenerated successfully!")
-        return redirect('admin_dashboard')
+        # Redirect based on role
+        if request.user.role == "admin":
+            return redirect("admin_dashboard")
+        return redirect("coordinator_dashboard")
 
     # ✅ Prefill form with certificate data
     return render(request, 'login/edit-certificate.html', {'certificate': certificate})
 
-
-@login_required
-@user_passes_test(is_coordinator)
-def edit_certificate(request, pk):
-    certificate = get_object_or_404(Certificate, pk=pk)
-
-    if request.method == 'POST':
-        data = request.POST
-        signature_file = request.FILES.get('offerSignature') or certificate.signature
-
-        try:
-            start_date = datetime.strptime(data.get('offerStartDate'), '%Y-%m-%d').date()
-            end_date   = datetime.strptime(data.get('offerEndDate'),   '%Y-%m-%d').date()
-            issue_date = datetime.strptime(data.get('offerIssueDate'), '%Y-%m-%d').date()
-        except Exception:
-            return JsonResponse({'status': 'error', 'message': 'Invalid date format'}, status=400)
-
-        # 🔹 Update fields
-        certificate.title = data.get('offerTitle')
-        certificate.student_name = data.get('offerStudentName')
-        certificate.student_id = data.get('offerRegisterNumber')
-        certificate.degree = data.get('offerDegree')
-        certificate.department = data.get('offerDepartment')
-        certificate.college = data.get('offerCollege')
-        certificate.location = data.get('offerLocation')
-        certificate.course_name = data.get('offerCourseName')
-        certificate.duration = data.get('offerDuration')
-        certificate.start_date = start_date
-        certificate.end_date = end_date
-        certificate.issue_date = issue_date
-        certificate.director_name = data.get('offerDirector')
-        certificate.signature = signature_file
-
-        # 🔹 Delete old PDF if exists
-        if certificate.generated_pdf:
-            old_pdf_path = certificate.generated_pdf.path
-            if os.path.exists(old_pdf_path):
-                os.remove(old_pdf_path)
-            certificate.generated_pdf.delete(save=False)
-
-        # 🔹 Save first so regeneration attaches to this cert
-        certificate.save()
-
-        # 🔹 Decide template depending on type
-        if certificate.certificate_type == "offer":
-            template_name = "login/internship_offer.html"
-        else:
-            template_name = get_template_for_certificate("completion")
-
-        # 🔹 Regenerate new PDF
-        generate_certificate_pdf(certificate, template_name)
-        
-        # 🔹 Auto-resolve related query
-        StudentQuery.objects.filter(certificate=certificate, resolved=False).update(resolved=True)
-
-        messages.success(request, "Certificate updated and regenerated successfully!")
-        return redirect('coordinator_dashboard')
-
-    # ✅ Prefill form with certificate data
-    return render(request, 'login/edit-certificate.html', {'certificate': certificate})
 
 
 from django.views.decorators.http import require_GET
@@ -1435,7 +1451,6 @@ def certificate_detail(request, pk):
     }
     return JsonResponse({"status": "success", "certificate": data})
 @login_required
-@user_passes_test(is_admin)
 def generate_completion(request, pk):
     # Fetch the offer certificate first
     offer_cert = get_object_or_404(Certificate, pk=pk, certificate_type="offer")
@@ -1450,7 +1465,10 @@ def generate_completion(request, pk):
             issue_date = datetime.strptime(data.get("completionIssueDate"), "%Y-%m-%d").date()
         except Exception:
             messages.error(request, "Invalid date format")
-            return redirect("admin_dashboard")
+            # Redirect based on role
+            if request.user.role == "admin":
+                return redirect("admin_dashboard")
+            return redirect("coordinator_dashboard")
 
         # Create a new Completion Certificate
         completion_cert = Certificate.objects.create(
@@ -1480,57 +1498,9 @@ def generate_completion(request, pk):
 
         # Show success on admin dashboard
         messages.success(request, f"Completion Certificate generated successfully for {completion_cert.student_name}!")
-        return redirect("admin_dashboard")
-
-    # If GET → show the prefilled form (like edit-certificate)
-    return render(request, "login/generate_completion.html", {"certificate": offer_cert})
-
-@login_required
-@user_passes_test(is_coordinator)
-def generate_completion(request, pk):
-    # Fetch the offer certificate first
-    offer_cert = get_object_or_404(Certificate, pk=pk, certificate_type="offer")
-
-    if request.method == "POST":
-        data = request.POST
-        signature_file = request.FILES.get("completionSignature")
-
-        try:
-            start_date = datetime.strptime(data.get("completionStartDate"), "%Y-%m-%d").date()
-            end_date   = datetime.strptime(data.get("completionEndDate"), "%Y-%m-%d").date()
-            issue_date = datetime.strptime(data.get("completionIssueDate"), "%Y-%m-%d").date()
-        except Exception:
-            messages.error(request, "Invalid date format")
+        # Redirect based on role
+        if request.user.role == "admin":
             return redirect("admin_dashboard")
-
-        # Create a new Completion Certificate
-        completion_cert = Certificate.objects.create(
-            certificate_type="completion",
-            template_choice=data.get("completionTemplate", "default"),
-            title=data.get("completionTitle") or f"Completion of {offer_cert.course_name}",
-            student_name=offer_cert.student_name,
-            student_id=offer_cert.student_id,
-            degree=offer_cert.degree,
-            department=offer_cert.department,
-            college=offer_cert.college,
-            location=offer_cert.location,
-            course_name=offer_cert.course_name,
-            duration=offer_cert.duration,
-            start_date=start_date,
-            end_date=end_date,
-            completion_date=issue_date,
-            issue_date=issue_date,
-            director_name=data.get("completionDirector") or offer_cert.director_name,
-            signature=signature_file or offer_cert.signature,
-            created_by=request.user,
-        )
-
-        # Generate PDF for the new certificate
-        template_name = get_template_for_certificate("completion")
-        generate_certificate_pdf(completion_cert, template_name)
-
-        # Show success on admin dashboard
-        messages.success(request, f"Completion Certificate generated successfully for {completion_cert.student_name}!")
         return redirect("coordinator_dashboard")
 
     # If GET → show the prefilled form (like edit-certificate)
