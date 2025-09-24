@@ -251,7 +251,7 @@
             </form>
             {% if messages %}
             {% for message in messages %}
-            <div style="color: red;">{{ message }}</div>
+            <div style="color: red;" class="message {{ message.tags }}">{{ message }}</div>
             {% endfor %}
             {% endif %}
             <div class="login-footer">

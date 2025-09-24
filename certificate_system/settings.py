@@ -75,7 +75,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'certificate_system.wsgi.application'
 
-SESSION_COOKIE_AGE =  60 * 30
+SESSION_COOKIE_AGE =  60 * 60
 
 CSRF_COOKIE_SECURE = True
 

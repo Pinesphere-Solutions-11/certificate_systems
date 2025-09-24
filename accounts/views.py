@@ -190,7 +190,6 @@ def set_password(request, uidb64, token):
         user = None
 
     if user is None or not default_token_generator.check_token(user, token):
-        messages.error(request, "The password set link is invalid or expired.")
         return redirect('index')
 
     if request.method == 'POST':
@@ -204,7 +203,6 @@ def set_password(request, uidb64, token):
         user.must_set_password = False
         user.password_locked = True
         user.save()
-        messages.success(request, "Password set successfully. Please log in.")
         return redirect('index')  # or appropriate login route
     # GET -> render form
     return render(request, 'login/set_password.html', {'valid': True})
