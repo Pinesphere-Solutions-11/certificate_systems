@@ -79,11 +79,11 @@ class Certificate(models.Model):
         choices=TEMPLATE_CHOICES,
         default='default'
     )
-    certificate_number = models.CharField(max_length=10, unique=True, blank=True)
+    certificate_number = models.CharField(max_length=100, unique=True, blank=True)
 
-    title = models.CharField(max_length=10)
+    title = models.CharField(max_length=100)
     student_name = models.CharField(max_length=100)
-    student_id = models.CharField(max_length=30)
+    student_id = models.CharField(max_length=50)
     degree = models.CharField(max_length=50, blank=True, null=True)
     department = models.CharField(max_length=100)
     college = models.CharField(max_length=200)

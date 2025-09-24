@@ -1468,15 +1468,15 @@ def generate_completion(request, pk):
                 return redirect("admin_dashboard")
             return redirect("coordinator_dashboard")
 
-        # Create a new Completion Certificate
+         # Create Completion Certificate immediately
         completion_cert = Certificate.objects.create(
             certificate_type="completion",
             template_choice=data.get("completionTemplate", "default"),
-            title=data.get("completionTitle") or f"Completion of {offer_cert.course_name}",
+            title=f"Completion of {offer_cert.course_name}",
             student_name=offer_cert.student_name,
             student_id=offer_cert.student_id,
             degree=offer_cert.degree,
-            department=offer_cert.department,
+            department=offer_cert.department,   # ✅ department fixed
             college=offer_cert.college,
             location=offer_cert.location,
             course_name=offer_cert.course_name,
@@ -1485,8 +1485,8 @@ def generate_completion(request, pk):
             end_date=end_date,
             completion_date=issue_date,
             issue_date=issue_date,
-            director_name=data.get("completionDirector") or offer_cert.director_name,
-            signature=signature_file or offer_cert.signature,
+            director_name=offer_cert.director_name,
+            signature=offer_cert.signature,
             created_by=request.user,
         )
 
