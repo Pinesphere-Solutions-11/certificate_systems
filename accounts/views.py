@@ -34,11 +34,45 @@ import pandas as pd
 import io
 import re
 from .utils import get_template_for_certificate
+from django.db import transaction
+from .models import PendingEmail
+import socket
+
+def is_internet_available():
+    try:
+        socket.create_connection(("8.8.8.8", 53), timeout=3)
+        return True
+    except OSError:
+        return False
+
+def send_or_store_email(subject, message, recipient):
+    if is_internet_available():
+        try:
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [recipient], fail_silently=False)
+            return True
+        except Exception:
+            # fallback → store
+            PendingEmail.objects.create(to=recipient, subject=subject, message=message)
+            return False
+    else:
+        PendingEmail.objects.create(to=recipient, subject=subject, message=message)
+        return False
+
+def resend_pending_emails():
+    if not is_internet_available():
+        return
+    pending = PendingEmail.objects.all()
+    for mail in pending:
+        try:
+            send_mail(mail.subject, mail.message, settings.DEFAULT_FROM_EMAIL, [mail.to], fail_silently=False)
+            mail.delete()
+        except Exception:
+            # if still fails, keep it
+            continue
+
 # Function for admin only login
 def is_admin(user):
     return user.is_authenticated and user.role == 'admin'
-
-
 
 @login_required
 def ping_session(request):
@@ -301,7 +335,8 @@ def admin_dashboard(request):
 
             subject = "Set your account password"
             message = f"Hello {full_name},\n\nPlease set your account password by clicking the link below:\n\n{set_password_url}\n\nThis link will expire soon."
-            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email], fail_silently=False)
+            send_or_store_email(subject, message, email)
+
 
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'status': 'success', 'message': 'Coordinator added successfully!'})
@@ -361,7 +396,8 @@ def admin_dashboard(request):
 
             subject = "Set your account password"
             message = f"Hello {full_name},\n\nPlease set your account password by clicking the link below:\n\n{set_password_url}\n\nThis link will expire soon."
-            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email], fail_silently=False)
+            send_or_store_email(subject, message, email)
+
 
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'status': 'success', 'message': 'Admin added successfully!'})
@@ -378,7 +414,7 @@ def admin_dashboard(request):
     except TemplateSetting.DoesNotExist:
         current_template = "default"
 
-    
+    resend_pending_emails()
     
     context = {
         "completion_certificates": page_obj.object_list,  # only current page records
